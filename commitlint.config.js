@@ -11,7 +11,6 @@ const Configuration = {
         'style',
         'refactor',
         'test',
-        'chore',
         'perf',
         'build',
         'ci',
