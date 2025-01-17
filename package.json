@@ -13,7 +13,6 @@
     "format": "prettier . --check",
     "format:fix": "prettier . --write",
     "prepare": "husky",
-    "commit-msg": "pnpm commitlint --edit $1",
     "pre-commit": "pnpm lint-staged",
     "pre-push": "pnpm eslint . && pnpm tsc -p tsconfig.json --noEmit"
   },
