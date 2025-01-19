@@ -5,11 +5,34 @@ export default {
   theme: {
     extend: {
       borderRadius: {
+        button: '8px',
+        input: '8px',
+        modal: '12px',
+
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
+        screenBg: '#E2F0E7',
+        bodyBg: '#F9F8F8',
+        bodyBorder: '#EDEAE9',
+        modalBorder: '#E1E3E5',
+        modalPlaceholder: '#00000038',
+        primary: '#82CD47',
+        category: {
+          blue: '#4285F4',
+          red: '#DB4437',
+          yellow: '#F4B400',
+          green: '#0D9D58',
+          purple: '#AB47BC',
+          cyan: '#02ACC1',
+          orange: '#FF7043',
+          khaki: '#9E9D24',
+          indigo: '#5C6BC0',
+          pink: '#F06292',
+        },
+
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -21,7 +44,7 @@ export default {
           foreground: 'hsl(var(--popover-foreground))',
         },
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
+          // DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
