@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const { fontFamily } = require('tailwindcss/defaultTheme')
 export default {
   darkMode: ['class'],
   content: ['./src/**/*.{js,jsx,ts,tsx,mdx}'],
@@ -12,6 +13,9 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      fontFamily: {
+        pretendard: ['Pretendard', ...fontFamily.sans],
       },
       colors: {
         screenBg: '#E2F0E7',
