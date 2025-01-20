@@ -11,7 +11,7 @@ export default function Header() {
     return (
       <nav className="px-4 flex items-center justify-between">
         <Link to="/">
-          <img src={logoText} />
+          <img src={logoText} className="w-2/3 md:w-auto h-auto" />
         </Link>
 
         {!token ? (
@@ -27,7 +27,7 @@ export default function Header() {
     return (
       <nav className="px-4">
         <Link to="/">
-          <img src={logoText} />
+          <img src={logoText} className="w-2/3 md:w-auto h-auto" />
         </Link>
       </nav>
     )
@@ -46,7 +46,7 @@ export default function Header() {
         </button>
         <div>
           <Link to="/">
-            <img src={logoText} />
+            <img src={logoText} className="w-2/3 md:w-auto h-auto" />
           </Link>
         </div>
       </div>
