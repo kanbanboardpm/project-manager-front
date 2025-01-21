@@ -55,7 +55,7 @@ export default function Sidebar() {
         <ul className="space-y-1 px-3 border-b border-bodyBorder">
           <li>
             <Link
-              to="/"
+              to="/main"
               className={`flex items-center p-2 hover:bg-gray-100 rounded-lg 
               ${isOpen ? 'gap-3' : 'justify-center'} w-full`}
             >

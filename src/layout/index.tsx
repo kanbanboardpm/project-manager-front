@@ -6,7 +6,10 @@ import Sidebar from './components/Sidebar'
 
 export default function RootLayout() {
   const location = useLocation()
-  const isMainRoute = ['/dashboard'].includes(location.pathname)
+  const sidebarRoutes = ['/main', '/projects', '/inbox', '/profile']
+  const isMainRoute = sidebarRoutes.some((route) =>
+    location.pathname.startsWith(route),
+  )
 
   return (
     <div className="bg-screenBg min-h-screen overflow-x-hidden">
