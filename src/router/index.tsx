@@ -1,13 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom'
-import AuthLayout from '../layout/AuthLayout'
-import MainLayout from '../layout/MainLayout'
+
+import RootLayout from '@/layout'
 
 const router = createBrowserRouter([
   {
-    element: <AuthLayout />,
+    path: '/',
+    element: <RootLayout />,
     children: [
       {
-        path: '/',
+        index: true,
         element: <div>HomePage</div>,
       },
       {
@@ -18,14 +19,9 @@ const router = createBrowserRouter([
         path: '/signup',
         element: <div>SignupPage</div>,
       },
-    ],
-  },
-  {
-    element: <MainLayout />,
-    children: [
       {
         path: '/dashboard',
-        element: <div>Dashboard Page</div>, // 회원 메인페이지
+        element: <div>Dashboard Page</div>,
       },
     ],
   },
