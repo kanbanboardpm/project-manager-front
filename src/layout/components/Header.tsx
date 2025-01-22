@@ -35,7 +35,7 @@ export default function Header() {
   // 로그인, 회원가입 페이지
   if (['/login', '/signup'].includes(location.pathname)) {
     return (
-      <nav className="px-4">
+      <nav className="px-4 flex">
         <Link to="/">
           <img src={logoText} className="w-2/3 md:w-auto h-auto" />
         </Link>
