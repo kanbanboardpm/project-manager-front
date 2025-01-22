@@ -4,7 +4,7 @@ import menuIcon from '@/assets/images/menu.png'
 import { useSidebarStore } from '@/store/sidebarStore'
 import Sidebar from './components/Sidebar'
 
-export default function MainLayout() {
+export default function RootLayout() {
   const location = useLocation()
   const { toggle } = useSidebarStore()
   const token = false
