@@ -24,6 +24,7 @@ export default {
         modalBorder: '#E1E3E5',
         modalPlaceholder: '#00000038',
         primary: '#82CD47',
+        warning: '#FF0004',
         category: {
           blue: '#4285F4',
           red: '#DB4437',
