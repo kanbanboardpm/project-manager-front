@@ -24,6 +24,7 @@ export default {
         modalBorder: '#E1E3E5',
         modalPlaceholder: '#00000038',
         primary: '#82CD47',
+        warning: '#FF0004',
         category: {
           blue: '#4285F4',
           red: '#DB4437',
@@ -46,10 +47,6 @@ export default {
         popover: {
           DEFAULT: 'hsl(var(--popover))',
           foreground: 'hsl(var(--popover-foreground))',
-        },
-        primary: {
-          // DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
