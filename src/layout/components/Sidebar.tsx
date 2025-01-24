@@ -1,13 +1,15 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useSidebarStore } from '@/store/sidebarStore'
 import homeIcon from '@/assets/images/home.png'
 import projectIcon from '@/assets/images/project.png'
 import inboxIcon from '@/assets/images/inbox.png'
 import profileIcon from '@/assets/images/profile.png'
+import { Button } from '@/shared/ui/button'
 
 export default function Sidebar() {
   const { isOpen, setIsOpen } = useSidebarStore()
+  const navigate = useNavigate()
   useEffect(() => {
     const handleResize = () => {
       const isDesktop = window.innerWidth >= 640
@@ -23,31 +25,31 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`bg-gradient-to-b from-white to-screenBg rounded-tr-lg flex flex-col transition-all duration-300 ease-in-out text-sm  font-pretendard
-        ${isOpen ? 'w-64 px-2 py-1' : 'w-16 items-center'} 
-        h-[calc(100vh-64px)]`}
+      className={`p-2 bg-gradient-to-b from-white to-screenBg rounded-tr-lg flex flex-col h-[calc(100vh-64px)] transition-all duration-300 ease-in-out text-sm font-pretendard
+      ${isOpen ? 'w-64' : 'w-16 items-center'}`}
     >
-      {/* 프로젝트 추가 버튼 (공통컴포넌트 변경예정)*/}
-      <div className="p-4 sm:px-2">
-        <button
-          className={` bg-[#82CD47] text-white rounded-button hover:bg-primary/80 transition-all duration-300 h-10
-          ${isOpen ? 'w-19 px-4' : 'w-7 h-7'}`}
+      <div className="px-3 mb-2">
+        <Button
+          className={`transition-all duration-300 ${isOpen ? '' : 'w-7 h-7'}`}
+          onClick={() => {
+            navigate('/projects/create')
+          }}
         >
           <div
             className={`flex items-center w-full justify-center overflow-hidden`}
           >
             <span
-              className={`transition-all duration-300 whitespace-nowrap   ${isOpen ? 'opacity-100' : 'opacity-0 w-0'}`}
+              className={`transition-all duration-300 whitespace-nowrap ${isOpen ? 'opacity-100' : 'opacity-0 w-0'}`}
             >
               + 프로젝트
             </span>
             <span
-              className={`transition-all duration-300  ${isOpen ? 'opacity-0 w-0' : 'opacity-100 '}`}
+              className={`transition-all duration-300 ${isOpen ? 'opacity-0 w-0' : 'opacity-100'}`}
             >
               +
             </span>
           </div>
-        </button>
+        </Button>
       </div>
 
       {/* 메인 네비게이션 */}

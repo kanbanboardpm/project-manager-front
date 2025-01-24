@@ -56,8 +56,8 @@ export default function RootLayout() {
   // 메인 라우트 (대시보드, 프로젝트 등)
   if (isMainRoute) {
     return (
-      <div className="bg-screenBg min-h-screen">
-        <nav className="px-4 flex items-center">
+      <div className="bg-screenBg min-h-screen flex flex-col">
+        <nav className="px-4 ">
           <div className="flex items-center gap-4">
             <button
               onClick={toggle}
@@ -72,8 +72,7 @@ export default function RootLayout() {
             </div>
           </div>
         </nav>
-
-        <div className="flex gap-3">
+        <div className="flex flex-1 gap-3 overflow-auto">
           <Sidebar />
           <main className="w-full">
             <Outlet />
