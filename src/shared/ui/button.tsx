@@ -9,19 +9,34 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        // 기본버튼
         default:
           'bg-primary text-white hover:bg-primary/90 px-2 text-xs md:text-sm',
-        member: 'bg-primary text-white hover:bg-primary/90 px-3 md:px-6',
+        member: 'bg-primary text-white hover:bg-primary/90 px-3 md:px-6', // 멤버
+        // 카테고리
         category:
           'bg-primary text-white p-1 md:p-2 lg:py-1 lg:px-4 hover:bg-primary/90',
+        // 카테고리 삭제
         categoryDelete:
           'bg-white border border-warning text-warning hover:text-white hover:bg-warning p-1 md:p-2 lg:py-1 lg:px-4',
-        outline:
+        // 모달
+        modal: '  bg-primary text-white hover:bg-primary/90',
+        // 모달 아웃라인
+        modalOutline:
           'py-2 border border-primary bg-white text-primary hover:bg-primary hover:text-white',
-        disabled: 'bg-modalBorder text-white hover:cursor-auto',
+        disabled: 'bg-modalBorder text-white hover:cursor-auto', // 모달 사용불가
+        // 수신함
         inbox:
           'bg-primary text-white px-3 md:px-4 py-1 md:text-xs hover:bg-primary/90',
         custom: '',
+        destructive:
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline:
+          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        secondary:
+          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {
         default: '',

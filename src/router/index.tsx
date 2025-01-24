@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 
+import CreateCardModal from '@/components/CreateCardModal'
 import RootLayout from '@/layout'
 
 const router = createBrowserRouter([
@@ -21,7 +22,12 @@ const router = createBrowserRouter([
       },
       {
         path: '/main',
-        element: <div>Main Page</div>,
+        element: (
+          <div>
+            Main Page
+            <CreateCardModal />
+          </div>
+        ),
       },
     ],
   },
