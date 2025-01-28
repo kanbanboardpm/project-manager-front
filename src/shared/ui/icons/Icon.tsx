@@ -85,9 +85,16 @@ export interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: number
   color?: string
   className?: string
+  onClick?: () => void
 }
 
-export const Icon = ({ icon, size = 24, color, className }: IconProps) => {
+export const Icon = ({
+  icon,
+  size = 24,
+  color,
+  className,
+  onClick,
+}: IconProps) => {
   const SelectedIcon = ICONS[icon]
   return (
     <SelectedIcon
@@ -97,6 +104,7 @@ export const Icon = ({ icon, size = 24, color, className }: IconProps) => {
       fill={color}
       stroke={color}
       className={className}
+      onClick={onClick}
     />
   )
 }

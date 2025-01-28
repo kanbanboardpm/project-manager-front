@@ -1,8 +1,8 @@
-import DeleteIcon from '@/assets/icons/cross.svg?react'
 import profileIcon from '@/assets/images/profile.png'
 import { CATEGORY_COLORS } from '@/shared/constants/color'
 import { MEMBER_LIST } from '@/shared/mock/memberList'
 import { Button } from '@/shared/ui/button'
+import { Icon } from '@/shared/ui/icons/Icon'
 import { useModalStore } from '@/store/useModalStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
@@ -86,12 +86,12 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
                 />
               </div>
               <Button
-                className={`${errors.member ? 'bg-modalBorder' : ''}`}
+                className={`${errors.member ? 'bg-modalBorder' : ''} `}
                 type="button"
                 onClick={addEmail}
                 disabled={errors.member !== undefined}
               >
-                +
+                <Icon icon="Plus" size={10} color="white" />
               </Button>
             </div>
 
@@ -106,8 +106,10 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
                       <img src={profileIcon} className="w-4 h-4 " />
                       <span className="truncate text-xs">{member}</span>
                     </div>
-                    <DeleteIcon
-                      className="fill-modalPlaceholder w-2 h-2 cursor-pointer"
+                    <Icon
+                      icon="Close"
+                      size={8}
+                      className="fill-modalPlaceholder cursor-pointer"
                       onClick={() => removeEmail(member)}
                     />
                   </div>
