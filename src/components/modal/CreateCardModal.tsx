@@ -15,13 +15,6 @@ import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from '../../shared/ui/form'
 import { Input } from '../../shared/ui/input'
 import { ModalKey } from './ModalController'
 
@@ -41,7 +34,14 @@ const formSchema = z
   })
 
 export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const {
+    register,
+    watch,
+    handleSubmit,
+    setValue,
+    getValues,
+    formState: { errors, isValid },
+  } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
     defaultValues: {
@@ -68,167 +68,117 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
       />
       <div className="relative bg-white w-[350px] md:w-[500px] h-auto rounded-modal p-6 flex flex-col gap-4">
         <div className="font-semibold text-base">카드 추가</div>
-        <Form {...form}>
-          <form
-            className="flex flex-col gap-4"
-            onSubmit={form.handleSubmit(onSubmit)}
-          >
-            <div className="md:px-4 flex flex-col gap-4">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem className="flex items-center gap-3 md:gap-4">
-                    <FormLabel>제목</FormLabel>
-                    <FormControl className="flex-1">
-                      <Input
-                        placeholder="제목을 입력하세요"
-                        {...field}
-                        className={`${form.formState.errors.title ? 'border-warning' : ''}  text-xs md:text-sm h-10`}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
+        <form
+          className="flex flex-col gap-4 text-xs md:text-sm"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="md:px-4 flex flex-col gap-4">
+            <div className="flex items-center gap-3 md:gap-4">
+              <label>제목</label>
+              <Input
+                placeholder="제목을 입력하세요"
+                {...register('title')}
+                className={`flex-1 ${errors.title ? 'border-warning' : ''}  text-xs md:text-sm h-10`}
               />
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem className="flex items-start gap-3 md:gap-4">
-                    <FormLabel className="whitespace-pre">
-                      상세{'\n'}정보
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        placeholder="상세 정보를 입력하세요"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
+            </div>
+
+            <div className="flex items-start gap-3 md:gap-4">
+              <label className="whitespace-pre">상세{'\n'}정보</label>
+              <Textarea
+                {...register('content')}
+                placeholder="상세 정보를 입력하세요"
               />
-              <div className="flex justify-between items-center">
-                <FormField
-                  control={form.control}
-                  name="startDate"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center gap-3 md:gap-4">
-                      <FormLabel className="whitespace-pre">기간</FormLabel>
-                      <FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              className="w-[105px] md:w-[154px]  h-10"
-                              variant="date"
-                            >
-                              {field.value ? (
-                                format(field.value, 'PPP', { locale: ko })
-                              ) : (
-                                <div className="text-modalPlaceholder">
-                                  시작일
-                                </div>
-                              )}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent>
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={(date) => field.onChange(date)}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <span className="text-lg text-modalPlaceholder">~</span>
-                <FormField
-                  control={form.control}
-                  name="endDate"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center gap-3 md:gap-4">
-                      <FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              className="w-[105px] md:w-[154px]  h-10"
-                              variant="date"
-                            >
-                              {field.value ? (
-                                format(field.value, 'PPP', { locale: ko })
-                              ) : (
-                                <div className="text-modalPlaceholder">
-                                  마감일
-                                </div>
-                              )}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent>
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={(date) => field.onChange(date)}
-                              disabled={(date) =>
-                                date < form.getValues('startDate')
-                              }
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-3 md:gap-4">
+                <label>기간</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      className="w-[105px] md:w-[154px]  h-10"
+                      variant="date"
+                    >
+                      {watch('startDate') ? (
+                        format(watch('startDate'), 'PPP', { locale: ko })
+                      ) : (
+                        <div className="text-modalPlaceholder">시작일</div>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Calendar
+                      mode="single"
+                      selected={watch('startDate')}
+                      onSelect={(date) => setValue('startDate', date as Date)}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem className="flex items-center gap-3 md:gap-4">
-                    <FormLabel className="whitespace-pre">카테고리</FormLabel>
-                    <div className="[&_[data-placeholder]]:text-modalPlaceholder w-full">
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue
-                              placeholder="카테고리를 선택하세요"
-                              className="placeholder:text-modalPlaceholder"
-                            />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="user">User</SelectItem>
-                          <SelectItem value="board">Board</SelectItem>
-                          <SelectItem value="comment">Comment</SelectItem>
-                          <SelectItem value="ci-cd">CI/CD</SelectItem>
-                          <SelectItem value="design">Design</SelectItem>
-                        </SelectContent>
-                      </Select>
+
+              <span className="text-lg text-modalPlaceholder">~</span>
+              <div className="flex items-center gap-3 md:gap-4">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      className="w-[105px] md:w-[154px]  h-10"
+                      variant="date"
+                    >
+                      {watch('endDate') ? (
+                        format(watch('endDate'), 'PPP', { locale: ko })
+                      ) : (
+                        <div className="text-modalPlaceholder">마감일</div>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Calendar
+                      mode="single"
+                      selected={watch('endDate')}
+                      onSelect={(date) => setValue('endDate', date as Date)}
+                      disabled={(date) => date < getValues('startDate')}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center gap-3 md:gap-4">
+                <label className="whitespace-pre">카테고리</label>
+                <div className="[&_[data-placeholder]]:text-modalPlaceholder w-full">
+                  <Select
+                    onValueChange={(value) => setValue('category', value)}
+                    defaultValue={getValues('category')}
+                  >
+                    <div>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder="카테고리를 선택하세요"
+                          className="placeholder:text-modalPlaceholder"
+                        />
+                      </SelectTrigger>
                     </div>
-                  </FormItem>
-                )}
-              />
+                    <SelectContent>
+                      <SelectItem value="user">User</SelectItem>
+                      <SelectItem value="board">Board</SelectItem>
+                      <SelectItem value="comment">Comment</SelectItem>
+                      <SelectItem value="ci-cd">CI/CD</SelectItem>
+                      <SelectItem value="design">Design</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
-            <div className="flex gap-3 justify-end">
-              <Button
-                variant="modalOutline"
-                onClick={() => closeModal(modalId)}
-              >
-                취소
-              </Button>
-              <Button
-                variant={`${form.formState.isValid ? 'modal' : 'disabled'}`}
-              >
-                생성
-              </Button>
-            </div>
-          </form>
-        </Form>
+          </div>
+          <div className="flex gap-3 justify-end">
+            <Button variant="modalOutline" onClick={() => closeModal(modalId)}>
+              취소
+            </Button>
+            <Button variant={`${isValid ? 'modal' : 'disabled'}`}>생성</Button>
+          </div>
+        </form>
       </div>
     </div>
   )
