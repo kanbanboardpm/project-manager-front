@@ -24,6 +24,7 @@ const buttonVariants = cva(
         // 모달 아웃라인
         modalOutline:
           'py-2 border border-primary bg-white text-primary hover:bg-primary hover:text-white',
+        date: 'py-2 border border-input hover:border-primary hover:text-primary focus:border-primary aria-expanded:border-primary',
         disabled: 'bg-modalBorder text-white hover:cursor-auto', // 모달 사용불가
         // 수신함
         inbox:

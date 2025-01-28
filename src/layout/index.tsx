@@ -1,7 +1,8 @@
-import { Link, Outlet, useLocation } from 'react-router-dom'
 import logoText from '@/assets/images/logo-text.png'
 import menuIcon from '@/assets/images/menu.png'
+import ModalController from '@/components/modal/ModalController'
 import { useSidebarStore } from '@/store/sidebarStore'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 import Sidebar from './components/Sidebar'
 
 export default function RootLayout() {
@@ -79,6 +80,7 @@ export default function RootLayout() {
             <Outlet />
           </main>
         </div>
+        <ModalController />
       </div>
     )
   }
