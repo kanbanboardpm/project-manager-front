@@ -1,21 +1,25 @@
-import { Button } from '@/shared/ui/button'
-import { Calendar } from '@/shared/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
+import { Button } from '@/shared/ui/common/button'
+import { Calendar } from '@/shared/ui/common/calendar'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/shared/ui/common/popover'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/shared/ui/select'
-import { Textarea } from '@/shared/ui/textarea'
+} from '@/shared/ui/common/select'
+import { Textarea } from '@/shared/ui/common/textarea'
 import { useModalStore } from '@/store/useModalStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Input } from '../../shared/ui/input'
+import { Input } from '../../shared/ui/common/input'
 import { ModalKey } from './ModalController'
 
 const formSchema = z
@@ -52,7 +56,6 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
       category: '',
     },
   })
-
   const { closeModal } = useModalStore()
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -149,8 +152,10 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
                 <label className="whitespace-pre">카테고리</label>
                 <div className="[&_[data-placeholder]]:text-modalPlaceholder w-full">
                   <Select
-                    onValueChange={(value) => setValue('category', value)}
-                    defaultValue={getValues('category')}
+                    onValueChange={(value) =>
+                      setValue('category', value, { shouldValidate: true })
+                    }
+                    value={watch('category')}
                   >
                     <div>
                       <SelectTrigger>

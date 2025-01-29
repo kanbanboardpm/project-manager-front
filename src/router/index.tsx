@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 
-import Main from '@/components/Main'
+import ProjectMainSection from '@/components/projectMain/ProjectMainSection'
 import RootLayout from '@/layout'
 
 const router = createBrowserRouter([
@@ -22,7 +22,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/main',
-        element: <Main />,
+        element: <ProjectMainSection />,
       },
     ],
   },

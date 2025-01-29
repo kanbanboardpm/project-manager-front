@@ -76,7 +76,7 @@ export default function RootLayout() {
 
         <div className="flex gap-3">
           <Sidebar />
-          <main className="w-full">
+          <main className="w-full bg-white rounded-tl-lg md:overflow-x-auto">
             <Outlet />
           </main>
         </div>

@@ -1,14 +1,14 @@
 import profileIcon from '@/assets/images/profile.png'
 import { CATEGORY_COLORS } from '@/shared/constants/color'
 import { MEMBER_LIST } from '@/shared/mock/memberList'
-import { Button } from '@/shared/ui/button'
-import { Icon } from '@/shared/ui/icons/Icon'
+import { Button } from '@/shared/ui/common/button'
+import { Icon } from '@/shared/ui/Icon'
 import { useModalStore } from '@/store/useModalStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Input } from '../../shared/ui/input'
+import { Input } from '../../shared/ui/common/input'
 import { ModalKey } from './ModalController'
 
 const formSchema = z.object({

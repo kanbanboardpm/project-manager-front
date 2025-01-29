@@ -1,13 +1,17 @@
-import { Link } from 'react-router-dom'
-import { useEffect } from 'react'
-import { useSidebarStore } from '@/store/sidebarStore'
 import homeIcon from '@/assets/images/home.png'
-import projectIcon from '@/assets/images/project.png'
 import inboxIcon from '@/assets/images/inbox.png'
 import profileIcon from '@/assets/images/profile.png'
+import projectIcon from '@/assets/images/project.png'
+import { useSidebarStore } from '@/store/sidebarStore'
+import { useModalStore } from '@/store/useModalStore'
+import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Sidebar() {
   const { isOpen, setIsOpen } = useSidebarStore()
+
+  const { openModal } = useModalStore()
+
   useEffect(() => {
     const handleResize = () => {
       const isDesktop = window.innerWidth >= 640
@@ -28,7 +32,12 @@ export default function Sidebar() {
         h-[calc(100vh-64px)]`}
     >
       {/* 프로젝트 추가 버튼 (공통컴포넌트 변경예정)*/}
-      <div className="p-4 sm:px-2">
+      <div
+        className="p-4 sm:px-2"
+        onClick={() => {
+          openModal('create-project')
+        }}
+      >
         <button
           className={` bg-[#82CD47] text-white rounded-button hover:bg-primary/80 transition-all duration-300 h-10
           ${isOpen ? 'w-19 px-4' : 'w-7 h-7'}`}
