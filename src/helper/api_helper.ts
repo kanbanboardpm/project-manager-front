@@ -28,15 +28,18 @@ axiosApi.interceptors.response.use(
   (response) => response,
   async (error) => {
     // 401 에러 처리
-    if (error.response?.status === 401) {
+
+    if (
+      error.response?.status === 401 &&
+      !error.config.url.includes('/login')
+    ) {
       sessionStore.getState().logout()
       window.location.href = '/login'
       return Promise.reject(error)
     }
 
-    // 일반 에러 처리
-    if (error.response?.data?.message) {
-      return Promise.reject(new Error(error.response.data.message))
+    if (error.response?.data) {
+      return Promise.reject(error)
     }
     return Promise.reject(error)
   },

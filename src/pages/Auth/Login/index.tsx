@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
 import useSessionStore from '@/store/useSessionStore'
-// import useUserStore from '@/store/useUserStore'
 import { postLogin } from '@/services/auth.service'
 import logoIcon from '@/assets/images/logo-text.png'
 import showIcon from '@/assets/images/Auth/show.png'
@@ -28,7 +27,6 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const setSessionInfo = useSessionStore((state) => state.setSessionInfo)
-  // const setUser = useUserStore((state) => state.setUser)
 
   const loginMutation = useMutation({
     mutationFn: postLogin,
@@ -38,7 +36,8 @@ export default function LoginPage() {
         access_token: data.token,
         isAuthenticated: true,
       })
-      navigate('/')
+
+      navigate('/main')
     },
   })
 
@@ -69,11 +68,16 @@ export default function LoginPage() {
     try {
       await loginMutation.mutateAsync(data)
     } catch (error: unknown) {
-      const message = axios.isAxiosError(error)
-        ? error.response?.data?.message
-        : '로그인에 실패했습니다. 다시 시도해주세요.'
-
-      form.setError('root', { message })
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        form.setError('root', {
+          message:
+            '아이디(로그인 전화번호, 로그인 전용 아이디) 또는 비밀번호가 잘못 되었습니다. 아이디와 비밀번호를 정확히 입력해 주세요.',
+        })
+      } else {
+        form.setError('root', {
+          message: '로그인에 실패했습니다. 다시 시도해주세요.',
+        })
+      }
     }
   }
 
@@ -87,6 +91,7 @@ export default function LoginPage() {
         />
         <Form {...form}>
           <form
+            noValidate
             onSubmit={form.handleSubmit(onSubmit)}
             className="w-full space-y-4"
           >

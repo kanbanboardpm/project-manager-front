@@ -17,6 +17,7 @@ import {
 import { Input } from '@/shared/ui/input'
 import axios from 'axios'
 import { cn } from '@/shared/lib/utils'
+import { Link } from 'react-router-dom'
 
 export default function SignupPage() {
   const navigate = useNavigate()
@@ -217,7 +218,14 @@ export default function SignupPage() {
                 {form.formState.errors.root.message}
               </p>
             )}
-
+            <div className="flex justify-end items-center mt-4">
+              <span className="text-sm text-modalPlaceholder">
+                이미 계정이 있습니다{' '}
+                <Link to="/login" className="text-[#82CD47] font-medium">
+                  로그인하기
+                </Link>
+              </span>
+            </div>
             <button
               type="submit"
               disabled={signupMutation.isPending}

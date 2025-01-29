@@ -11,11 +11,6 @@ interface SignupRequest {
   nickname: string
 }
 
-// export const postLogin = async (payload: LoginRequest) => {
-//   const response = await axiosApi.post('/api/users/login', payload)
-//   return response?.data || {}
-// }
-
 interface LoginResponse {
   token: string
 }
@@ -27,12 +22,8 @@ export const postLogin = async (
   return response.data
 }
 
-// export const postSignup = async (payload: SignupRequest) => {
-//   const response = await axiosApi.post('/api/users', payload)
-//   return response?.data || {}
-// }
-
 export const postSignup = async (payload: SignupRequest) => {
+  console.log('TEST:::', payload)
   const response = await axiosApi.post('/api/users', payload)
   return response?.data || {}
 }
