@@ -12,7 +12,8 @@ const buttonVariants = cva(
         // 기본버튼
         default:
           'bg-primary text-white hover:bg-primary/90 px-2 text-xs md:text-sm',
-        member: 'bg-primary text-white hover:bg-primary/90 px-3 md:px-6', // 멤버
+        member:
+          'bg-primary text-white hover:bg-primary/90 px-3 md:px-6 flex gap-1', // 멤버
         // 카테고리
         category:
           'bg-primary text-white p-1 md:p-2 lg:py-1 lg:px-4 hover:bg-primary/90',
