@@ -1,5 +1,5 @@
-import { Button } from '@/shared/ui/button'
-import { Icon } from '@/shared/ui/icons/Icon'
+import { Button } from '@/shared/ui/common/button'
+import { Icon } from '@/shared/ui/Icon'
 import { useModalStore } from '@/store/useModalStore'
 
 interface PageProps {

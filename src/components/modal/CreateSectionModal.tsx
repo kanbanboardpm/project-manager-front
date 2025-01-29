@@ -1,9 +1,9 @@
-import { Button } from '@/shared/ui/button'
+import { Button } from '@/shared/ui/common/button'
 import { useModalStore } from '@/store/useModalStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Input } from '../../shared/ui/input'
+import { Input } from '../../shared/ui/common/input'
 import { ModalKey } from './ModalController'
 
 const formSchema = z.object({

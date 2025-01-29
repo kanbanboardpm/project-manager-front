@@ -9,6 +9,7 @@ export default {
   theme: {
     extend: {
       borderRadius: {
+        card: '6px',
         button: '8px',
         input: '8px',
         modal: '12px',
@@ -26,6 +27,7 @@ export default {
         bodyBorder: '#EDEAE9',
         modalBorder: '#E1E3E5',
         modalPlaceholder: '#00000038',
+        cardDate: '#757575',
         primary: '#82CD47',
         warning: '#FF0004',
         category: { ...CATEGORY_COLORS },
