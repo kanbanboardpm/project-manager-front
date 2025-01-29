@@ -1,7 +1,7 @@
 // libs/axios.ts
 import axios from 'axios'
 import sessionStore from '@/store/useSessionStore'
-import { apiUrl } from '@/constant/configure'
+import { apiUrl } from '@/shared/constants/configure'
 
 export const axiosApi = axios.create({
   baseURL: apiUrl,

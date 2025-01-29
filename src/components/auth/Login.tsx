@@ -5,16 +5,16 @@ import { useMutation } from '@tanstack/react-query'
 import useSessionStore from '@/store/useSessionStore'
 import { postLogin } from '@/services/auth.service'
 import logoIcon from '@/assets/images/logo-text.png'
-import showIcon from '@/assets/images/Auth/show.png'
-import hideIcon from '@/assets/images/Auth/hide.png'
+import showIcon from '@/assets/icons/eye.svg'
+import hideIcon from '@/assets/icons/eye-crossed.svg'
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from '@/shared/ui/form'
-import { Input } from '@/shared/ui/input'
+} from '@/shared/ui/common/form'
+import { Input } from '@/shared/ui/common/input'
 import { validateLogin } from '@/utils/validation'
 import axios from 'axios'
 
@@ -37,7 +37,7 @@ export default function LoginPage() {
         isAuthenticated: true,
       })
 
-      navigate('/main')
+      navigate('/home')
     },
   })
 
