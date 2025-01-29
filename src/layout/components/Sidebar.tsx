@@ -1,7 +1,7 @@
-import homeIcon from '@/assets/images/home.png'
-import inboxIcon from '@/assets/images/inbox.png'
+import homeIcon from '@/assets/icons/home.svg'
+import inboxIcon from '@/assets/icons/bell.svg'
 import profileIcon from '@/assets/images/profile.png'
-import projectIcon from '@/assets/images/project.png'
+import projectIcon from '@/assets/icons/folder.svg'
 import { useSidebarStore } from '@/store/sidebarStore'
 import { useModalStore } from '@/store/useModalStore'
 import { useEffect } from 'react'
@@ -64,7 +64,7 @@ export default function Sidebar() {
         <ul className="space-y-1 px-3 border-b border-bodyBorder">
           <li>
             <Link
-              to="/main"
+              to="/home"
               className={`flex items-center p-2 hover:bg-gray-100 rounded-lg 
               ${isOpen ? 'gap-3' : 'justify-center'} w-full`}
             >

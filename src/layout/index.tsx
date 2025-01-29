@@ -4,11 +4,12 @@ import ModalController from '@/components/modal/ModalController'
 import { useSidebarStore } from '@/store/sidebarStore'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import Sidebar from './components/Sidebar'
+import useSessionStore from '@/store/useSessionStore'
 
 export default function RootLayout() {
   const location = useLocation()
   const { toggle } = useSidebarStore()
-  const token = false
+  const { access_token } = useSessionStore.getState()
 
   // 사이드바가 필요한 메인 경로들
   const mainRoutes = ['/main', '/projects', '/inbox', '/profile']
@@ -25,7 +26,7 @@ export default function RootLayout() {
             <img src={logoText} className="w-2/3 md:w-auto h-auto" />
           </Link>
 
-          {!token ? (
+          {!access_token ? (
             <Link to="/login">로그인</Link>
           ) : (
             <Link to="/logout">로그아웃</Link>
@@ -39,6 +40,22 @@ export default function RootLayout() {
   }
 
   // 로그인, 회원가입 페이지
+  if (['/login', '/signup'].includes(location.pathname)) {
+    return (
+      <div className="bg-screenBg min-h-screen">
+        <nav className="px-4 flex">
+          <Link to="/">
+            <img src={logoText} className="w-2/3 md:w-auto h-auto" />
+          </Link>
+        </nav>
+        <main>
+          <Outlet />
+        </main>
+      </div>
+    )
+  }
+
+  // 메인 라우트 (대시보드, 프로젝트 등)
   if (['/login', '/signup'].includes(location.pathname)) {
     return (
       <div className="bg-screenBg min-h-screen">
@@ -73,10 +90,9 @@ export default function RootLayout() {
             </div>
           </div>
         </nav>
-
-        <div className="flex gap-3">
+        <div className="flex gap-3 overflow-auto ">
           <Sidebar />
-          <main className="w-full bg-white rounded-tl-lg md:overflow-x-auto">
+          <main className="flex w-full ">
             <Outlet />
           </main>
         </div>
