@@ -56,7 +56,6 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
       category: '',
     },
   })
-
   const { closeModal } = useModalStore()
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -153,8 +152,10 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
                 <label className="whitespace-pre">카테고리</label>
                 <div className="[&_[data-placeholder]]:text-modalPlaceholder w-full">
                   <Select
-                    onValueChange={(value) => setValue('category', value)}
-                    defaultValue={getValues('category')}
+                    onValueChange={(value) =>
+                      setValue('category', value, { shouldValidate: true })
+                    }
+                    value={watch('category')}
                   >
                     <div>
                       <SelectTrigger>
