@@ -1,13 +1,13 @@
-import CardSection from './CardSection'
+import CardContainer from './CardContainer'
 import ProjectHeader from './ProjectHeader'
 import SettingMenuBar from './SettingMenuBar'
 
-export default function ProjectMainSection() {
+export default function ProjectMainContainer() {
   return (
-    <section className="h-full flex flex-col">
+    <section className="h-full flex flex-col overflow-x-scroll">
       <ProjectHeader />
       <SettingMenuBar page="project" />
-      <CardSection />
+      <CardContainer />
     </section>
   )
 }

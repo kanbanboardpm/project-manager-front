@@ -10,7 +10,7 @@ export default function SettingMenuBar({ page }: PageProps) {
   const { openModal } = useModalStore()
 
   return (
-    <div className="px-3 py-2 md:py-2.5 flex justify-between border-b border-bodyBorder">
+    <div className="px-3 py-2 md:py-2.5 flex justify-between border-b border-bodyBorder bg-white">
       <div
         className={`flex items-center gap-2 md:gap-3 ${page === 'project' && 'hidden'}`}
       >

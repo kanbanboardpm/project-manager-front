@@ -2,7 +2,7 @@ import { Icon } from '@/shared/ui/Icon'
 import { useModalStore } from '@/store/useModalStore'
 import Section from './Section'
 
-export default function CardSection() {
+export default function CardContainer() {
   const { openModal } = useModalStore()
   return (
     <div className="bg-bodyBg flex-1 md:flex md:px-3 md:gap-3 md:overflow-x-auto">

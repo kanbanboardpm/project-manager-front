@@ -1,11 +1,11 @@
 import logoText from '@/assets/images/logo-text.png'
 import ModalController from '@/components/modal/ModalController'
+import { postLogout } from '@/services/auth.service'
+import { Icon } from '@/shared/ui/Icon'
 import { useSidebarStore } from '@/store/sidebarStore'
+import useSessionStore from '@/store/useSessionStore'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import Sidebar from './components/Sidebar'
-import useSessionStore from '@/store/useSessionStore'
-import { Icon } from '@/shared/ui/Icon'
-import { postLogout } from '@/services/auth.service'
 
 export default function RootLayout() {
   const location = useLocation()
@@ -89,7 +89,7 @@ export default function RootLayout() {
         </nav>
         <div className="flex gap-3 overflow-auto ">
           <Sidebar />
-          <main className="flex w-full ">
+          <main className="flex w-full overflow-x-scroll">
             <Outlet />
           </main>
         </div>
