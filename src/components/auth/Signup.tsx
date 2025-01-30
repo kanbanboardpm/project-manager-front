@@ -218,7 +218,7 @@ export default function SignupPage() {
             <div className="flex justify-end items-center mt-4">
               <span className="text-sm text-modalPlaceholder">
                 이미 계정이 있습니다{' '}
-                <Link to="/login" className="text-[#82CD47] font-medium">
+                <Link to="/login" className="text-primary font-medium">
                   로그인하기
                 </Link>
               </span>
@@ -226,7 +226,7 @@ export default function SignupPage() {
             <Button
               type="submit"
               disabled={signupMutation.isPending}
-              className="w-full  disabled:opacity-50"
+              className="w-full disabled:opacity-50"
             >
               {signupMutation.isPending ? '가입 중...' : '회원가입'}
             </Button>
