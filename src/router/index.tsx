@@ -4,6 +4,7 @@ import ProjectMainSection from '@/components/projectMain/ProjectMainSection'
 import RootLayout from '@/layout'
 import LoginPage from '@/components/auth/Login'
 import SignupPage from '@/components/auth/Signup'
+import HomePage from '@/components/home/Home'
 
 const router = createBrowserRouter([
   {
@@ -24,7 +25,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/home',
-        element: <div>home Page</div>,
+        element: <HomePage />,
       },
       {
         path: '/main',

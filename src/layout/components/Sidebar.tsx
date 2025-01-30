@@ -1,7 +1,5 @@
-import homeIcon from '@/assets/icons/home.svg'
-import inboxIcon from '@/assets/icons/bell.svg'
-import profileIcon from '@/assets/images/profile.png'
-import projectIcon from '@/assets/icons/folder.svg'
+import { Icon } from '@/shared/ui/Icon'
+import profileIcon from '@/assets/images/profile.png' //교체예정
 import { useSidebarStore } from '@/store/sidebarStore'
 import { useModalStore } from '@/store/useModalStore'
 import { useEffect } from 'react'
@@ -31,7 +29,6 @@ export default function Sidebar() {
         ${isOpen ? 'w-64 px-2 py-1' : 'w-16 items-center'} 
         h-[calc(100vh-64px)]`}
     >
-      {/* 프로젝트 추가 버튼 (공통컴포넌트 변경예정)*/}
       <div
         className="p-4 sm:px-2"
         onClick={() => {
@@ -43,17 +40,22 @@ export default function Sidebar() {
           ${isOpen ? 'w-19 px-4' : 'w-7 h-7'}`}
         >
           <div
-            className={`flex items-center w-full justify-center overflow-hidden`}
+            className={`flex  items-center w-full justify-center overflow-hidden`}
           >
+            <Icon
+              icon="Plus"
+              size={10}
+              className={`transition-all duration-300 whitespace-nowrap   ${isOpen ? 'mr-1 opacity-100' : 'opacity-0 w-0'}`}
+            />
             <span
               className={`transition-all duration-300 whitespace-nowrap   ${isOpen ? 'opacity-100' : 'opacity-0 w-0'}`}
             >
-              + 프로젝트
+              프로젝트
             </span>
             <span
-              className={`transition-all duration-300  ${isOpen ? 'opacity-0 w-0' : 'opacity-100 '}`}
+              className={`text-center transition-all duration-300  ${isOpen ? 'opacity-0 w-0' : 'opacity-100 '}`}
             >
-              +
+              <Icon icon="Plus" size={10} />
             </span>
           </div>
         </button>
@@ -68,11 +70,7 @@ export default function Sidebar() {
               className={`flex items-center p-2 hover:bg-gray-100 rounded-lg 
               ${isOpen ? 'gap-3' : 'justify-center'} w-full`}
             >
-              <img
-                src={homeIcon}
-                alt="홈"
-                className="w-3.5 h-3.5 min-w-[14px]"
-              />
+              <Icon icon="Home" size={14} className="min-w-[14px]" />
               <span
                 className={`transition-all duration-300 whitespace-nowrap overflow-hidden 
                 ${isOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}
@@ -87,11 +85,7 @@ export default function Sidebar() {
               className={`flex items-center p-2 hover:bg-gray-100 rounded-lg 
                 ${isOpen ? 'gap-3' : 'justify-center'} w-full`}
             >
-              <img
-                src={inboxIcon}
-                alt="수신함"
-                className="w-3.5 h-3.5 min-w-[14px]"
-              />
+              <Icon icon="Bell" size={14} className="min-w-[14px]" />
               <span
                 className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${isOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}
               >
@@ -109,11 +103,7 @@ export default function Sidebar() {
             className={`flex items-center p-2  
                 ${isOpen ? 'gap-3' : 'justify-center'} w-full`}
           >
-            <img
-              src={projectIcon}
-              alt="프로젝트"
-              className="w-3.5 h-3.5 min-w-[14px]"
-            />
+            <Icon icon="Folder" size={14} className="min-w-[14px]" />
             <span
               className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${isOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}
             >

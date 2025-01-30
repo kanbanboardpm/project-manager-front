@@ -5,8 +5,7 @@ import { useMutation } from '@tanstack/react-query'
 import useSessionStore from '@/store/useSessionStore'
 import { postLogin } from '@/services/auth.service'
 import logoIcon from '@/assets/images/logo-text.png'
-import showIcon from '@/assets/icons/eye.svg'
-import hideIcon from '@/assets/icons/eye-crossed.svg'
+
 import {
   Form,
   FormControl,
@@ -17,6 +16,8 @@ import {
 import { Input } from '@/shared/ui/common/input'
 import { validateLogin } from '@/utils/validation'
 import axios from 'axios'
+import { Icon } from '@/shared/ui/Icon'
+import { Button } from '@/shared/ui/common/button'
 
 interface LoginFormData {
   email: string
@@ -133,10 +134,10 @@ export default function LoginPage() {
                         showPassword ? '비밀번호 숨기기' : '비밀번호 보기'
                       }
                     >
-                      <img
-                        className="sm:w-5 sm:h-5 w-4 h-4"
-                        src={showPassword ? showIcon : hideIcon}
-                        alt={showPassword ? '비밀번호 보기' : '비밀번호 숨기기'}
+                      <Icon
+                        icon={showPassword ? 'Eye' : 'EyeClosed'}
+                        size={20}
+                        className="opacity-20 sm:w-5 sm:h-5 w-4 h-4"
                       />
                     </button>
                   </div>
@@ -146,7 +147,7 @@ export default function LoginPage() {
             />
 
             {form.formState.errors.root && (
-              <p className="text-category-red text-sm">
+              <p className="text-warning text-sm">
                 {form.formState.errors.root.message}
               </p>
             )}
@@ -161,13 +162,13 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <button
+            <Button
               type="submit"
               disabled={loginMutation.isPending}
-              className="w-full sm:h-[50px] h-[40px] bg-[#82CD47] text-white rounded-button font-semibold sm:text-base text-sm disabled:opacity-50"
+              className="w-full disabled:opacity-50"
             >
               {loginMutation.isPending ? '로그인 중...' : '로그인'}
-            </button>
+            </Button>
           </form>
         </Form>
       </div>

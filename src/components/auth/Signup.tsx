@@ -5,8 +5,7 @@ import { useMutation } from '@tanstack/react-query'
 import { postSignup } from '@/services/auth.service'
 import { validateSignUp, SignUpFormData } from '@/utils/validation'
 import logoIcon from '@/assets/images/logo-text.png'
-import showIcon from '@/assets/icons/eye.svg'
-import hideIcon from '@/assets/icons/eye-crossed.svg'
+
 import {
   Form,
   FormControl,
@@ -18,6 +17,8 @@ import { Input } from '@/shared/ui/common/input'
 import axios from 'axios'
 import { cn } from '@/shared/lib/utils'
 import { Link } from 'react-router-dom'
+import { Icon } from '@/shared/ui/Icon'
+import { Button } from '@/shared/ui/common/button'
 
 export default function SignupPage() {
   const navigate = useNavigate()
@@ -99,9 +100,30 @@ export default function SignupPage() {
                       type="email"
                       className={cn(
                         form.formState.errors.email &&
-                          'border-category-red focus:border-category-red',
+                          'border-warning focus:border-warning',
                       )}
                       placeholder="이메일을 입력하세요"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="nickname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      className={cn(
+                        form.formState.errors.nickname &&
+                          'border-warning focus:border-warning',
+                      )}
+                      placeholder="닉네임을 입력하세요"
                       {...field}
                     />
                   </FormControl>
@@ -121,7 +143,7 @@ export default function SignupPage() {
                         type={showPassword ? 'text' : 'password'}
                         className={cn(
                           form.formState.errors.password &&
-                            'border-category-red focus:border-category-red',
+                            'border-warning focus:border-warning',
                         )}
                         placeholder="비밀번호를 입력하세요"
                         {...field}
@@ -135,10 +157,10 @@ export default function SignupPage() {
                         showPassword ? '비밀번호 숨기기' : '비밀번호 보기'
                       }
                     >
-                      <img
-                        className="sm:w-5 sm:h-5 w-4 h-4"
-                        src={showPassword ? showIcon : hideIcon}
-                        alt={showPassword ? '비밀번호 보기' : '비밀번호 숨기기'}
+                      <Icon
+                        icon={showPassword ? 'Eye' : 'EyeClosed'}
+                        size={20}
+                        className="opacity-20 sm:w-5 sm:h-5 w-4 h-4"
                       />
                     </button>
                   </div>
@@ -158,7 +180,7 @@ export default function SignupPage() {
                         type={showPasswordConfirm ? 'text' : 'password'}
                         className={cn(
                           form.formState.errors.passwordConfirm &&
-                            'border-category-red focus:border-category-red',
+                            'border-warning focus:border-warning',
                         )}
                         placeholder="비밀번호를 다시 입력하세요"
                         {...field}
@@ -176,14 +198,10 @@ export default function SignupPage() {
                           : '비밀번호 보기'
                       }
                     >
-                      <img
-                        className="sm:w-5 sm:h-5 w-4 h-4"
-                        src={showPasswordConfirm ? showIcon : hideIcon}
-                        alt={
-                          showPasswordConfirm
-                            ? '비밀번호 보기'
-                            : '비밀번호 숨기기'
-                        }
+                      <Icon
+                        icon={showPasswordConfirm ? 'Eye' : 'EyeClosed'}
+                        size={20}
+                        className="opacity-20 sm:w-5 sm:h-5 w-4 h-4"
                       />
                     </button>
                   </div>
@@ -192,47 +210,26 @@ export default function SignupPage() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="nickname"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className={cn(
-                        form.formState.errors.nickname &&
-                          'border-category-red focus:border-category-red',
-                      )}
-                      placeholder="닉네임을 입력하세요"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             {form.formState.errors.root && (
-              <p className="text-category-red text-sm">
+              <p className="text-warning border-warning text-sm">
                 {form.formState.errors.root.message}
               </p>
             )}
             <div className="flex justify-end items-center mt-4">
               <span className="text-sm text-modalPlaceholder">
                 이미 계정이 있습니다{' '}
-                <Link to="/login" className="text-[#82CD47] font-medium">
+                <Link to="/login" className="text-primary font-medium">
                   로그인하기
                 </Link>
               </span>
             </div>
-            <button
+            <Button
               type="submit"
               disabled={signupMutation.isPending}
-              className="w-full sm:h-[50px] h-[40px] bg-[#82CD47] text-white rounded-button font-semibold sm:text-base text-sm disabled:opacity-50"
+              className="w-full disabled:opacity-50"
             >
               {signupMutation.isPending ? '가입 중...' : '회원가입'}
-            </button>
+            </Button>
           </form>
         </Form>
       </div>
