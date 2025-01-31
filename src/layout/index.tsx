@@ -14,7 +14,14 @@ export default function RootLayout() {
   const { access_token } = useSessionStore.getState()
   const logout = useSessionStore((state) => state.logout)
   // 사이드바가 필요한 메인 경로들
-  const mainRoutes = ['/main', '/projects', '/inbox', '/profile', '/home']
+  const mainRoutes = [
+    '/main',
+    '/project',
+    '/inbox',
+    '/profile',
+    '/section',
+    '/home',
+  ]
   const isMainRoute = mainRoutes.some((route) =>
     location.pathname.startsWith(route),
   )
@@ -89,7 +96,7 @@ export default function RootLayout() {
         </nav>
         <div className="flex gap-3 overflow-auto ">
           <Sidebar />
-          <main className="flex w-full overflow-x-scroll">
+          <main className="flex overflow-x-scroll grow">
             <Outlet />
           </main>
         </div>

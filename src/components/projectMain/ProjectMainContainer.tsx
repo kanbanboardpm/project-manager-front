@@ -4,7 +4,7 @@ import SettingMenuBar from './SettingMenuBar'
 
 export default function ProjectMainContainer() {
   return (
-    <section className="h-full flex flex-col overflow-x-scroll">
+    <section className="h-full w-full flex flex-col overflow-x-scroll">
       <ProjectHeader />
       <SettingMenuBar page="project" />
       <CardContainer />
