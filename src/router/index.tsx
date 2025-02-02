@@ -5,6 +5,7 @@ import RootLayout from '@/layout'
 import LoginPage from '@/components/auth/Login'
 import SignupPage from '@/components/auth/Signup'
 import HomePage from '@/components/home/Home'
+import CardDetail from '@/components/card/CardDetail'
 
 const router = createBrowserRouter([
   {
@@ -27,9 +28,32 @@ const router = createBrowserRouter([
         path: '/home',
         element: <HomePage />,
       },
+
       {
         path: '/main',
-        element: <ProjectMainSection />,
+        children: [
+          {
+            index: true,
+            element: <ProjectMainSection />,
+          },
+          {
+            path: ':cardId',
+            children: [
+              {
+                index: true,
+                element: <CardDetail />,
+              },
+              {
+                path: 'edit',
+                element: <CardDetail mode="edit" />,
+              },
+              {
+                path: 'complete',
+                element: <CardDetail mode="complete" />,
+              },
+            ],
+          },
+        ],
       },
     ],
   },

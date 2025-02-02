@@ -1,21 +1,34 @@
 import logoText from '@/assets/images/logo-text.png'
 import ModalController from '@/components/modal/ModalController'
 import { useSidebarStore } from '@/store/sidebarStore'
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import Sidebar from './components/Sidebar'
 import useSessionStore from '@/store/useSessionStore'
 import { Icon } from '@/shared/ui/Icon'
+import { postLogout } from '@/services/auth.service'
 
 export default function RootLayout() {
   const location = useLocation()
+  const navigate = useNavigate()
   const { toggle } = useSidebarStore()
   const { access_token } = useSessionStore.getState()
-
+  const logout = useSessionStore((state) => state.logout)
   // 사이드바가 필요한 메인 경로들
   const mainRoutes = ['/main', '/projects', '/inbox', '/profile', '/home']
   const isMainRoute = mainRoutes.some((route) =>
     location.pathname.startsWith(route),
   )
+
+  const handleLogout = async () => {
+    try {
+      await postLogout()
+      logout()
+      navigate('/')
+    } catch (error) {
+      console.error('로그아웃 실패:', error)
+      navigate('/')
+    }
+  }
 
   // 랜딩 페이지
   if (location.pathname === '/') {
@@ -29,7 +42,7 @@ export default function RootLayout() {
           {!access_token ? (
             <Link to="/login">로그인</Link>
           ) : (
-            <Link to="/logout">로그아웃</Link>
+            <button onClick={handleLogout}>로그아웃</button>
           )}
         </nav>
         <main>

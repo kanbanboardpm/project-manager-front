@@ -42,12 +42,12 @@ export default function HomePage() {
         </div>
 
         {/* Stats Bar */}
-        <div className="flex  justify-center gap-4 px-4 py-2 border border-[#82CD47] rounded-full sm:text-sm">
-          <div className="text-[#82CD47] font-bold">total</div>
-          <div className="text-[#82CD47] font-bold">
+        <div className="flex  justify-center gap-4 px-4 py-2 border border-primary rounded-full sm:text-sm">
+          <div className="text-primary font-bold">total</div>
+          <div className="text-primary font-bold">
             {MOCK_USER.stats.totalProjects} 프로젝트
           </div>
-          <div className="text-[#82CD47] font-bold">
+          <div className="text-primary font-bold">
             {MOCK_USER.stats.totalCards} 카드
           </div>
         </div>

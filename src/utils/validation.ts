@@ -62,11 +62,12 @@ export const validateSignUp = (
     errors.password = '비밀번호를 입력해주세요.'
   } else if (formData.password.length < 8) {
     errors.password = '비밀번호는 8자 이상이어야 합니다.'
-  } else if (
-    !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(formData.password)
-  ) {
-    errors.password = '비밀번호는 영문과 숫자를 포함해야 합니다.'
   }
+  // else if (
+  //   !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(formData.password)
+  // ) {
+  //   errors.password = '비밀번호는 영문과 숫자를 포함해야 합니다.'
+  // }
 
   // 비밀번호 확인 검사
   if (!formData.passwordConfirm) {

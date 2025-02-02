@@ -24,13 +24,15 @@ import EyeClosed from '@/assets/icons/eye-crossed.svg?react'
 import Eye from '@/assets/icons/eye.svg?react'
 import Folder from '@/assets/icons/folder.svg?react'
 import Home from '@/assets/icons/home.svg?react'
-import Kakao from '@/assets/icons/icon-kaKao.svg?react'
+import Kakao from '@/assets/icons/icon-kakao.svg?react'
 import Menu from '@/assets/icons/menu-burger.svg?react'
 import Update from '@/assets/icons/pencil.svg?react'
 import Plus from '@/assets/icons/plus.svg?react'
 import Setting from '@/assets/icons/settings.svg?react'
 import Delete from '@/assets/icons/trash.svg?react'
 import Member from '@/assets/icons/users.svg?react'
+import Calendar from '@/assets/icons/calendar.svg?react'
+import ChevronDown from '@/assets/icons/dropdown-arrow.svg?react'
 
 import { FC, SVGProps } from 'react'
 
@@ -42,6 +44,8 @@ export type IconName =
   | 'AngleLeft'
   | 'AngleRight'
   | 'Bell'
+  | 'Calendar' // 추가
+  | 'ChevronDown' // 추가
   | 'Category'
   | 'Check'
   | 'Close'
@@ -65,6 +69,8 @@ const ICONS: Record<IconName, FC<SVGProps<SVGSVGElement>>> = {
   AngleLeft,
   AngleRight,
   Bell,
+  Calendar, // 추가
+  ChevronDown, // 추가
   Category,
   Check,
   Close,
