@@ -1,4 +1,5 @@
 import axiosApi from '@/helper/api_helper'
+import { apiUrl } from '@/shared/constants/configure'
 import useSessionStore from '@/store/useSessionStore'
 
 interface LoginRequest {
@@ -41,6 +42,8 @@ export const postLogout = async () => {
 }
 
 export const postSignup = async (payload: SignupRequest) => {
+  console.log('VITE_API_URL:', import.meta.env.VITE_API_URL)
+  console.log('API Base URL:', apiUrl)
   console.log('TEST:::', payload)
   const response = await axiosApi.post('/api/users', payload)
   return response?.data || {}
