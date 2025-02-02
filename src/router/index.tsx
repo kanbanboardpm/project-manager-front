@@ -14,30 +14,29 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <div>Landing Page</div>,
+        element: <div>랜딩 페이지지</div>,
       },
       {
-        path: '/login',
+        path: 'login',
         element: <LoginPage />,
       },
       {
-        path: '/signup',
+        path: 'signup',
         element: <SignupPage />,
       },
       {
-        path: '/home',
+        path: 'home',
         element: <HomePage />,
       },
-
       {
-        path: '/main',
+        path: 'projects',
         children: [
           {
             index: true,
             element: <ProjectMainSection />,
           },
           {
-            path: ':cardId',
+            path: ':cardId', // 중첩 라우팅 유지
             children: [
               {
                 index: true,

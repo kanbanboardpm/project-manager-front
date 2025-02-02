@@ -59,7 +59,7 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
     mutationFn: updateCard,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['card', cardId] })
-      navigate(`/main/${cardId}`)
+      navigate(`/projects/${cardId}`)
     },
   })
 
@@ -172,7 +172,7 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
               <div className="flex justify-end gap-2">
                 <Button
                   variant="modalOutline"
-                  onClick={() => navigate(`/main/${cardId}`)}
+                  onClick={() => navigate(`/projects/${cardId}`)}
                   disabled={mutation.isPending}
                   className="h-7 sm:h-8 text-xs sm:text-sm"
                 >
