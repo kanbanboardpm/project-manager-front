@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
 import { postSignup } from '@/services/auth.service'
-import { validateSignUp, SignUpFormData } from '@/utils/validation'
 import logoIcon from '@/assets/images/logo-text.png'
 
 import {
@@ -19,6 +18,15 @@ import { cn } from '@/shared/lib/utils'
 import { Link } from 'react-router-dom'
 import { Icon } from '@/shared/ui/Icon'
 import { Button } from '@/shared/ui/common/button'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { signUpSchema } from '@/utils/validation'
+
+interface SignUpFormData {
+  email: string
+  password: string
+  passwordConfirm: string
+  nickname: string
+}
 
 export default function SignupPage() {
   const navigate = useNavigate()
@@ -42,23 +50,7 @@ export default function SignupPage() {
       passwordConfirm: '',
       nickname: '',
     },
-    resolver: async (data) => {
-      const errors = validateSignUp(data)
-
-      return {
-        values: Object.keys(errors).length === 0 ? data : {},
-        errors: Object.entries(errors).reduce(
-          (acc, [key, value]) => ({
-            ...acc,
-            [key]: {
-              type: 'validation',
-              message: value,
-            },
-          }),
-          {},
-        ),
-      }
-    },
+    resolver: zodResolver(signUpSchema),
   })
 
   const onSubmit = async (data: SignUpFormData) => {
