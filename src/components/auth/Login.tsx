@@ -14,10 +14,11 @@ import {
   FormMessage,
 } from '@/shared/ui/common/form'
 import { Input } from '@/shared/ui/common/input'
-import { validateLogin } from '@/utils/validation'
 import axios from 'axios'
 import { Icon } from '@/shared/ui/Icon'
 import { Button } from '@/shared/ui/common/button'
+import { loginSchema } from '@/utils/validation'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 interface LoginFormData {
   email: string
@@ -47,23 +48,7 @@ export default function LoginPage() {
       email: '',
       password: '',
     },
-    resolver: async (data) => {
-      const errors = validateLogin(data.email, data.password)
-
-      return {
-        values: Object.keys(errors).length === 0 ? data : {},
-        errors: Object.entries(errors).reduce(
-          (acc, [key, value]) => ({
-            ...acc,
-            [key]: {
-              type: 'validation',
-              message: value,
-            },
-          }),
-          {},
-        ),
-      }
-    },
+    resolver: zodResolver(loginSchema),
   })
   const onSubmit = async (data: LoginFormData) => {
     try {
