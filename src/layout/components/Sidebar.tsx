@@ -116,6 +116,7 @@ export default function Sidebar() {
             {MOCK_PROJECT_LIST.map((project) => {
               return (
                 <Link
+                  key={project.id}
                   to={`/project/${project.id}`}
                   className={`flex items-center  p-2 hover:bg-gray-100 rounded-lg cursor-pointer ${isOpen ? 'gap-2' : ''}`}
                 >

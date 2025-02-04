@@ -29,12 +29,16 @@ export default function Section({ sectionName, sectionId }: SectionProps) {
           className="md:hidden cursor-pointer"
           icon={isOpen ? 'AngleDoubleUp' : 'AngleDoubleDown'}
           size={20}
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={(e: React.MouseEvent<SVGSVGElement>) => {
+            e.preventDefault() // 링크의 기본 동작을 막음
+            e.stopPropagation() // 이벤트 버블링을 막음
+            setIsOpen(!isOpen)
+          }}
         />
       </Link>
       <div
-        className={`flex flex-col transition-all duration-300 ease-in-out overflow-hidden md:hidden ${
-          isOpen ? 'slide-down' : 'slide-up'
+        className={`flex flex-col transition-all duration-300 ease-in-out overflow-hidden md:!max-h-none ${
+          isOpen ? 'max-h-[1000px] slide-down' : 'max-h-[89px] slide-up'
         }`}
       >
         {MOCK_CARD_LIST.map((card, index) => {
@@ -47,7 +51,7 @@ export default function Section({ sectionName, sectionId }: SectionProps) {
           <Icon icon="Plus" size={14} />
         </div>
       </div>
-      <div className="hidden md:block">
+      {/* <div className="hidden md:block">
         {MOCK_CARD_LIST.map((card, index) => {
           return <Card key={`${card.title}-${index}`} {...card} />
         })}
@@ -55,10 +59,9 @@ export default function Section({ sectionName, sectionId }: SectionProps) {
           className="w-full h-[81px] bg-white flex justify-center items-center cursor-pointer rounded-card"
           onClick={() => openModal('create-card')}
         >
-          {' '}
           <Icon icon="Plus" size={14} />
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }

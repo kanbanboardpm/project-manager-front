@@ -89,7 +89,7 @@ export interface IconProps extends React.SVGProps<SVGSVGElement> {
   icon: IconName
   size?: number
   className?: string
-  onClick?: () => void
+  onClick?: (() => void) | ((e: React.MouseEvent<SVGSVGElement>) => void)
 }
 
 export const Icon = ({ icon, size = 24, className, onClick }: IconProps) => {
