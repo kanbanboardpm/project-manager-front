@@ -1,15 +1,16 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
-import { useSidebarStore } from '@/store/sidebarStore'
-import homeIcon from '@/assets/images/home.png'
-import projectIcon from '@/assets/images/project.png'
-import inboxIcon from '@/assets/images/inbox.png'
 import profileIcon from '@/assets/images/profile.png'
-import { Button } from '@/shared/ui/button'
+import { MOCK_PROJECT_LIST } from '@/shared/mock/projectList'
+import { Icon } from '@/shared/ui/Icon'
+import { useSidebarStore } from '@/store/sidebarStore'
+import { useModalStore } from '@/store/useModalStore'
+import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Sidebar() {
   const { isOpen, setIsOpen } = useSidebarStore()
-  const navigate = useNavigate()
+
+  const { openModal } = useModalStore()
+
   useEffect(() => {
     const handleResize = () => {
       const isDesktop = window.innerWidth >= 640
@@ -28,28 +29,36 @@ export default function Sidebar() {
       className={`p-2 bg-gradient-to-b from-white to-screenBg rounded-tr-lg flex flex-col h-[calc(100vh-64px)] transition-all duration-300 ease-in-out text-sm font-pretendard
       ${isOpen ? 'w-64' : 'w-16 items-center'}`}
     >
-      <div className="px-3 mb-2">
-        <Button
-          className={`transition-all duration-300 ${isOpen ? '' : 'w-7 h-7'}`}
-          onClick={() => {
-            navigate('/projects/create')
-          }}
+      <div
+        className="p-4 sm:px-2"
+        onClick={() => {
+          openModal('create-project')
+        }}
+      >
+        <button
+          className={` bg-primary text-white rounded-button hover:bg-primary/80 transition-all duration-300 h-10
+          ${isOpen ? 'w-19 px-4' : 'w-7 h-7'}`}
         >
           <div
-            className={`flex items-center w-full justify-center overflow-hidden`}
+            className={`flex  items-center w-full justify-center overflow-hidden`}
           >
+            <Icon
+              icon="Plus"
+              size={10}
+              className={`transition-all duration-300 whitespace-nowrap   ${isOpen ? 'mr-1 opacity-100' : 'opacity-0 w-0'}`}
+            />
             <span
               className={`transition-all duration-300 whitespace-nowrap ${isOpen ? 'opacity-100' : 'opacity-0 w-0'}`}
             >
-              + 프로젝트
+              프로젝트
             </span>
             <span
-              className={`transition-all duration-300 ${isOpen ? 'opacity-0 w-0' : 'opacity-100'}`}
+              className={`text-center transition-all duration-300  ${isOpen ? 'opacity-0 w-0' : 'opacity-100 '}`}
             >
-              +
+              <Icon icon="Plus" size={10} />
             </span>
           </div>
-        </Button>
+        </button>
       </div>
 
       {/* 메인 네비게이션 */}
@@ -57,15 +66,11 @@ export default function Sidebar() {
         <ul className="space-y-1 px-3 border-b border-bodyBorder">
           <li>
             <Link
-              to="/main"
+              to="/home"
               className={`flex items-center p-2 hover:bg-gray-100 rounded-lg 
               ${isOpen ? 'gap-3' : 'justify-center'} w-full`}
             >
-              <img
-                src={homeIcon}
-                alt="홈"
-                className="w-3.5 h-3.5 min-w-[14px]"
-              />
+              <Icon icon="Home" size={14} className="min-w-[14px]" />
               <span
                 className={`transition-all duration-300 whitespace-nowrap overflow-hidden 
                 ${isOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}
@@ -80,11 +85,7 @@ export default function Sidebar() {
               className={`flex items-center p-2 hover:bg-gray-100 rounded-lg 
                 ${isOpen ? 'gap-3' : 'justify-center'} w-full`}
             >
-              <img
-                src={inboxIcon}
-                alt="수신함"
-                className="w-3.5 h-3.5 min-w-[14px]"
-              />
+              <Icon icon="Bell" size={14} className="min-w-[14px]" />
               <span
                 className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${isOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}
               >
@@ -102,11 +103,7 @@ export default function Sidebar() {
             className={`flex items-center p-2  
                 ${isOpen ? 'gap-3' : 'justify-center'} w-full`}
           >
-            <img
-              src={projectIcon}
-              alt="프로젝트"
-              className="w-3.5 h-3.5 min-w-[14px]"
-            />
+            <Icon icon="Folder" size={14} className="min-w-[14px]" />
             <span
               className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${isOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}
             >
@@ -115,17 +112,22 @@ export default function Sidebar() {
           </div>
           {/* api 적용할때 반복문으로 수정 */}
           <div className="space-y-2">
-            <Link
-              to="/projects"
-              className={`flex items-center  p-2 hover:bg-gray-100 rounded-lg cursor-pointer ${isOpen ? 'gap-2' : ''}`}
-            >
-              <div className="w-3.5 h-3.5 rounded-sm bg-red-500 min-w-[8px]"></div>
-              <span
-                className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${isOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}
-              >
-                Project Manager
-              </span>
-            </Link>
+            {MOCK_PROJECT_LIST.map((project) => {
+              return (
+                <Link
+                  key={project.id}
+                  to={`/project/${project.id}`}
+                  className={`flex items-center  p-2 hover:bg-gray-100 rounded-lg cursor-pointer ${isOpen ? 'gap-2' : ''}`}
+                >
+                  <div className="w-3.5 h-3.5 rounded-sm bg-red-500 min-w-[8px]"></div>
+                  <span
+                    className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${isOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}
+                  >
+                    {project.name}
+                  </span>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </nav>

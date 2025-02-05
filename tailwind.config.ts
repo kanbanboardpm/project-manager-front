@@ -1,11 +1,15 @@
 /** @type {import('tailwindcss').Config} */
-const { fontFamily } = require('tailwindcss/defaultTheme')
+import animate from 'tailwindcss-animate'
+import { fontFamily } from 'tailwindcss/defaultTheme'
+import { CATEGORY_COLORS } from './src/shared/constants/color'
+
 export default {
   darkMode: ['class'],
   content: ['./src/**/*.{js,jsx,ts,tsx,mdx}'],
   theme: {
     extend: {
       borderRadius: {
+        card: '6px',
         button: '8px',
         input: '8px',
         modal: '12px',
@@ -23,20 +27,10 @@ export default {
         bodyBorder: '#EDEAE9',
         modalBorder: '#E1E3E5',
         modalPlaceholder: '#00000038',
+        cardDate: '#757575',
         primary: '#82CD47',
         warning: '#FF0004',
-        category: {
-          blue: '#4285F4',
-          red: '#DB4437',
-          yellow: '#F4B400',
-          green: '#0D9D58',
-          purple: '#AB47BC',
-          cyan: '#02ACC1',
-          orange: '#FF7043',
-          khaki: '#9E9D24',
-          indigo: '#5C6BC0',
-          pink: '#F06292',
-        },
+        category: { ...CATEGORY_COLORS },
 
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
@@ -77,5 +71,5 @@ export default {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [animate],
 }
