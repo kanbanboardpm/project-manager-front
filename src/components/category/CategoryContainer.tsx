@@ -1,3 +1,11 @@
+import ProjectHeader from '../projectMain/ProjectHeader'
+import Category from './Category'
+
 export default function CategoryContainer() {
-  return <div>CategoryContainer</div>
+  return (
+    <section className="w-full bg-white">
+      <ProjectHeader />
+      <Category />
+    </section>
+  )
 }

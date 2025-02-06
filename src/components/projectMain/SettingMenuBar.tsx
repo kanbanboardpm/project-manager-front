@@ -11,7 +11,7 @@ export default function SettingMenuBar({ page }: PageProps) {
   const { openModal } = useModalStore()
   const navigate = useNavigate()
   const location = useLocation()
-  const currentPath = location.pathname
+  const currentProjectPath = location.pathname.split('/').slice(0, 3).join('/')
 
   return (
     <div className="px-3 py-2 md:py-2.5 flex justify-between border-b border-bodyBorder bg-white">
@@ -43,7 +43,7 @@ export default function SettingMenuBar({ page }: PageProps) {
         </Button>
         <Button
           className="flex gap-0.5"
-          onClick={() => navigate(`${currentPath}/category`)}
+          onClick={() => navigate(`${currentProjectPath}/category`)}
         >
           <Icon
             icon="Category"
