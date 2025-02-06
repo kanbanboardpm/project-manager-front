@@ -1,5 +1,4 @@
 import { CATEGORY_COLORS } from '@/shared/constants/color'
-import { MOCK_CATEGORY } from '@/shared/mock/category'
 import { Button } from '@/shared/ui/common/button'
 import { Input } from '@/shared/ui/common/input'
 import { Icon } from '@/shared/ui/Icon'
@@ -7,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import CategoryList from './CategoryList'
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -104,75 +104,7 @@ export default function Category() {
           <div className="hidden lg:block">생성</div>
         </Button>
       </form>
-      <div>
-        <div className="border-b border-bodyBorder flex py-1.5 md:py-1 px-1 lg:px-0 lg:w-[740px] mx-auto">
-          <div className="font-normal text-xs md:text-sm w-8 md:w-[46px] md:pl-1 lg:w-[92px] lg:pl-[30px]">
-            색상
-          </div>
-          <div className="font-normal text-xs md:text-sm w-[78px] md:w-[135px] lg:w-[185px]">
-            이름
-          </div>
-          <div className="font-normal text-xs md:text-sm w-[149px] md:w-[222px] lg:w-[309px]">
-            설명
-          </div>
-        </div>
-        {MOCK_CATEGORY.map((category) => {
-          return (
-            <div
-              key={category.id}
-              className="h-10 md:h-[45px] border-b border-bodyBorder flex items-center w-fit mx-auto"
-            >
-              <div className="w-[38px] md:w-[46px] lg:w-[92px]">
-                <div
-                  className="w-4 h-4 md:w-5 md:h-5 rounded-card ml-1.5 lg:ml-8"
-                  style={{ backgroundColor: category.color }}
-                />
-                <Icon icon="AngleDoubleDown" className="hidden" />
-              </div>
-              <div className="w-[78px] md:w-[135px] lg:w-[185px]">
-                <div className="text-xs md:text-sm truncate">
-                  {category.name}
-                </div>
-                <Input className="w-[70px] hidden" />
-              </div>
-              <div className="w-[149px] md:w-[222px] lg:w-[309px]">
-                <div className="text-xs md:text-sm truncate">
-                  {category.description}
-                </div>
-                <Input className="w-[140px] hidden" />
-              </div>
-              <div className="flex gap-0.5 md:gap-1 lg:gap-2 justify-end w-[42px] md:w-[60px] lg:w-[122px] md:ml-2 lg:ml-0 lg:mr-8">
-                <Button variant="category" className="p-1 md:p-2">
-                  <Icon
-                    icon="Update"
-                    size={12}
-                    className={`fill-white lg:hidden`}
-                  />
-                  <span className="hidden lg:block">수정</span>
-                </Button>
-                <div className="hidden">
-                  <Button variant="categoryDelete" className="p-1 md:p-2">
-                    <Icon
-                      icon="Delete"
-                      size={12}
-                      className={`fill-white lg:hidden`}
-                    />
-                    <span className="hidden lg:block">삭제</span>
-                  </Button>
-                  <Button variant="category" className="p-1 md:p-2">
-                    <Icon
-                      icon="Check"
-                      size={12}
-                      className={`fill-white lg:hidden`}
-                    />
-                    <span className="hidden lg:block">완료</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )
-        })}
-      </div>
+      <CategoryList />
     </div>
   )
 }
