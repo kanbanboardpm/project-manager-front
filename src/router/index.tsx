@@ -8,6 +8,7 @@ import NotificationPage from '@/components/inbox/NotificationPage'
 import ProjectMainContainer from '@/components/projectMain/ProjectMainContainer'
 import SectionContainer from '@/components/section/SectionContainer'
 import { AuthLayout, MainLayout, LandingLayout } from '@/layout/index'
+import ProfilePage from '@/components/profile/Profile'
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: 'inbox',
         element: <NotificationPage />,
+      },
+      {
+        path: 'profile',
+        element: <ProfilePage />,
       },
       {
         path: 'project',
