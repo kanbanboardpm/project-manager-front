@@ -1,3 +1,11 @@
+import ProjectHeader from '../projectMain/ProjectHeader'
+import ProjectUpdate from './ProjectUpdate'
+
 export default function ProjectUpdateContainer() {
-  return <div>ProjectUpdateContainer</div>
+  return (
+    <section className="w-full h-full bg-white">
+      <ProjectHeader />
+      <ProjectUpdate />
+    </section>
+  )
 }
