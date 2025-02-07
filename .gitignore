@@ -11,6 +11,8 @@ lerna-debug.log*
 .env
 .env.development
 .env.production
+.env.local
+.env.*.local
 
 node_modules
 dist
