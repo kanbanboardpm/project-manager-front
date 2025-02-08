@@ -41,8 +41,3 @@ export const createCategory = async (requestData: CreateCategoryRequest) => {
   const response = await axiosApi.post('/categories', requestData)
   return response.data
 }
-
-export const getProjects = async () => {
-  const response = await axiosApi.get('/projects')
-  return response.data
-}
