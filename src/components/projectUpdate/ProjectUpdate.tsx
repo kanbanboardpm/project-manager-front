@@ -8,7 +8,7 @@ import { Icon } from '@/shared/ui/Icon'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 
 const formSchema = z.object({
@@ -16,7 +16,7 @@ const formSchema = z.object({
   color: z.string().min(1),
 })
 
-export default function ProjectUpdate() {
+export default function ProjectUpdate({ projectId }: { projectId: number }) {
   const [memberList, setMemberList] = useState<string[]>([])
   const [memberInput, setMemberInput] = useState('')
 
@@ -24,7 +24,6 @@ export default function ProjectUpdate() {
   const location = useLocation()
   const currentProjectPath = location.pathname.split('/').slice(0, 3).join('/')
 
-  const { projectId } = useParams()
   const { data } = useQueryProject(projectId)
   const updateProject = useMutationUpdateProject()
   const project = data?.data
@@ -161,12 +160,17 @@ export default function ProjectUpdate() {
 
         <div className="flex gap-3 justify-center">
           <Button
+            type="button"
             variant="modalOutline"
             onClick={() => navigate(`${currentProjectPath}`)}
           >
             취소
           </Button>
-          <Button type="submit" variant={isValid ? 'modal' : 'disabled'}>
+          <Button
+            type="submit"
+            variant={isValid ? 'modal' : 'disabled'}
+            onClick={() => navigate(`${currentProjectPath}`)}
+          >
             수정
           </Button>
         </div>

@@ -9,14 +9,14 @@ import { QUERY_KEYS } from '../constants/queryKeys'
 const useMutationCreateSection = () => {
   const queryClient = useQueryClient()
 
-  const mutation = useMutation<Section, Error, CreateSectionRequest>({
+  return useMutation<Section, Error, CreateSectionRequest>({
     mutationFn: createSection,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.sections.lists() })
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.sections.all,
+      })
     },
   })
-
-  return mutation
 }
 
 export { useMutationCreateSection }

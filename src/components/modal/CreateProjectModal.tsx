@@ -14,10 +14,9 @@ import { z } from 'zod'
 import { Input } from '../../shared/ui/common/input'
 import { ModalKey } from './ModalController'
 
-const COLORS = Object.keys(CATEGORY_COLORS).map((key) => key.toUpperCase()) as [
-  UppercaseCategoryColor,
-  ...UppercaseCategoryColor[],
-]
+export const COLORS = Object.keys(CATEGORY_COLORS).map((key) =>
+  key.toUpperCase(),
+) as [UppercaseCategoryColor, ...UppercaseCategoryColor[]]
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -105,6 +104,7 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
               <div className="w-full flex items-center gap-2 md:gap-4">
                 <label className="whitespace-pre">멤버 초대</label>
                 <Input
+                  value={memberInput}
                   onChange={(e) => setMemberInput(e.target.value)}
                   placeholder="이메일을 입력하여 프로젝트에 멤버를 추가하세요"
                   className="text-xs md:text-sm placeholder:text-xs placeholder:md:text-sm h-10"

@@ -7,20 +7,17 @@ import { APIResponse } from '../types/response'
 const useMutationInviteProject = () => {
   const queryClient = useQueryClient()
 
-  const mutation = useMutation<
-    APIResponse<null>,
-    AxiosError,
-    InviteProjectRequest
-  >({
+  return useMutation<APIResponse<null>, AxiosError, InviteProjectRequest>({
     mutationFn: inviteProject,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.members.lists() })
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.members.lists(variables.projectId),
+      })
     },
     onError: (error) => {
       console.error('초대 실패:', error.response?.data)
     },
   })
-  return mutation
 }
 
 export { useMutationInviteProject }

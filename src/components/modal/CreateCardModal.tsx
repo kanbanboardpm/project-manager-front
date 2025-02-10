@@ -1,3 +1,4 @@
+import { useProjectId } from '@/shared/hooks/useProjectId'
 import { useQueryCategoryList } from '@/shared/queries/useQueryCategoryList'
 import { useQuerySectionList } from '@/shared/queries/useQuerySectionList'
 import { Button } from '@/shared/ui/common/button'
@@ -20,7 +21,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { useForm } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { z } from 'zod'
 import { Input } from '../../shared/ui/common/input'
 import { ModalKey } from './ModalController'
@@ -44,6 +44,9 @@ const formSchema = z
   })
 
 export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
+  const { closeModal, getModalData } = useModalStore()
+  const modalData = getModalData('create-card')
+
   const {
     register,
     watch,
@@ -59,11 +62,12 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
       content: '',
       startDate: undefined,
       endDate: undefined,
+      section: modalData?.sectionName ?? '',
       category: '',
     },
   })
-  const { closeModal } = useModalStore()
-  const { projectId } = useParams()
+
+  const projectId = useProjectId()
   const { data: sectionList } = useQuerySectionList(projectId)
   const { data: categoryList } = useQueryCategoryList(projectId)
   console.log(categoryList)

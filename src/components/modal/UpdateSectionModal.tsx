@@ -11,6 +11,9 @@ const formSchema = z.object({
 })
 
 export default function UpdateSectionModal({ modalId }: { modalId: ModalKey }) {
+  const { closeModal, getModalData } = useModalStore()
+  const modalData = getModalData('update-section')
+
   const {
     register,
     handleSubmit,
@@ -19,11 +22,9 @@ export default function UpdateSectionModal({ modalId }: { modalId: ModalKey }) {
     resolver: zodResolver(formSchema),
     mode: 'onChange',
     defaultValues: {
-      title: 'Frontend',
+      title: modalData?.sectionName,
     },
   })
-
-  const { closeModal } = useModalStore()
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values)

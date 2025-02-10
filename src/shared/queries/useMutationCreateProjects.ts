@@ -9,13 +9,14 @@ import { QUERY_KEYS } from '../constants/queryKeys'
 const useMutationCreateProject = () => {
   const queryClient = useQueryClient()
 
-  const mutation = useMutation<Project, Error, CreateProjectRequest>({
+  return useMutation<Project, Error, CreateProjectRequest>({
     mutationFn: createProject,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.projects.lists('') })
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.projects.all,
+      })
     },
   })
-  return mutation
 }
 
 export { useMutationCreateProject }

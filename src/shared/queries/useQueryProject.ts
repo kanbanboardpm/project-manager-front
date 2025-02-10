@@ -1,25 +1,17 @@
 import axiosApi from '@/helper/api_helper'
 import { Project } from '@/services/projects.service'
 import { useQuery } from '@tanstack/react-query'
-import axios, { AxiosResponse } from 'axios'
 import { QUERY_KEYS } from '../constants/queryKeys'
+import { APIResponse } from '../types/response'
 
-const useQueryProject = (projectId: string | undefined) => {
-  const { isPending, isError, data, error } = useQuery<AxiosResponse<Project>>({
-    queryKey: QUERY_KEYS.projects.lists(projectId ?? ''),
+const useQueryProject = (projectId: number) => {
+  const { isPending, isError, data, error } = useQuery<APIResponse<Project>>({
+    queryKey: QUERY_KEYS.projects.lists(projectId),
     queryFn: async () => {
-      try {
-        const { data } = await axiosApi.get(`/projects/${projectId}`)
-
-        return data
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error('Error fetching project:', error.message)
-        }
-        throw error
-      }
+      const { data } = await axiosApi.get(`/projects/${projectId}`)
+      return data
     },
-    enabled: !!projectId,
+    enabled: projectId > 0,
   })
   return { isPending, isError, data, error }
 }

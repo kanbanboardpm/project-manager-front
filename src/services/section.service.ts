@@ -10,6 +10,11 @@ export interface Section {
   name: string
 }
 
+export interface UpdateSectionRequest {
+  id: number
+  name: string
+}
+
 export const createSection = async ({
   projectId,
   name,
@@ -20,5 +25,12 @@ export const createSection = async ({
   if (!response?.data) {
     throw new Error('Failed to create section')
   }
+  return response.data
+}
+
+export const updateSection = async ({ id, name }: UpdateSectionRequest) => {
+  const response = await axiosApi.put(`sections/${id}`, {
+    name,
+  })
   return response.data
 }

@@ -1,12 +1,10 @@
 import { useQuerySectionList } from '@/shared/queries/useQuerySectionList'
 import { Icon } from '@/shared/ui/Icon'
 import { useModalStore } from '@/store/useModalStore'
-import { useParams } from 'react-router-dom'
 import Section from './Section'
 
-export default function CardContainer() {
+export default function CardContainer({ projectId }: { projectId: number }) {
   const { openModal } = useModalStore()
-  const { projectId } = useParams()
 
   const { data } = useQuerySectionList(projectId)
 

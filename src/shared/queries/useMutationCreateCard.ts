@@ -6,7 +6,7 @@ import { APIResponse } from '../types/response'
 const useMutationCreateCard = () => {
   const queryClient = useQueryClient()
 
-  const mutation = useMutation<APIResponse<null>, Error, CreateCardRequest>({
+  return useMutation<APIResponse<null>, Error, CreateCardRequest>({
     mutationFn: createCard,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cards.lists() })
@@ -15,7 +15,5 @@ const useMutationCreateCard = () => {
       console.error('Error creating card:', error)
     },
   })
-
-  return mutation
 }
 export { useMutationCreateCard }

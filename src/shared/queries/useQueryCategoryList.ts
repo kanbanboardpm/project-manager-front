@@ -4,19 +4,16 @@ import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '../constants/queryKeys'
 import { APIResponse } from '../types/response'
 
-const useQueryCategoryList = (projectId: string | undefined) => {
+const useQueryCategoryList = (projectId: number) => {
   const { data, isError } = useQuery<APIResponse<Category[]>>({
-    queryKey: QUERY_KEYS.categories.lists(),
+    queryKey: QUERY_KEYS.categories.lists(projectId),
     queryFn: async () => {
-      try {
-        const { data } = await axiosApi.get('/categories', {
-          params: { project_id: projectId },
-        })
-        return data
-      } catch (error) {
-        console.error(error)
-      }
+      const { data } = await axiosApi.get('/categories', {
+        params: { project_id: projectId },
+      })
+      return data
     },
+    enabled: projectId > 0,
   })
 
   return { data, isError }

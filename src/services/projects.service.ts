@@ -4,7 +4,7 @@ import axios from 'axios'
 
 type CategoryColors = typeof CATEGORY_COLORS
 type ColorKeys = keyof CategoryColors
-type UppercaseColorKeys = Uppercase<ColorKeys>
+export type UppercaseColorKeys = Uppercase<ColorKeys>
 
 export interface CreateProjectRequest {
   name: string
@@ -12,7 +12,7 @@ export interface CreateProjectRequest {
 }
 
 export interface UpdateProjectRequest {
-  id: string | undefined
+  id: number
   name: string
   // color: string
 }

@@ -1,11 +1,9 @@
 import { useQueryProject } from '@/shared/queries/useQueryProject'
 import { Button } from '@/shared/ui/common/button'
 import { Icon } from '@/shared/ui/Icon'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
-export default function ProjectHeader() {
-  const { projectId } = useParams()
-
+export default function ProjectHeader({ projectId }: { projectId: number }) {
   const { data } = useQueryProject(projectId)
   const project = data?.data
 

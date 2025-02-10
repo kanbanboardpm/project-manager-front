@@ -1,23 +1,26 @@
 export const QUERY_KEYS = {
   members: {
     all: ['members'] as const,
-    lists: () => [...QUERY_KEYS.members.all, 'list'] as const,
+    lists: (projectId: number) =>
+      [...QUERY_KEYS.members.all, 'list', projectId] as const,
     detail: (id: number) => [...QUERY_KEYS.members.all, id] as const,
   },
   projects: {
     all: ['projects'] as const,
-    lists: (projectId: string) =>
-      [...QUERY_KEYS.projects.all, 'list', projectId ?? ''] as const,
+    lists: (projectId: number) =>
+      [...QUERY_KEYS.projects.all, 'list', projectId] as const,
     detail: (id: number) => [...QUERY_KEYS.projects.all, id] as const,
   },
   sections: {
     all: ['sections'] as const,
-    lists: () => [...QUERY_KEYS.sections.all, 'list'] as const,
+    lists: (projectId: number) =>
+      [...QUERY_KEYS.sections.all, 'list', projectId] as const,
     detail: (id: number) => [...QUERY_KEYS.sections.all, id] as const,
   },
   categories: {
     all: ['categories'] as const,
-    lists: () => [...QUERY_KEYS.categories.all, 'list'] as const,
+    lists: (projectId: number) =>
+      [...QUERY_KEYS.categories.all, 'list', projectId] as const,
     detail: (id: number) => [...QUERY_KEYS.categories.all, id] as const,
   },
   cards: {
