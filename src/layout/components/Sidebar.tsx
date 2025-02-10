@@ -25,7 +25,7 @@ export default function Sidebar() {
   return (
     <aside
       className={`p-2 bg-gradient-to-b from-white to-screenBg rounded-tr-lg flex flex-col h-[calc(100vh)] transition-all duration-300 ease-in-out text-sm font-pretendard
-      ${isOpen ? 'w-64' : 'w-16 items-center'}`}
+      ${isOpen ? 'min-w-64 w-64' : 'w-16 items-center'}`}
     >
       <CreateProjectButton isOpen={isOpen} />
       <nav className="flex-1">

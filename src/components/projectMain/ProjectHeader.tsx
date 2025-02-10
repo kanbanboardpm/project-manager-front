@@ -8,7 +8,6 @@ export default function ProjectHeader() {
 
   const { data } = useQueryProject(projectId)
   const project = data?.data
-  console.log(data)
 
   const navigate = useNavigate()
   const location = useLocation()

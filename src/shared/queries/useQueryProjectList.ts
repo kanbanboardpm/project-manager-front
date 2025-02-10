@@ -2,7 +2,7 @@ import axiosApi from '@/helper/api_helper'
 import { Project } from '@/services/projects.service'
 import { useQuery } from '@tanstack/react-query'
 import axios, { AxiosResponse } from 'axios'
-import { QUERY_KEYS } from './useMutationCreateProjects'
+import { QUERY_KEYS } from '../constants/queryKeys'
 
 const useQueryProjectList = () => {
   const { isPending, isError, data, error } = useQuery<
@@ -11,7 +11,7 @@ const useQueryProjectList = () => {
     queryKey: QUERY_KEYS.projects.lists(''),
     queryFn: async () => {
       try {
-        const { data } = await axiosApi.get('/api/projects')
+        const { data } = await axiosApi.get('/projects')
         return data
       } catch (error) {
         if (axios.isAxiosError(error)) {

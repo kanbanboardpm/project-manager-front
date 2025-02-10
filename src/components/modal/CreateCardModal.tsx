@@ -1,3 +1,5 @@
+import { useQueryCategoryList } from '@/shared/queries/useQueryCategoryList'
+import { useQuerySectionList } from '@/shared/queries/useQuerySectionList'
 import { Button } from '@/shared/ui/common/button'
 import { Calendar } from '@/shared/ui/common/calendar'
 import {
@@ -18,6 +20,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { useForm } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 import { z } from 'zod'
 import { Input } from '../../shared/ui/common/input'
 import { ModalKey } from './ModalController'
@@ -28,6 +31,9 @@ const formSchema = z
     content: z.string(),
     startDate: z.date({ required_error: '시작 날짜를 선택하세요' }),
     endDate: z.date({ required_error: '종료 날짜를 선택하세요' }),
+    section: z
+      .string({ required_error: '섹션을 선택하세요' })
+      .min(1, '섹션을 선택하세요'),
     category: z
       .string({ required_error: '카테고리를 선택하세요' })
       .min(1, '카테고리를 선택하세요'),
@@ -57,9 +63,26 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
     },
   })
   const { closeModal } = useModalStore()
+  const { projectId } = useParams()
+  const { data: sectionList } = useQuerySectionList(projectId)
+  const { data: categoryList } = useQueryCategoryList(projectId)
+  console.log(categoryList)
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  // const createCard = useMutationCreateCard()
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values)
+    // try {
+    //   await createCard.mutateAsync({
+    //     projectId: projectId,
+    //     sectionId: string | undefined
+    //     categoryId: string | undefined
+    //     title: string
+    //     content: string | undefined
+    //     startDate: Date | undefined
+    //     endDate: Date | undefined
+    //   })
+    // }
     closeModal('create-card')
   }
 
@@ -147,33 +170,58 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
                 </Popover>
               </div>
             </div>
-            <div>
-              <div className="flex items-center gap-3 md:gap-4">
-                <label className="whitespace-pre">카테고리</label>
-                <div className="[&_[data-placeholder]]:text-modalPlaceholder w-full">
-                  <Select
-                    onValueChange={(value) =>
-                      setValue('category', value, { shouldValidate: true })
-                    }
-                    value={watch('category')}
-                  >
-                    <div>
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder="카테고리를 선택하세요"
-                          className="placeholder:text-modalPlaceholder"
-                        />
-                      </SelectTrigger>
-                    </div>
-                    <SelectContent>
-                      <SelectItem value="user">User</SelectItem>
-                      <SelectItem value="board">Board</SelectItem>
-                      <SelectItem value="comment">Comment</SelectItem>
-                      <SelectItem value="ci-cd">CI/CD</SelectItem>
-                      <SelectItem value="design">Design</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+            <div className="flex items-center gap-3 md:gap-4">
+              <label className="whitespace-pre">섹션</label>
+              <div className="[&_[data-placeholder]]:text-modalPlaceholder w-full">
+                <Select
+                  onValueChange={(value) =>
+                    setValue('section', value, { shouldValidate: true })
+                  }
+                  value={watch('section')}
+                >
+                  <div>
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder="섹션을 선택하세요"
+                        className="placeholder:text-modalPlaceholder"
+                      />
+                    </SelectTrigger>
+                  </div>
+                  <SelectContent>
+                    {sectionList?.data?.map((section) => (
+                      <SelectItem key={section.id} value={section.name}>
+                        {section.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 md:gap-4">
+              <label className="whitespace-pre">카테고리</label>
+              <div className="[&_[data-placeholder]]:text-modalPlaceholder w-full">
+                <Select
+                  onValueChange={(value) =>
+                    setValue('category', value, { shouldValidate: true })
+                  }
+                  value={watch('category')}
+                >
+                  <div>
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder="카테고리를 선택하세요"
+                        className="placeholder:text-modalPlaceholder"
+                      />
+                    </SelectTrigger>
+                  </div>
+                  <SelectContent>
+                    {categoryList?.data?.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>

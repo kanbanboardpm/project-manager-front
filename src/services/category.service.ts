@@ -5,6 +5,12 @@ import axios from 'axios'
 //   project_id: number
 // }
 
+export interface Category {
+  projectId: string | undefined
+  id: string
+  name: string
+}
+
 interface CreateCategoryRequest {
   project_id: number
   name: string

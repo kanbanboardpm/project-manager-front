@@ -1,27 +1,33 @@
 import profileIcon from '@/assets/images/profile.png'
 import { CATEGORY_COLORS } from '@/shared/constants/color'
-import { MEMBER_LIST } from '@/shared/mock/memberList'
+import { useMutationUpdateProject } from '@/shared/queries/useMutationUpdateProject'
+import { useQueryProject } from '@/shared/queries/useQueryProject'
 import { Button } from '@/shared/ui/common/button'
 import { Input } from '@/shared/ui/common/input'
 import { Icon } from '@/shared/ui/Icon'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { z } from 'zod'
 
 const formSchema = z.object({
   title: z.string().min(1),
-  member: z.string().email(),
   color: z.string().min(1),
 })
 
 export default function ProjectUpdate() {
-  const [memberList, setMemberList] = useState(MEMBER_LIST)
+  const [memberList, setMemberList] = useState<string[]>([])
+  const [memberInput, setMemberInput] = useState('')
 
   const navigate = useNavigate()
   const location = useLocation()
   const currentProjectPath = location.pathname.split('/').slice(0, 3).join('/')
+
+  const { projectId } = useParams()
+  const { data } = useQueryProject(projectId)
+  const updateProject = useMutationUpdateProject()
+  const project = data?.data
 
   const {
     register,
@@ -33,20 +39,36 @@ export default function ProjectUpdate() {
     resolver: zodResolver(formSchema),
     mode: 'onChange',
     defaultValues: {
-      title: '',
-      member: '',
-      color: '',
+      title: project?.name ?? '',
+      color: project?.color ?? '',
     },
   })
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values)
+    try {
+      await updateProject.mutateAsync({
+        id: projectId,
+        name: getValues('title'),
+        // color: getValues('color'),
+      })
+    } catch (error) {
+      console.error('Error updating project:', error)
+    }
+  }
+
+  const isValidEmail = (email: string) => {
+    return z.string().email().safeParse(email).success
   }
 
   const addEmail = () => {
-    if (getValues('member') && !memberList.includes(getValues('member'))) {
-      setMemberList([...memberList, getValues('member')])
-      setValue('member', '')
+    if (
+      memberInput &&
+      isValidEmail(memberInput) &&
+      !memberList.includes(memberInput)
+    ) {
+      setMemberList([...memberList, memberInput])
+      setMemberInput('')
     }
   }
 
@@ -77,16 +99,16 @@ export default function ProjectUpdate() {
             <div className="w-full flex items-center gap-2 md:gap-4">
               <label className="whitespace-pre font-semibold">멤버 초대</label>
               <Input
-                {...register('member')}
+                onChange={(e) => setMemberInput(e.target.value)}
                 placeholder="이메일을 입력하여 프로젝트에 멤버를 추가하세요"
                 className="text-xs md:text-sm placeholder:text-xs placeholder:md:text-sm h-[30px] md:h-10"
               />
             </div>
             <Button
-              className={`${errors.member ? 'bg-modalBorder' : ''} `}
               type="button"
+              className={`${isValidEmail(memberInput) ? '' : 'bg-modalBorder'} `}
               onClick={addEmail}
-              disabled={errors.member !== undefined}
+              disabled={!isValidEmail(memberInput)}
             >
               <Icon icon="Plus" size={10} color="white" />
             </Button>
