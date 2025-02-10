@@ -8,7 +8,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 const QUERY_KEYS = {
   projects: {
     all: ['projects'] as const,
-    lists: () => [...QUERY_KEYS.projects.all, 'list'] as const,
+    lists: (projectId: string) =>
+      [...QUERY_KEYS.projects.all, 'list', projectId ?? ''] as const,
     detail: (id: number) => [...QUERY_KEYS.projects.all, id] as const,
   },
 } as const
@@ -19,7 +20,7 @@ const useMutationCreateProject = () => {
   const mutation = useMutation<Project, Error, CreateProjectRequest>({
     mutationFn: createProject,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.projects.lists() })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.projects.lists('') })
     },
   })
   return mutation

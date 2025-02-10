@@ -1,13 +1,14 @@
-import { MOCK_PROJECT_LIST } from '@/shared/mock/projectList'
+import { useQueryProject } from '@/shared/queries/useQueryProject'
 import { Button } from '@/shared/ui/common/button'
 import { Icon } from '@/shared/ui/Icon'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 export default function ProjectHeader() {
   const { projectId } = useParams()
-  const project = MOCK_PROJECT_LIST.find(
-    (project) => project.id === Number(projectId),
-  )
+
+  const { data } = useQueryProject(projectId)
+  const project = data?.data
+  console.log(data)
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -16,7 +17,10 @@ export default function ProjectHeader() {
   return (
     <div className="flex justify-between p-3 border-b border-bodyBorder bg-white rounded-tl-lg">
       <div className="flex items-center gap-3">
-        <div className="bg-category-red w-5 h-5 md:w-10 md:h-10 rounded-button"></div>
+        <div
+          className="w-5 h-5 md:w-10 md:h-10 rounded-button"
+          style={{ backgroundColor: project?.color }}
+        ></div>
         <div className="text-base md:text-xl">{project?.name}</div>
         <Icon
           icon="Setting"

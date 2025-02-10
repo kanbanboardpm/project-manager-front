@@ -1,5 +1,6 @@
 import axiosApi from '@/helper/api_helper'
 import { CATEGORY_COLORS } from '@/shared/constants/color'
+import { APIResponse } from '@/shared/types/response'
 import axios from 'axios'
 
 type CategoryColors = typeof CATEGORY_COLORS
@@ -9,6 +10,10 @@ type UppercaseColorKeys = Uppercase<ColorKeys>
 export interface CreateProjectRequest {
   name: string
   color: UppercaseColorKeys
+}
+
+export interface GetProjectRequest {
+  projectId: number
 }
 
 export interface Project {
@@ -31,14 +36,13 @@ export const createProject = async (
   }
 }
 
-export const getProjects = async () => {
+export const getProject = async (
+  payload: GetProjectRequest,
+): Promise<APIResponse> => {
   try {
-    const { data } = await axiosApi.get('/api/projects')
-    return data
+    const response = await axiosApi.get(`/api/projects`, payload)
+    return response
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(error)
-    }
-    throw error
+    console.error(error)
   }
 }
