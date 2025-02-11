@@ -9,7 +9,7 @@ const useQueryCategoryList = (projectId: number) => {
     queryKey: QUERY_KEYS.categories.lists(projectId),
     queryFn: async () => {
       const { data } = await axiosApi.get('/categories', {
-        params: { project_id: projectId },
+        params: { projectId },
       })
       return data
     },

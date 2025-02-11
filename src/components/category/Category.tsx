@@ -41,7 +41,7 @@ export default function Category({ projectId }: { projectId: number }) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await createCategory.mutateAsync({
-        project_id: projectId,
+        projectId,
         name: values.name,
         description: values.description,
         color: values.color,

@@ -9,7 +9,7 @@ const useMutationCreateCategory = () => {
     mutationFn: createCategory,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.categories.lists(variables.project_id),
+        queryKey: QUERY_KEYS.categories.lists(variables.projectId),
       })
     },
     onError: (error: AxiosError) => {

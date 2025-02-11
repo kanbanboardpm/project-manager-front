@@ -14,7 +14,7 @@ export interface Category {
 }
 
 interface CreateCategoryRequest {
-  project_id: number
+  projectId: number
   name: string
   description: string
   color: UppercaseColorKeys
