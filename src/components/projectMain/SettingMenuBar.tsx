@@ -32,7 +32,11 @@ export default function SettingMenuBar({ page, projectId }: PageProps) {
             icon="Update"
             className="w-3 h-3 md:w-[14px] md:h-[14px] fill-white"
             onClick={() =>
-              openModal('update-section', { sectionName: section?.name })
+              openModal('update-section', {
+                sectionName: section?.name,
+                sectionId: section?.id,
+                projectId,
+              })
             }
           />
         </Button>

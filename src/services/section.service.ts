@@ -11,8 +11,14 @@ export interface Section {
 }
 
 export interface UpdateSectionRequest {
-  id: number
+  projectId: number
+  sectionId: number
   name: string
+}
+
+export interface DeleteSectionRequest {
+  sectionId: number
+  projectId: number
 }
 
 export const createSection = async ({
@@ -22,15 +28,29 @@ export const createSection = async ({
   const response = await axiosApi.post(`projects/${projectId}/sections`, {
     name,
   })
-  if (!response?.data) {
-    throw new Error('Failed to create section')
-  }
   return response.data
 }
 
-export const updateSection = async ({ id, name }: UpdateSectionRequest) => {
-  const response = await axiosApi.put(`sections/${id}`, {
-    name,
-  })
+export const updateSection = async ({
+  projectId,
+  sectionId,
+  name,
+}: UpdateSectionRequest) => {
+  const response = await axiosApi.put(
+    `projects/${projectId}/sections/${sectionId}`,
+    {
+      name,
+    },
+  )
+  return response.data
+}
+
+export const deleteSection = async ({
+  sectionId,
+  projectId,
+}: DeleteSectionRequest) => {
+  const response = await axiosApi.delete(
+    `projects/${projectId}/sections/${sectionId}`,
+  )
   return response.data
 }

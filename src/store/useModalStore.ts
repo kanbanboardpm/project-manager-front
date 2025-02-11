@@ -11,6 +11,8 @@ interface ModalStore {
 
 interface ModalData {
   sectionName?: string
+  sectionId?: number
+  projectId?: number
   // 필요한 다른 props들도 여기에 추가 가능
 }
 

@@ -1,4 +1,4 @@
-import { useMutationCreateSection } from '@/shared/queries/useMutationCreateSection'
+import { useMutationCreateSection } from '@/shared/queries/useMutationSection'
 import { Button } from '@/shared/ui/common/button'
 import { useModalStore } from '@/store/useModalStore'
 import { zodResolver } from '@hookform/resolvers/zod'
