@@ -1,6 +1,5 @@
 import axiosApi from '@/helper/api_helper'
 import { CATEGORY_COLORS } from '@/shared/constants/color'
-import axios from 'axios'
 
 type CategoryColors = typeof CATEGORY_COLORS
 type ColorKeys = keyof CategoryColors
@@ -30,15 +29,8 @@ export interface Project {
 export const createProject = async (
   payload: CreateProjectRequest,
 ): Promise<Project> => {
-  try {
-    const { data } = await axiosApi.post(`/projects`, payload)
-    return data
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(error)
-    }
-    throw error
-  }
+  const { data } = await axiosApi.post(`/projects`, payload)
+  return data
 }
 
 export const updateProject = async ({
@@ -47,5 +39,10 @@ export const updateProject = async ({
   name,
 }: UpdateProjectRequest) => {
   const response = await axiosApi.put(`/projects/${id}`, { name })
+  return response.data
+}
+
+export const deleteProject = async ({ projectId }: GetProjectRequest) => {
+  const response = await axiosApi.delete(`/projects/${projectId}`)
   return response.data
 }

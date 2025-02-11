@@ -1,6 +1,9 @@
 import profileIcon from '@/assets/images/profile.png'
 import { CATEGORY_COLORS } from '@/shared/constants/color'
-import { useMutationUpdateProject } from '@/shared/queries/useMutationUpdateProject'
+import {
+  useMutationDeleteProject,
+  useMutationUpdateProject,
+} from '@/shared/queries/useMutationProject'
 import { useQueryProject } from '@/shared/queries/useQueryProject'
 import { Button } from '@/shared/ui/common/button'
 import { Input } from '@/shared/ui/common/input'
@@ -26,6 +29,7 @@ export default function ProjectUpdate({ projectId }: { projectId: number }) {
 
   const { data } = useQueryProject(projectId)
   const updateProject = useMutationUpdateProject()
+  const deleteProject = useMutationDeleteProject()
   const project = data?.data
 
   const {
@@ -73,6 +77,15 @@ export default function ProjectUpdate({ projectId }: { projectId: number }) {
 
   const removeEmail = (memberToRemove: string) => {
     setMemberList(memberList.filter((member) => member !== memberToRemove))
+  }
+
+  const onDelete = async () => {
+    try {
+      await deleteProject.mutateAsync({ projectId })
+      navigate(`${currentProjectPath}`)
+    } catch (error) {
+      console.error('Error deleting project:', error)
+    }
   }
 
   return (
@@ -157,22 +170,31 @@ export default function ProjectUpdate({ projectId }: { projectId: number }) {
             </div>
           </div>
         </div>
-
-        <div className="flex gap-3 justify-center">
+        <div className="flex justify-between">
           <Button
             type="button"
-            variant="modalOutline"
-            onClick={() => navigate(`${currentProjectPath}`)}
+            variant="categoryDelete"
+            className="!py-2 !px-6"
+            onClick={onDelete}
           >
-            취소
+            삭제
           </Button>
-          <Button
-            type="submit"
-            variant={isValid ? 'modal' : 'disabled'}
-            onClick={() => navigate(`${currentProjectPath}`)}
-          >
-            수정
-          </Button>
+          <div className="flex gap-3 justify-center">
+            <Button
+              type="button"
+              variant="modalOutline"
+              onClick={() => navigate(`${currentProjectPath}`)}
+            >
+              취소
+            </Button>
+            <Button
+              type="submit"
+              variant={isValid ? 'modal' : 'disabled'}
+              onClick={() => navigate(`${currentProjectPath}`)}
+            >
+              수정
+            </Button>
+          </div>
         </div>
       </form>
     </div>

@@ -3,7 +3,7 @@ import {
   CATEGORY_COLORS,
   UppercaseCategoryColor,
 } from '@/shared/constants/color'
-import { useMutationCreateProject } from '@/shared/queries/useMutationCreateProjects'
+import { useMutationCreateProject } from '@/shared/queries/useMutationProject'
 import { Button } from '@/shared/ui/common/button'
 import { Icon } from '@/shared/ui/Icon'
 import { useModalStore } from '@/store/useModalStore'
