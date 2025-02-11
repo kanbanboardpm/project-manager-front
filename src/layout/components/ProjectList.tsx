@@ -31,8 +31,8 @@ export const ProjectList = ({ isOpen }: ProjectListProps) => {
       <div className="space-y-2">
         {isLoading ? (
           <div className="p-2 text-gray-500 text-sm">로딩중...</div>
-        ) : projects?.length ? (
-          projects.map((project) => (
+        ) : projects?.data.length ? (
+          projects.data.map((project) => (
             <Link
               key={project.id}
               to={`/project/${project.id}`}

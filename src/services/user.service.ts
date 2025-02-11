@@ -12,12 +12,16 @@ export interface Project {
   color: string
 }
 
+export interface ProjectsResponse {
+  data: Project[]
+}
+
 export const getUser = async (): Promise<User> => {
   const response = await axiosApi.get('/users')
   return response.data.data
 }
 
-export const getProjects = async (): Promise<Project[]> => {
+export const getProjects = async (): Promise<ProjectsResponse> => {
   const response = await axiosApi.get('/projects')
   return response.data
 }

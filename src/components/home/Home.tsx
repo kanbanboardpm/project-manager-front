@@ -5,7 +5,20 @@ import {
   MOCK_PROGRESS_TASKS,
   MOCK_COMPLETED_TASKS,
 } from '@/shared/mock/task'
+import { useQuery } from '@tanstack/react-query'
+import { getProjects, getUser } from '@/services/user.service'
 export default function HomePage() {
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: getUser,
+  })
+
+  const { data: projects } = useQuery({
+    queryKey: ['projects'],
+    queryFn: getProjects,
+  })
+  console.log('PROJECTS:::', projects?.data.length)
+
   const [inProgressPage, setInProgressPage] = useState(1)
   const [completedPage, setCompletedPage] = useState(1)
   const inProgressTaskData = MOCK_PROGRESS_TASKS.find(
@@ -36,16 +49,15 @@ export default function HomePage() {
       <div className="flex flex-col items-center py-10 gap-14  px-4 sm:px-2 w-full">
         {/* Header */}
         <div className="text-center text-base">
-          {formatDate()}{' '}
-          <span className="font-semibold">{MOCK_USER.username}</span>님
-          안녕하세요!
+          {formatDate()} <span className="font-semibold">{user?.nickname}</span>
+          님 안녕하세요!
         </div>
 
         {/* Stats Bar */}
         <div className="flex  justify-center gap-4 px-4 py-2 border border-primary rounded-full sm:text-sm">
           <div className="text-primary font-bold">total</div>
           <div className="text-primary font-bold">
-            {MOCK_USER.stats.totalProjects} 프로젝트
+            {projects?.data.length} 프로젝트
           </div>
           <div className="text-primary font-bold">
             {MOCK_USER.stats.totalCards} 카드
@@ -55,14 +67,14 @@ export default function HomePage() {
         {/* Main Content */}
         <div className="flex flex-col items-center gap-6 w-full">
           <div className="flex flex-col gap-3">
-            <h2 className="text-sm lg:text-xl font-bold">{`${MOCK_USER.username}님의 진행중인 작업`}</h2>
+            <h2 className="text-sm lg:text-xl font-bold">{`${user?.nickname} 님의 진행중인 작업`}</h2>
             <TaskList
               taskData={inProgressTaskData}
               onPageChange={handleInProgressPageChange}
             />
           </div>
           <div className="flex flex-col  gap-3">
-            <h2 className="text-sm lg:text-xl font-bold">{`${MOCK_USER.username}님의 완료 된 작업`}</h2>
+            <h2 className="text-sm lg:text-xl font-bold">{`${user?.nickname} 님의 완료 된 작업`}</h2>
             <TaskList
               taskData={completedTaskData}
               onPageChange={handleCompletedPageChange}
