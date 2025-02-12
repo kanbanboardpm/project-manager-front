@@ -2,11 +2,11 @@ import axiosApi from '@/helper/api_helper'
 import { APIResponse } from '@/shared/types/response'
 
 export interface FormData {
-  title: string
-  description: string
-  category: string
+  title: string | undefined
+  content: string | undefined
   startDate?: Date | undefined
   endDate?: Date | undefined
+  categoryId: string | undefined
 }
 export interface CreateCardRequest {
   projectId: string | undefined
@@ -36,6 +36,11 @@ export interface CardData {
   photoUrl: string
 }
 
+export interface DeleteCardRequest {
+  cardId: number
+  projectId: number
+}
+
 export const createCard = async (payload: CreateCardRequest) => {
   const response = await axiosApi.post(`/cards`, payload)
   return response.data
@@ -46,5 +51,17 @@ export const updateCard = async ({
   data,
 }: UpdateCardRequest): Promise<APIResponse<null>> => {
   const response = await axiosApi.put(`/api/cards/${cardId}`, data)
+  return response.data
+}
+
+export const deleteCard = async ({
+  cardId,
+  projectId,
+}: DeleteCardRequest): Promise<APIResponse<null>> => {
+  const response = await axiosApi.delete(`/api/cards/${cardId}`, {
+    data: {
+      projectId,
+    },
+  })
   return response.data
 }
