@@ -1,71 +1,99 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  ADDITIONAL_DATA,
-  CardData,
-  MOCK_CARD_DETAIL,
-} from '@/shared/mock/cardDetail.ts'
 import ProjectHeader from '../projectMain/ProjectHeader'
 import { Button } from '@/shared/ui/common/button'
 import MetaInfoField from './meta/MetaInfo'
 import { Textarea } from '@/shared/ui/common/textarea'
-import CommentSection from './CommentSection'
-import { useEffect, useState } from 'react'
-import { FormData, updateCard } from '@/services/card.service'
+// import CommentSection from './CommentSection'
 import { Input } from '@/shared/ui/common/input'
 import { ActionButtons } from './ActionButtons'
 import { CategorySelect } from './meta/CategorySelect'
 import { AssigneeField } from './meta/AssigneeField'
 import { DateField } from './meta/DateField'
 import { ProjectField } from './meta/ProjectField'
+import { useQueryCardDetail } from '@/shared/queries/useQueryCardDetail'
+import { useMutationUpdateCard } from '@/shared/queries/useMutationUpdateCard'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { useEffect } from 'react'
+import { useProjectId } from '@/shared/hooks/useProjectId'
 
 interface CardDetailProps {
   mode?: 'view' | 'edit' | 'complete'
 }
 
+const formSchema = z.object({
+  title: z.string().min(1, '제목을 입력해주세요'),
+  description: z.string().min(1, '설명을 입력해주세요'),
+  category: z.string().min(1, '카테고리를 선택해주세요'),
+  startDate: z.date().optional(),
+  endDate: z.date().optional(),
+})
+
+type FormValues = z.infer<typeof formSchema>
+
 export default function CardDetail({ mode = 'view' }: CardDetailProps) {
   const navigate = useNavigate()
-  const { cardId } = useParams()
+  const projectId = useProjectId()
+  const { sectionId, cardId } = useParams<{
+    sectionId: string
+    cardId: string
+  }>()
+  const parsedSectionId = Number(sectionId)
+  const parsedCardId = Number(cardId)
   const isComplete = mode === 'complete'
   const isEdit = mode === 'edit'
-
-  const queryClient = useQueryClient()
-  const [formData, setFormData] = useState<FormData>({
-    title: '',
-    description: '',
-    category: '',
-    startDate: undefined,
-    endDate: undefined,
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { isValid, errors },
+    reset,
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    mode: 'onChange',
   })
 
-  const { data, isLoading } = useQuery<CardData>({
-    queryKey: ['card', cardId],
-    queryFn: async () => MOCK_CARD_DETAIL,
+  const {
+    data: cardDetail,
+    isPending,
+    isError,
+  } = useQueryCardDetail({
+    cardId: parsedCardId,
+    projectId,
+    sectionId: parsedSectionId,
   })
+  const updateCardMutation = useMutationUpdateCard()
+  const card = cardDetail?.data
 
   useEffect(() => {
-    if (data) {
-      setFormData({
-        title: data.data.title,
-        description: data.data.content,
-        category: data.data.category,
-        startDate: new Date(data.data.startDate),
-        endDate: new Date(data.data.endDate),
+    if (card) {
+      reset({
+        title: card?.title ?? '',
+        description: card?.content ?? '',
+        category: card?.categoryName ?? '',
+        startDate: card?.startDate ? new Date(card?.startDate) : undefined,
+        endDate: card?.endDate ? new Date(card?.endDate) : undefined,
       })
     }
-  }, [data])
+  }, [card, reset])
 
-  const mutation = useMutation({
-    mutationFn: updateCard,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['card', cardId] })
-      navigate(`/projects/${cardId}`)
-    },
-  })
+  const onSubmit = async (values: FormValues) => {
+    if (!cardId) return
+    try {
+      await updateCardMutation.mutateAsync({
+        cardId: parsedCardId,
+        data: values,
+      })
+      navigate(`/project/${projectId}/section/${sectionId}/${cardId}`)
+    } catch (error) {
+      console.error('Error updating card:', error)
+    }
+  }
 
-  if (isLoading)
+  if (isPending)
     return <div className="min-h-screen bg-screenBg p-6">로딩중...</div>
-  if (!data)
+  if (isError || !card)
     return (
       <div className="min-h-screen bg-screenBg p-6">
         카드를 불러올 수 없습니다.
@@ -74,93 +102,105 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
 
   return (
     <div className="min-h-screen bg-white w-full rounded-card">
-      <ProjectHeader />
+      <ProjectHeader projectId={projectId} />
       <main>
-        <div className="bg-white rounded-card p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-5 md:space-y-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="bg-white rounded-card p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-5 md:space-y-6"
+        >
           {!isEdit && <ActionButtons isComplete={isComplete} />}
 
           {/* Title */}
           {isEdit ? (
-            <Input
-              type="text"
-              value={formData.title}
-              className="text-lg sm:text-xl md:text-2xl font-semibold"
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, title: e.target.value }))
-              }
-            />
+            <div>
+              <Input
+                {...register('title')}
+                type="text"
+                className="text-lg sm:text-xl md:text-2xl font-semibold"
+              />
+              {errors.title && (
+                <p className="text-error text-xs mt-1">
+                  {errors.title.message}
+                </p>
+              )}
+            </div>
           ) : (
             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold">
-              {data.data.title}
+              {card?.title}
             </h2>
           )}
 
           {/* Meta Information */}
           <div className="flex flex-col gap-2 sm:gap-3 w-full sm:w-[280px] md:w-[390px]">
-            {/* 담당자 (고정)*/}
-            <AssigneeField name="김나연" />
-            {/* 마감일 */}
+            <AssigneeField
+              name={card?.nickName ?? ''}
+              photoUrl={card?.photoUrl}
+            />
             {isEdit ? (
               <DateField
                 isEdit={true}
-                startDate={formData.startDate}
-                endDate={formData.endDate}
+                startDate={
+                  card?.startDate ? new Date(card.startDate) : undefined
+                }
+                endDate={card?.endDate ? new Date(card.endDate) : undefined}
                 onRangeSelect={(range) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    startDate: range?.from,
-                    endDate: range?.to,
-                  }))
+                  setValue('startDate', range?.from ?? undefined)
+                  setValue('endDate', range?.to ?? undefined)
                 }}
-                displayStartDate={data.data.startDate}
-                displayEndDate={data.data.endDate}
+                displayStartDate={card?.startDate ?? ''}
+                displayEndDate={card?.endDate ?? ''}
               />
             ) : (
               <DateField
                 isEdit={false}
-                startDate={formData.startDate}
-                endDate={formData.endDate}
-                displayStartDate={data.data.startDate}
-                displayEndDate={data.data.endDate}
+                startDate={
+                  card?.startDate ? new Date(card.startDate) : undefined
+                }
+                endDate={card?.startDate ? new Date(card.endDate) : undefined}
+                displayStartDate={card?.startDate ?? ''}
+                displayEndDate={card?.endDate ?? ''}
               />
             )}
-            {/* 프로젝트(고정) */}
             <ProjectField
-              projectName={ADDITIONAL_DATA.project.name}
-              projectCategory={ADDITIONAL_DATA.project.category}
+              projectName={card?.nickName ?? ''}
+              projectCategory={card?.categoryName ?? ''}
             />
-            {/* 카테고리 */}
             <MetaInfoField label="카테고리" showDropdown={isEdit}>
               <CategorySelect
-                value={formData.category}
-                onChange={(category) =>
-                  setFormData((prev) => ({ ...prev, category }))
-                }
+                value={card?.categoryName ?? ''}
+                color={card?.categoryColor ?? ''}
+                onChange={(category) => setValue('category', category)}
                 isEdit={isEdit}
               />
+              {errors.category && (
+                <p className="text-error text-xs mt-1">
+                  {errors.category.message}
+                </p>
+              )}
             </MetaInfoField>
           </div>
 
           {/* Description */}
-          <div className=" w-full space-y-2 sm:space-y-3 ">
+          <div className="w-full space-y-2 sm:space-y-3">
             <h3 className="text-xs sm:text-sm font-semibold text-cardDate">
               설명
             </h3>
             {isEdit ? (
-              <Textarea
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
-                className="w-full p-2 sm:p-3 border border-bodyBorder rounded-input text-xs sm:text-sm"
-              />
+              <div>
+                <Textarea
+                  {...register('description')}
+                  className="w-full p-2 sm:p-3 border border-bodyBorder rounded-input text-xs sm:text-sm"
+                />
+                {errors.description && (
+                  <p className="text-error text-xs mt-1">
+                    {errors.description.message}
+                  </p>
+                )}
+              </div>
             ) : (
               <div className="w-full p-3 sm:p-4 bg-bodyBg rounded-card">
-                <p className=" text-xs sm:text-sm whitespace-pre-line">
-                  {data.data.content}
+                <p className="text-xs sm:text-sm whitespace-pre-line">
+                  {card?.content}
                 </p>
               </div>
             )}
@@ -172,28 +212,28 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
               <div className="flex justify-end gap-2">
                 <Button
                   variant="modalOutline"
+                  type="button"
                   onClick={() => navigate(`/projects/${cardId}`)}
-                  disabled={mutation.isPending}
+                  disabled={updateCardMutation.isPending}
                   className="h-7 sm:h-8 text-xs sm:text-sm"
                 >
                   취소하기
                 </Button>
                 <Button
                   variant="modal"
-                  onClick={() =>
-                    cardId && mutation.mutate({ cardId, data: formData })
-                  }
-                  disabled={mutation.isPending}
+                  type="submit"
+                  disabled={!isValid || updateCardMutation.isPending}
                   className="h-7 sm:h-8 text-xs sm:text-sm"
                 >
-                  {mutation.isPending ? '수정 중...' : '수정하기'}
+                  {updateCardMutation.isPending ? '수정 중...' : '수정하기'}
                 </Button>
               </div>
             ) : (
-              <CommentSection comments={data.comments} mode={mode} />
+              // <CommentSection comments={cardDetail?.comments} mode={mode} />
+              <div>댓글</div>
             )}
           </div>
-        </div>
+        </form>
       </main>
     </div>
   )
