@@ -6,7 +6,11 @@ import Section from './Section'
 export default function CardContainer({ projectId }: { projectId: number }) {
   const { openModal } = useModalStore()
 
-  const { data } = useQuerySectionList(projectId)
+  const { data, isError } = useQuerySectionList(projectId)
+
+  if (isError) {
+    return <div className="text-red-500">Error loading sections.</div>
+  }
 
   return (
     <div className="bg-bodyBg flex-1 md:flex md:px-3 md:gap-3 md:overflow-x-auto">

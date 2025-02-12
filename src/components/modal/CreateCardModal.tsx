@@ -31,12 +31,9 @@ const formSchema = z
     content: z.string(),
     startDate: z.date({ required_error: '시작 날짜를 선택하세요' }),
     endDate: z.date({ required_error: '종료 날짜를 선택하세요' }),
-    section: z
-      .string({ required_error: '섹션을 선택하세요' })
-      .min(1, '섹션을 선택하세요'),
-    category: z
-      .string({ required_error: '카테고리를 선택하세요' })
-      .min(1, '카테고리를 선택하세요'),
+    section: z.string().min(1, '섹션 이름을 입력하세요'),
+    // section: z.number({ required_error: '섹션 이름을 입력하세요' }),
+    category: z.string().min(1, '카테고리를 선택하세요'),
   })
   .refine((data) => data.endDate >= data.startDate, {
     message: '종료 날짜는 시작 날짜보다 빠를 수 없습니다.',
@@ -70,17 +67,19 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
   const projectId = useProjectId()
   const { data: sectionList } = useQuerySectionList(projectId)
   const { data: categoryList } = useQueryCategoryList(projectId)
-  console.log(categoryList)
 
   // const createCard = useMutationCreateCard()
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
+    // console.log(values)
+    console.log(
+      sectionList?.data?.find((section) => section.name === values.section)?.id,
+    )
     // try {
     //   await createCard.mutateAsync({
-    //     projectId: projectId,
-    //     sectionId: string | undefined
-    //     categoryId: string | undefined
+    //     projectId
+    //     sectionId: sectionList?.data?.find((section) => section.name === values.section)?.id
+    //     categoryId: categoryList?.data?.find((category) => category.name === values.category)?.id
     //     title: string
     //     content: string | undefined
     //     startDate: Date | undefined
@@ -220,7 +219,7 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
                   </div>
                   <SelectContent>
                     {categoryList?.data?.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
+                      <SelectItem key={category.id} value={category.name}>
                         {category.name}
                       </SelectItem>
                     ))}

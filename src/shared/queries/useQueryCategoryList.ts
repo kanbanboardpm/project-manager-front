@@ -13,6 +13,7 @@ const useQueryCategoryList = (projectId: number) => {
       })
       return data
     },
+    retry: false,
     enabled: projectId > 0,
   })
 

@@ -11,7 +11,7 @@ export default function MemberList({
   const navigate = useNavigate()
 
   return (
-    <div className="right-0 bg-white top-14 md:top-16  absolute border border-modalBorder rounded-input w-[282px] md:w-[352px] h-[120px] md:h-[180px] md:max-h-[180px] overflow-y-auto ml-auto px-4 py-3 flex flex-col gap-2">
+    <div className="z-50 right-0 bg-white top-14 md:top-16  absolute border border-modalBorder rounded-input w-[282px] md:w-[352px] h-[120px] md:h-[180px] md:max-h-[180px] overflow-y-auto ml-auto px-4 py-3 flex flex-col gap-2">
       {MOCK_MEMBER_LIST.map((member) => {
         return (
           <div key={member} className="flex items-center justify-between gap-2">

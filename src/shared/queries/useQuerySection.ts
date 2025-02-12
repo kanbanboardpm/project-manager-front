@@ -9,8 +9,8 @@ interface GetSectionProps {
 }
 
 const useQuerySection = ({ projectId, sectionId }: GetSectionProps) => {
-  const { data, isError } = useQuery<Section>({
-    queryKey: QUERY_KEYS.sections.all,
+  const { data, isError, isLoading, refetch } = useQuery<Section>({
+    queryKey: QUERY_KEYS.sections.detail(projectId, sectionId),
     queryFn: async () => {
       const { data } = await axiosApi.get(
         `/projects/${projectId}/sections/${sectionId}`,
@@ -18,7 +18,7 @@ const useQuerySection = ({ projectId, sectionId }: GetSectionProps) => {
       return data.data
     },
   })
-  return { data, isError }
+  return { data, isError, isLoading, refetch }
 }
 
 export { useQuerySection }
