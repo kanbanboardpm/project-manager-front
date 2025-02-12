@@ -9,7 +9,6 @@ import MetaInfoField from './MetaInfo'
 interface BaseDateFieldProps {
   startDate?: Date
   endDate?: Date
-  displayStartDate: string
   displayEndDate: string
 }
 
@@ -28,7 +27,7 @@ interface EditDateFieldProps extends BaseDateFieldProps {
 type DateFieldProps = ViewDateFieldProps | EditDateFieldProps
 
 export function DateField(props: DateFieldProps) {
-  const { startDate, endDate, displayStartDate, displayEndDate, isEdit } = props
+  const { startDate, endDate, displayEndDate, isEdit } = props
 
   return (
     <MetaInfoField label="마감일">
@@ -46,9 +45,7 @@ export function DateField(props: DateFieldProps) {
             className="sm:w-6 md:w-7 sm:h-6 md:h-7"
             color="gray"
           />
-          <span className="text-xs text-cardDate">
-            {displayStartDate} ~ {displayEndDate}
-          </span>
+          <span className="text-xs text-cardDate">{displayEndDate}</span>
         </>
       )}
     </MetaInfoField>

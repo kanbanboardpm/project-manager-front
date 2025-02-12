@@ -24,10 +24,10 @@ interface CardDetailProps {
 
 const formSchema = z.object({
   title: z.string().min(1, '제목을 입력해주세요'),
-  description: z.string().min(1, '설명을 입력해주세요'),
-  category: z.string().min(1, '카테고리를 선택해주세요'),
+  content: z.string().min(1, '설명을 입력해주세요'),
   startDate: z.date().optional(),
   endDate: z.date().optional(),
+  categoryId: z.string(),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -69,11 +69,11 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
   useEffect(() => {
     if (card) {
       reset({
-        title: card?.title ?? '',
-        description: card?.content ?? '',
-        category: card?.categoryName ?? '',
-        startDate: card?.startDate ? new Date(card?.startDate) : undefined,
-        endDate: card?.endDate ? new Date(card?.endDate) : undefined,
+        title: card.title,
+        content: card.content,
+        startDate: new Date(card?.startDate),
+        endDate: new Date(card?.endDate),
+        categoryId: '',
       })
     }
   }, [card, reset])
@@ -132,49 +132,41 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
 
           {/* Meta Information */}
           <div className="flex flex-col gap-2 sm:gap-3 w-full sm:w-[280px] md:w-[390px]">
-            <AssigneeField
-              name={card?.nickName ?? ''}
-              photoUrl={card?.photoUrl}
-            />
+            <AssigneeField name={card?.nickName} photoUrl={card?.photoUrl} />
             {isEdit ? (
               <DateField
                 isEdit={true}
-                startDate={
-                  card?.startDate ? new Date(card.startDate) : undefined
-                }
-                endDate={card?.endDate ? new Date(card.endDate) : undefined}
+                startDate={new Date(card.startDate)}
+                endDate={new Date(card.endDate)}
                 onRangeSelect={(range) => {
-                  setValue('startDate', range?.from ?? undefined)
-                  setValue('endDate', range?.to ?? undefined)
+                  setValue('startDate', range?.from)
+                  setValue('endDate', range?.to)
                 }}
-                displayStartDate={card?.startDate ?? ''}
-                displayEndDate={card?.endDate ?? ''}
+                displayEndDate={card?.endDate}
               />
             ) : (
               <DateField
                 isEdit={false}
-                startDate={
-                  card?.startDate ? new Date(card.startDate) : undefined
-                }
-                endDate={card?.startDate ? new Date(card.endDate) : undefined}
-                displayStartDate={card?.startDate ?? ''}
-                displayEndDate={card?.endDate ?? ''}
+                startDate={new Date(card.startDate)}
+                endDate={new Date(card.endDate)}
+                displayEndDate={card?.endDate}
               />
             )}
             <ProjectField
-              projectName={card?.nickName ?? ''}
-              projectCategory={card?.categoryName ?? ''}
+              projectName={card?.nickName}
+              projectCategory={card?.categoryName}
             />
             <MetaInfoField label="카테고리" showDropdown={isEdit}>
               <CategorySelect
-                value={card?.categoryName ?? ''}
-                color={card?.categoryColor ?? ''}
-                onChange={(category) => setValue('category', category)}
+                value={card?.categoryName}
+                color={card?.categoryColor}
+                onChange={(categoryId) => setValue('categoryId', categoryId)}
                 isEdit={isEdit}
+                projectId={projectId}
               />
-              {errors.category && (
+              {errors.categoryId && (
                 <p className="text-error text-xs mt-1">
-                  {errors.category.message}
+                  {errors.categoryId.message}
                 </p>
               )}
             </MetaInfoField>
@@ -188,12 +180,12 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
             {isEdit ? (
               <div>
                 <Textarea
-                  {...register('description')}
+                  {...register('content')}
                   className="w-full p-2 sm:p-3 border border-bodyBorder rounded-input text-xs sm:text-sm"
                 />
-                {errors.description && (
+                {errors.content && (
                   <p className="text-error text-xs mt-1">
-                    {errors.description.message}
+                    {errors.content.message}
                   </p>
                 )}
               </div>
