@@ -2,11 +2,11 @@ import axiosApi from '@/helper/api_helper'
 import { APIResponse } from '@/shared/types/response'
 
 export interface FormData {
-  title: string | undefined
-  content: string | undefined
-  startDate?: Date | undefined
-  endDate?: Date | undefined
-  categoryId: string | undefined
+  title: string
+  content: string
+  startDate?: Date
+  endDate?: Date
+  categoryId: string
 }
 export interface CreateCardRequest {
   projectId: string | undefined
@@ -41,6 +41,11 @@ export interface DeleteCardRequest {
   projectId: number
 }
 
+export interface CompleteCardRequest {
+  cardId: number
+  completeDate: string | null
+}
+
 export const createCard = async (payload: CreateCardRequest) => {
   const response = await axiosApi.post(`/cards`, payload)
   return response.data
@@ -50,7 +55,7 @@ export const updateCard = async ({
   cardId,
   data,
 }: UpdateCardRequest): Promise<APIResponse<null>> => {
-  const response = await axiosApi.put(`/api/cards/${cardId}`, data)
+  const response = await axiosApi.put(`/cards/${cardId}`, data)
   return response.data
 }
 
@@ -58,9 +63,21 @@ export const deleteCard = async ({
   cardId,
   projectId,
 }: DeleteCardRequest): Promise<APIResponse<null>> => {
-  const response = await axiosApi.delete(`/api/cards/${cardId}`, {
+  const response = await axiosApi.delete(`/cards/${cardId}`, {
     data: {
       projectId,
+    },
+  })
+  return response.data
+}
+
+export const completeCard = async ({
+  cardId,
+  completeDate,
+}: CompleteCardRequest): Promise<APIResponse<null>> => {
+  const response = await axiosApi.post(`/cards/${cardId}`, {
+    data: {
+      completeDate,
     },
   })
   return response.data

@@ -19,7 +19,7 @@ import { useEffect } from 'react'
 import { useProjectId } from '@/shared/hooks/useProjectId'
 
 interface CardDetailProps {
-  mode?: 'view' | 'edit' | 'complete'
+  mode?: 'view' | 'edit'
 }
 
 const formSchema = z.object({
@@ -41,7 +41,7 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
   }>()
   const parsedSectionId = Number(sectionId)
   const parsedCardId = Number(cardId)
-  const isComplete = mode === 'complete'
+
   const isEdit = mode === 'edit'
   const {
     register,
@@ -65,7 +65,7 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
   })
   const updateCardMutation = useMutationUpdateCard()
   const card = cardDetail?.data
-
+  const isComplete = card?.completeDate !== null
   useEffect(() => {
     if (card) {
       reset({
@@ -79,7 +79,7 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
   }, [card, reset])
 
   const onSubmit = async (values: FormValues) => {
-    if (!cardId) return
+    if (!cardId || !projectId || !sectionId) return
     try {
       await updateCardMutation.mutateAsync({
         cardId: parsedCardId,
@@ -108,7 +108,9 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
           onSubmit={handleSubmit(onSubmit)}
           className="bg-white rounded-card p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-5 md:space-y-6"
         >
-          {!isEdit && <ActionButtons isComplete={isComplete} />}
+          {!isEdit && (
+            <ActionButtons isComplete={isComplete} cardId={parsedCardId} />
+          )}
 
           {/* Title */}
           {isEdit ? (
@@ -132,34 +134,36 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
 
           {/* Meta Information */}
           <div className="flex flex-col gap-2 sm:gap-3 w-full sm:w-[280px] md:w-[390px]">
-            <AssigneeField name={card?.nickName} photoUrl={card?.photoUrl} />
+            <AssigneeField name={card.nickName} photoUrl={card?.photoUrl} />
             {isEdit ? (
               <DateField
                 isEdit={true}
-                startDate={new Date(card.startDate)}
-                endDate={new Date(card.endDate)}
+                startDate={
+                  card.startDate ? new Date(card.startDate) : undefined
+                }
+                endDate={card.endDate ? new Date(card.endDate) : undefined}
                 onRangeSelect={(range) => {
                   setValue('startDate', range?.from)
                   setValue('endDate', range?.to)
                 }}
-                displayEndDate={card?.endDate}
+                displayEndDate={card.endDate}
               />
             ) : (
               <DateField
                 isEdit={false}
                 startDate={new Date(card.startDate)}
                 endDate={new Date(card.endDate)}
-                displayEndDate={card?.endDate}
+                displayEndDate={card.endDate}
               />
             )}
             <ProjectField
-              projectName={card?.nickName}
-              projectCategory={card?.categoryName}
+              projectName={card.nickName}
+              projectCategory={card.categoryName}
             />
             <MetaInfoField label="카테고리" showDropdown={isEdit}>
               <CategorySelect
-                value={card?.categoryName}
-                color={card?.categoryColor}
+                value={card.categoryName}
+                color={card.categoryColor}
                 onChange={(categoryId) => setValue('categoryId', categoryId)}
                 isEdit={isEdit}
                 projectId={projectId}
@@ -205,7 +209,11 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
                 <Button
                   variant="modalOutline"
                   type="button"
-                  onClick={() => navigate(`/projects/${cardId}`)}
+                  onClick={() =>
+                    navigate(
+                      `/project/${projectId}/section/${sectionId}/${cardId}`,
+                    )
+                  }
                   disabled={updateCardMutation.isPending}
                   className="h-7 sm:h-8 text-xs sm:text-sm"
                 >
@@ -221,7 +229,7 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
                 </Button>
               </div>
             ) : (
-              // <CommentSection comments={cardDetail?.comments} mode={mode} />
+              // <CommentSection comments={cardDetail?.comments} completeDate={isComplete} />
               <div>댓글</div>
             )}
           </div>

@@ -79,10 +79,6 @@ const router = createBrowserRouter([
                     path: 'edit',
                     element: <CardDetail mode="edit" />,
                   },
-                  {
-                    path: 'complete',
-                    element: <CardDetail mode="complete" />,
-                  },
                 ],
               },
             ],
