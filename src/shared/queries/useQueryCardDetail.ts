@@ -18,12 +18,9 @@ const useQueryCardDetail = ({
   const { data, isPending, isError } = useQuery<APIResponse<CardData>>({
     queryKey: QUERY_KEYS.cards.detail(cardId),
     queryFn: async () => {
-      const { data } = await axiosApi.get(`/api/cards/${cardId}`, {
-        params: {
-          projectId,
-          sectionId,
-        },
-      })
+      const { data } = await axiosApi.get(
+        `/projects/${projectId}/sections/${sectionId}/cards/${cardId}`,
+      )
       return data
     },
     enabled: !!cardId,
