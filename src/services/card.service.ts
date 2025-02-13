@@ -8,13 +8,13 @@ export interface FormData {
   endDate: Date | undefined
 }
 export interface CreateCardRequest {
-  projectId: string | undefined
-  sectionId: string | undefined
-  categoryId: string | undefined
+  projectId: number
+  sectionId: number
+  categoryId: number
   title: string
   content: string | undefined
-  startDate: Date | undefined
-  endDate: Date | undefined
+  startDate: Date
+  endDate: Date
 }
 
 export const createCard = async (payload: CreateCardRequest) => {

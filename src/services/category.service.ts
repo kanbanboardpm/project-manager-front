@@ -7,7 +7,7 @@ import { UppercaseColorKeys } from './projects.service'
 
 export interface Category {
   projectId: number
-  id: string
+  id: number
   name: string
   description: string
   color: string
