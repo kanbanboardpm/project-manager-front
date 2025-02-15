@@ -19,10 +19,11 @@ export const QUERY_KEYS = {
       [...QUERY_KEYS.sections.all, projectId, sectionId] as const,
   },
   categories: {
-    all: ['categories'] as const,
+    all: (projectId: number) => ['projects', projectId, 'categories'] as const,
     lists: (projectId: number) =>
-      [...QUERY_KEYS.categories.all, 'list', projectId] as const,
-    detail: (id: number) => [...QUERY_KEYS.categories.all, id] as const,
+      [...QUERY_KEYS.categories.all(projectId), 'list'] as const,
+    detail: (projectId: number, categoryId: number) =>
+      [...QUERY_KEYS.categories.all(projectId), categoryId] as const,
   },
   cards: {
     all: ['cards'] as const,

@@ -39,7 +39,7 @@ export default function CategoryList({ projectId }: { projectId: number }) {
   const [editColor, setEditColor] = useState(false)
 
   const { data: categoryList } = useQueryCategoryList(projectId)
-  console.log('categoryList', projectId)
+  console.log('categoryList', categoryList)
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values)
