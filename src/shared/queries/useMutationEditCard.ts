@@ -3,6 +3,8 @@ import {
   CompleteCardRequest,
   deleteCard,
   DeleteCardRequest,
+  progressCard,
+  ProgressCardRequest,
   updateCard,
   UpdateCardRequest,
 } from '@/services/card.service'
@@ -63,4 +65,28 @@ const useMutationCompleteCard = () => {
   })
 }
 
-export { useMutationDeleteCard, useMutationUpdateCard, useMutationCompleteCard }
+const useMutationInProgressCard = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<APIResponse<null>, Error, ProgressCardRequest>({
+    mutationFn: progressCard,
+    onSuccess: (_, { cardId }) => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.cards.detail(cardId),
+      })
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.cards.lists(),
+      })
+    },
+    onError: (error) => {
+      console.error('Error completing card:', error)
+    },
+  })
+}
+
+export {
+  useMutationDeleteCard,
+  useMutationUpdateCard,
+  useMutationCompleteCard,
+  useMutationInProgressCard,
+}

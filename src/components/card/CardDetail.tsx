@@ -8,27 +8,35 @@ import { Input } from '@/shared/ui/common/input'
 import { ActionButtons } from './ActionButtons'
 import { CategorySelect } from './meta/CategorySelect'
 import { AssigneeField } from './meta/AssigneeField'
-import { DateField } from './meta/DateField'
-import { ProjectField } from './meta/ProjectField'
+// import { ProjectField } from './meta/ProjectField'
 import { useQueryCardDetail } from '@/shared/queries/useQueryCardDetail'
-import { useMutationUpdateCard } from '@/shared/queries/useMutationUpdateCard'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useProjectId } from '@/shared/hooks/useProjectId'
+import { useMutationUpdateCard } from '@/shared/queries/useMutationEditCard'
+import { format } from 'date-fns'
+import { DateField } from './meta/DateField'
 
 interface CardDetailProps {
   mode?: 'view' | 'edit'
 }
 
-const formSchema = z.object({
-  title: z.string().min(1, '제목을 입력해주세요'),
-  content: z.string().min(1, '설명을 입력해주세요'),
-  startDate: z.date().optional(),
-  endDate: z.date().optional(),
-  categoryId: z.string(),
-})
+const formSchema = z
+  .object({
+    title: z.string().min(1, '제목을 입력해주세요'),
+    content: z.string().min(1, '설명을 입력해주세요'),
+    startDate: z.date({ required_error: '시작 날짜를 선택하세요' }),
+    endDate: z.date({ required_error: '종료 날짜를 선택하세요' }),
+    categoryId: z.string(),
+    categoryName: z.string().optional(),
+    categoryColor: z.string().optional(),
+  })
+  .refine((data) => data.endDate >= data.startDate, {
+    message: '종료 날짜는 시작 날짜보다 빠를 수 없습니다.',
+    path: ['endDate'],
+  })
 
 type FormValues = z.infer<typeof formSchema>
 
@@ -46,6 +54,7 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
   const {
     register,
     handleSubmit,
+    watch,
     setValue,
     formState: { isValid, errors },
     reset,
@@ -66,17 +75,33 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
   const updateCardMutation = useMutationUpdateCard()
   const card = cardDetail?.data
   const isComplete = card?.completeDate !== null
+
   useEffect(() => {
     if (card) {
       reset({
         title: card.title,
         content: card.content,
-        startDate: new Date(card?.startDate),
-        endDate: new Date(card?.endDate),
+        startDate: card.startDate
+          ? new Date(card.startDate.split('T')[0])
+          : undefined,
+        endDate: card.endDate
+          ? new Date(card.endDate.split('T')[0])
+          : undefined,
         categoryId: '',
+        categoryName: card.categoryName,
+        categoryColor: card.categoryColor,
       })
     }
   }, [card, reset])
+
+  const handleCategoryChange = useCallback(
+    (categoryId: string, categoryName: string, categoryColor: string) => {
+      setValue('categoryId', String(categoryId))
+      setValue('categoryName', categoryName)
+      setValue('categoryColor', categoryColor)
+    },
+    [setValue],
+  )
 
   const onSubmit = async (values: FormValues) => {
     if (!cardId || !projectId || !sectionId) return
@@ -108,9 +133,11 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
           onSubmit={handleSubmit(onSubmit)}
           className="bg-white rounded-card p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-5 md:space-y-6"
         >
-          {!isEdit && (
-            <ActionButtons isComplete={isComplete} cardId={parsedCardId} />
-          )}
+          <ActionButtons
+            isComplete={isComplete}
+            cardId={parsedCardId}
+            isEdit={isEdit}
+          />
 
           {/* Title */}
           {isEdit ? (
@@ -138,33 +165,32 @@ export default function CardDetail({ mode = 'view' }: CardDetailProps) {
             {isEdit ? (
               <DateField
                 isEdit={true}
-                startDate={
-                  card.startDate ? new Date(card.startDate) : undefined
+                startDate={watch('startDate')}
+                endDate={watch('endDate')}
+                displayEndDate={
+                  watch('endDate') ? format(watch('endDate'), 'M월 d일') : ''
                 }
-                endDate={card.endDate ? new Date(card.endDate) : undefined}
                 onRangeSelect={(range) => {
-                  setValue('startDate', range?.from)
-                  setValue('endDate', range?.to)
+                  setValue('startDate', range?.from ?? new Date(), {
+                    shouldValidate: true,
+                  })
+                  setValue('endDate', range?.to ?? new Date(), {
+                    shouldValidate: true,
+                  })
                 }}
-                displayEndDate={card.endDate}
               />
             ) : (
-              <DateField
-                isEdit={false}
-                startDate={new Date(card.startDate)}
-                endDate={new Date(card.endDate)}
-                displayEndDate={card.endDate}
-              />
+              <DateField isEdit={false} displayEndDate={card.endDate} />
             )}
-            <ProjectField
+            {/* <ProjectField
               projectName={card.nickName}
               projectCategory={card.categoryName}
-            />
+            /> */}
             <MetaInfoField label="카테고리" showDropdown={isEdit}>
               <CategorySelect
-                value={card.categoryName}
-                color={card.categoryColor}
-                onChange={(categoryId) => setValue('categoryId', categoryId)}
+                value={watch('categoryName') || card.categoryName}
+                color={watch('categoryColor') || card.categoryColor}
+                onChange={handleCategoryChange}
                 isEdit={isEdit}
                 projectId={projectId}
               />
