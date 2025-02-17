@@ -1,4 +1,7 @@
-import { useMutationDeleteSection } from '@/shared/queries/useMutationSection'
+import {
+  useMutationDeleteSection,
+  useMutationUpdateSection,
+} from '@/shared/queries/useMutationSection'
 import { Button } from '@/shared/ui/common/button'
 import { useModalStore } from '@/store/useModalStore'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -15,6 +18,7 @@ export default function UpdateSectionModal({ modalId }: { modalId: ModalKey }) {
   const { closeModal, getModalData } = useModalStore()
   const modalData = getModalData('update-section')
 
+  const updateSection = useMutationUpdateSection()
   const deleteSection = useMutationDeleteSection()
 
   console.log(modalData?.projectId)
@@ -30,9 +34,20 @@ export default function UpdateSectionModal({ modalId }: { modalId: ModalKey }) {
     },
   })
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values)
-    closeModal('update-section')
+    try {
+      if (modalData?.projectId && modalData?.sectionId) {
+        await updateSection.mutateAsync({
+          projectId: modalData?.projectId,
+          sectionId: modalData?.sectionId,
+          name: values.title,
+        })
+      }
+      closeModal('update-section')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const onDelete = async () => {
