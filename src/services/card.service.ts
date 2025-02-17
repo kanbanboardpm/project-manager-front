@@ -7,18 +7,43 @@ export interface FormData {
   startDate: Date | undefined
   endDate: Date | undefined
 }
+
+export interface Card {
+  cardId: number
+  sectionId: number
+  title: string
+  content: string
+  startDate: string
+  endDate: string
+  completedDate: string
+  categoryColor: string
+  categoryName: string
+  nickName: string
+  photoUrl: string
+}
 export interface CreateCardRequest {
   projectId: number
   sectionId: number
   categoryId: number
   title: string
   content: string | undefined
-  startDate: Date
-  endDate: Date
+  startDate: string
+  endDate: string
 }
 
-export const createCard = async (payload: CreateCardRequest) => {
-  const response = await axiosApi.post(`/cards`, payload)
+export const createCard = async ({
+  projectId,
+  sectionId,
+  categoryId,
+  title,
+  content,
+  startDate,
+  endDate,
+}: CreateCardRequest) => {
+  const response = await axiosApi.post(
+    `projects/${projectId}/sections/${sectionId}/cards`,
+    { categoryId, title, content, startDate, endDate },
+  )
   return response.data
 }
 

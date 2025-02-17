@@ -42,7 +42,7 @@ export default function CategoryList({ projectId }: { projectId: number }) {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editColor, setEditColor] = useState(false)
 
-  const { data: categoryList } = useQueryCategoryList({ projectId })
+  const { data: categoryList } = useQueryCategoryList(projectId)
   const updateCategory = useMutationUpdateCategory()
   const deleteCategory = useMutationDeleteCategory()
 

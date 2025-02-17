@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '../constants/queryKeys'
 import { APIResponse } from '../types/response'
 
-const useQueryCategoryList = ({ projectId }: { projectId: number }) => {
+const useQueryCategoryList = (projectId: number) => {
   const { data, isError } = useQuery<APIResponse<Category[]>>({
     queryKey: QUERY_KEYS.categories.lists(projectId),
     queryFn: async () => {

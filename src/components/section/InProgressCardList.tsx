@@ -1,13 +1,19 @@
-import { MOCK_CARD_LIST } from '@/shared/mock/card'
+import { useQueryCardList } from '@/shared/queries/useQueryCardList'
 import Card from '@/shared/ui/Card'
 import { Icon } from '@/shared/ui/Icon'
 import { useModalStore } from '@/store/useModalStore'
 import { useState } from 'react'
 
-export default function InProgressCardList() {
+export default function InProgressCardList({
+  projectId,
+}: {
+  projectId: number
+}) {
   const [isOpen, setIsOpen] = useState(false)
 
   const { openModal } = useModalStore()
+
+  const { data: cardList } = useQueryCardList(projectId)
 
   return (
     <div className="lg:w-[256px] flex flex-col gap-2">
@@ -25,8 +31,8 @@ export default function InProgressCardList() {
           isOpen ? 'max-h-[1000px] slide-down' : 'max-h-[89px] slide-up'
         }`}
       >
-        {MOCK_CARD_LIST.map((card, index) => {
-          return <Card {...card} key={`${card.title}-${index}`} />
+        {cardList?.data?.map((card) => {
+          return <Card key={card.cardId} projectId={projectId} {...card} />
         })}
         <div
           className="w-full h-[81px] bg-white flex justify-center items-center cursor-pointer rounded-card"

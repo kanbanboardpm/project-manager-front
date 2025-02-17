@@ -31,8 +31,8 @@ const formSchema = z
   .object({
     title: z.string().min(1),
     content: z.string(),
-    startDate: z.date({ required_error: '시작 날짜를 선택하세요' }),
-    endDate: z.date({ required_error: '종료 날짜를 선택하세요' }),
+    startDate: z.string({ required_error: '시작 날짜를 선택하세요' }),
+    endDate: z.string({ required_error: '종료 날짜를 선택하세요' }),
     section: z.string().min(1, '섹션 이름을 입력하세요'),
     category: z.string().min(1, '카테고리를 선택하세요'),
   })
@@ -60,8 +60,8 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
     defaultValues: {
       title: '',
       content: '',
-      startDate: undefined,
-      endDate: undefined,
+      startDate: '',
+      endDate: '',
       section: modalData?.sectionName ?? '',
       category: '',
     },
@@ -150,6 +150,7 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
                 >
                   <PopoverTrigger asChild>
                     <Button
+                      type="button"
                       className="w-[105px] md:w-[154px]  h-10"
                       variant="date"
                     >
@@ -163,9 +164,10 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
                   <PopoverContent>
                     <Calendar
                       mode="single"
-                      selected={startDate}
+                      selected={new Date(startDate)}
                       onSelect={(date) => {
-                        setValue('startDate', date as Date)
+                        if (date)
+                          setValue('startDate', format(date, 'yyyy-MM-dd'))
                         setIsOpenStartDateCalendar(false)
                       }}
                       initialFocus
@@ -182,6 +184,7 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
                 >
                   <PopoverTrigger asChild>
                     <Button
+                      type="button"
                       className="w-[105px] md:w-[154px]  h-10"
                       variant="date"
                     >
@@ -195,12 +198,13 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
                   <PopoverContent>
                     <Calendar
                       mode="single"
-                      selected={endDate}
+                      selected={new Date(endDate)}
                       onSelect={(date) => {
-                        setValue('endDate', date as Date)
+                        if (date)
+                          setValue('endDate', format(date, 'yyyy-MM-dd'))
                         setIsOpenEndDateCalendar(false)
                       }}
-                      disabled={(date) => date < startDate}
+                      disabled={(date) => date < new Date(startDate)}
                       initialFocus
                     />
                   </PopoverContent>
@@ -263,10 +267,16 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
             </div>
           </div>
           <div className="flex gap-3 justify-end">
-            <Button variant="modalOutline" onClick={() => closeModal(modalId)}>
+            <Button
+              type="button"
+              variant="modalOutline"
+              onClick={() => closeModal(modalId)}
+            >
               취소
             </Button>
-            <Button variant={isValid ? 'modal' : 'disabled'}>생성</Button>
+            <Button type="submit" variant={isValid ? 'modal' : 'disabled'}>
+              생성
+            </Button>
           </div>
         </form>
       </div>

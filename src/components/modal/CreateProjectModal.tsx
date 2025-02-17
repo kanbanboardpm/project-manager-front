@@ -3,6 +3,7 @@ import {
   CATEGORY_COLORS,
   UppercaseCategoryColor,
 } from '@/shared/constants/color'
+import { useMutationInviteProject } from '@/shared/queries/useMutationInviteProject'
 import { useMutationCreateProject } from '@/shared/queries/useMutationProject'
 import { Button } from '@/shared/ui/common/button'
 import { Icon } from '@/shared/ui/Icon'
@@ -38,14 +39,13 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
       color: 'BLUE',
     },
   })
+  const [memberList, setMemberList] = useState<string[]>([])
+  const [memberInput, setMemberInput] = useState('')
 
   const { closeModal } = useModalStore()
 
   const createProject = useMutationCreateProject()
-  // const inviteProject = useMutationInviteProject()
-
-  const [memberList, setMemberList] = useState<string[]>([])
-  const [memberInput, setMemberInput] = useState('')
+  const inviteProject = useMutationInviteProject()
 
   const isValidEmail = (email: string) => {
     return z.string().email().safeParse(email).success
@@ -53,9 +53,13 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await createProject.mutateAsync({
+      const result = await createProject.mutateAsync({
         name: values.name,
         color: values.color,
+      })
+      await inviteProject.mutateAsync({
+        projectId: result.id,
+        email: memberList,
       })
       closeModal('create-project')
     } catch (error) {

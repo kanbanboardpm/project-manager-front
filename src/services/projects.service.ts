@@ -13,7 +13,7 @@ export interface CreateProjectRequest {
 export interface UpdateProjectRequest {
   id: number
   name: string
-  // color: string
+  color: string
 }
 
 export interface GetProjectRequest {
@@ -35,10 +35,10 @@ export const createProject = async (
 
 export const updateProject = async ({
   id,
-  // color,
+  color,
   name,
 }: UpdateProjectRequest) => {
-  const response = await axiosApi.put(`/projects/${id}`, { name })
+  const response = await axiosApi.put(`/projects/${id}`, { name, color })
   return response.data
 }
 
