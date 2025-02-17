@@ -2,7 +2,8 @@ import { createBrowserRouter } from 'react-router-dom'
 
 import LoginPage from '@/components/auth/Login'
 import SignupPage from '@/components/auth/Signup'
-import CardDetail from '@/components/card/CardDetail'
+
+import CardDetailContainer from '@/components/card/CardDetailContainer'
 import CategoryContainer from '@/components/category/CategoryContainer'
 import HomePage from '@/components/home/Home'
 import NotificationPage from '@/components/inbox/NotificationPage'
@@ -88,11 +89,11 @@ const router = createBrowserRouter([
                 children: [
                   {
                     index: true,
-                    element: <CardDetail />,
+                    element: <CardDetailContainer />,
                   },
                   {
                     path: 'edit',
-                    element: <CardDetail mode="edit" />,
+                    element: <CardDetailContainer mode="edit" />,
                   },
                 ],
               },

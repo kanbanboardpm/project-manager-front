@@ -60,7 +60,7 @@ export function CategorySelect({
             }
           }}
         >
-          <SelectTrigger className="flex items-center justify-start gap-3 p-0 text-xs text-cardDate border-none min-w-[100px]">
+          <SelectTrigger className="flex items-center justify-start gap-3 p-0 h-auto text-xs text-cardDate border-none min-w-[100px]  ">
             <div
               className={`w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 rounded-full`}
               style={{ backgroundColor: color }}

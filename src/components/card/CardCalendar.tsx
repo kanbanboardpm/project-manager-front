@@ -8,6 +8,7 @@ import {
 } from '@/shared/ui/common/popover'
 import { Button } from '@/shared/ui/common/button'
 import { DateRange } from 'react-day-picker'
+import { ChevronDown } from 'lucide-react'
 
 interface DateRangePickerProps {
   startDate?: Date
@@ -33,6 +34,7 @@ export default function DateRangePicker({
               <span className="text-xs text-cardDate">
                 {safeEndDate ? format(safeEndDate, 'M월 d일') : '마감일 선택'}
               </span>
+              <ChevronDown className="h-4 w-4 opacity-50" stroke="#82CD47" />
             </div>
           </Button>
         </PopoverTrigger>
