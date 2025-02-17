@@ -87,12 +87,16 @@ export default function UpdateSectionModal({ modalId }: { modalId: ModalKey }) {
             </Button>
             <div className="flex gap-3 justify-end">
               <Button
+                type="button"
                 variant="modalOutline"
                 onClick={() => closeModal(modalId)}
               >
                 취소
               </Button>
-              <Button variant={`${isValid ? 'modal' : 'disabled'}`}>
+              <Button
+                type="submit"
+                variant={`${isValid ? 'modal' : 'disabled'}`}
+              >
                 수정
               </Button>
             </div>
