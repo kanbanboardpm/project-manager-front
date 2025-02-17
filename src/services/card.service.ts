@@ -4,8 +4,8 @@ import { APIResponse } from '@/shared/types/response'
 export interface FormData {
   title: string
   content: string
-  startDate?: Date
-  endDate?: Date
+  startDate: Date | undefined
+  endDate: Date | undefined
   categoryId: string
 }
 export interface CreateCardRequest {
@@ -46,6 +46,10 @@ export interface CompleteCardRequest {
   completeDate: string | null
 }
 
+export interface ProgressCardRequest {
+  cardId: number
+}
+
 export const createCard = async (payload: CreateCardRequest) => {
   const response = await axiosApi.post(`/cards`, payload)
   return response.data
@@ -75,10 +79,16 @@ export const completeCard = async ({
   cardId,
   completeDate,
 }: CompleteCardRequest): Promise<APIResponse<null>> => {
-  const response = await axiosApi.post(`/cards/${cardId}`, {
-    data: {
-      completeDate,
-    },
+  console.log(completeDate)
+  const response = await axiosApi.put(`/cards/${cardId}/complete`, {
+    completeDate,
   })
+  return response.data
+}
+
+export const progressCard = async ({
+  cardId,
+}: ProgressCardRequest): Promise<APIResponse<null>> => {
+  const response = await axiosApi.put(`/cards/${cardId}/progress`)
   return response.data
 }

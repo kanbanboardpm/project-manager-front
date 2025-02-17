@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { format } from 'date-fns'
+import { format, set } from 'date-fns'
 import { Calendar } from '@/shared/ui/common/calendar'
 import { Icon } from '@/shared/ui/Icon'
 import {
@@ -9,11 +8,10 @@ import {
 } from '@/shared/ui/common/popover'
 import { Button } from '@/shared/ui/common/button'
 import { DateRange } from 'react-day-picker'
-import { cn } from '@/shared/lib/utils'
 
 interface DateRangePickerProps {
-  startDate: Date | undefined
-  endDate: Date | undefined
+  startDate?: Date
+  endDate?: Date
   onRangeSelect: (range: DateRange | undefined) => void
 }
 
@@ -22,63 +20,42 @@ export default function DateRangePicker({
   endDate,
   onRangeSelect,
 }: DateRangePickerProps) {
-  const [calendarOpen, setCalendarOpen] = useState(false)
+  const safeStartDate = startDate ?? new Date()
+  const safeEndDate = endDate ?? new Date()
 
   return (
     <div className="flex items-center gap-2">
-      <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+      <Popover>
         <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            className={cn(
-              'justify-start text-left font-normal p-0 h-auto hover:bg-transparent',
-              !startDate && 'text-muted-foreground',
-            )}
-          >
+          <Button variant="ghost" className="p-0">
             <div className="flex items-center gap-2">
-              <Icon
-                icon="Calendar"
-                size={18}
-                color="gray"
-                className="sm:w-5 sm:h-5"
-              />
+              <Icon icon="Calendar" size={20} />
               <span className="text-xs text-cardDate">
-                {startDate ? (
-                  endDate ? (
-                    <>
-                      {format(startDate, 'yyyy-MM-dd')} ~{' '}
-                      {format(endDate, 'yyyy-MM-dd')}
-                    </>
-                  ) : (
-                    format(startDate, 'yyyy-MM-dd')
-                  )
-                ) : (
-                  '날짜를 선택하세요'
-                )}
+                {safeEndDate ? format(safeEndDate, 'M월 d일') : '마감일 선택'}
               </span>
-              <Icon
-                icon="ChevronDown"
-                size={12}
-                color="gray"
-                className="sm:w-5 sm:h-5"
-              />
             </div>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent>
           <Calendar
-            initialFocus
             mode="range"
-            defaultMonth={startDate}
-            selected={{
-              from: startDate,
-              to: endDate,
-            }}
+            defaultMonth={safeStartDate}
+            selected={{ from: safeStartDate, to: safeEndDate }}
             onSelect={(range) => {
-              onRangeSelect(range)
-              setCalendarOpen(false)
+              if (!range) return
+              onRangeSelect({
+                from: set(range.from ?? safeStartDate, {
+                  hours: 12,
+                  minutes: 0,
+                  seconds: 0,
+                }), // 정오 기준
+                to: set(range.to ?? safeEndDate, {
+                  hours: 12,
+                  minutes: 0,
+                  seconds: 0,
+                }), // 정오 기준
+              })
             }}
-            numberOfMonths={2}
           />
         </PopoverContent>
       </Popover>

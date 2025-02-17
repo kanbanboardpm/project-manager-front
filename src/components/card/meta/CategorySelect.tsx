@@ -1,11 +1,22 @@
 import { useQueryCategoryList } from '@/shared/queries/useQueryCategoryList'
 import { Category } from '@/services/category.service'
-import { useEffect } from 'react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/ui/common/select'
+import { useEffect, useMemo } from 'react'
 
 interface CategorySelectProps {
   value: string
   color: string
-  onChange: (categoryId: string) => void
+  onChange: (
+    categoryId: string,
+    categoryName: string,
+    categoryColor: string,
+  ) => void
   isEdit?: boolean
   projectId: number
 }
@@ -18,42 +29,59 @@ export function CategorySelect({
   projectId,
 }: CategorySelectProps) {
   const { data } = useQueryCategoryList(projectId)
+  const categories = useMemo(() => data?.data ?? [], [data])
+
   useEffect(() => {
-    const categories = data?.data ?? []
-    if (categories.length > 0 && value) {
-      const currentCategory = categories.find((cat) => cat.name === value)
-      if (currentCategory) {
-        onChange(currentCategory.id)
+    if (isEdit && value) {
+      const selectedCategory = categories.find((cat) => cat.name === value)
+      if (selectedCategory) {
+        onChange(
+          selectedCategory.id,
+          selectedCategory.name,
+          selectedCategory.color,
+        )
       }
     }
-  }, [data?.data, value, onChange])
+  }, [categories, value, isEdit, onChange])
 
   if (isEdit) {
-    const categories = data?.data ?? []
     return (
-      <div className="flex items-center gap-2">
-        <div
-          className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 rounded-full"
-          style={{ backgroundColor: color }}
-        />
-        <select
-          value={value}
-          onChange={(e) => {
-            const selectedCategory = categories.find(
-              (cat) => cat.name === e.target.value,
-            )
+      <div>
+        <Select
+          defaultValue={value}
+          onValueChange={(name) => {
+            const selectedCategory = categories.find((cat) => cat.name === name)
             if (selectedCategory) {
-              onChange(selectedCategory.id)
+              onChange(
+                selectedCategory.id,
+                selectedCategory.name,
+                selectedCategory.color,
+              )
             }
           }}
-          className="text-xs text-cardDate border-none focus:ring-0"
         >
-          {categories.map((category: Category) => (
-            <option key={category.id} value={category.name}>
-              {category.name}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="flex items-center justify-start gap-3 p-0 text-xs text-cardDate border-none min-w-[100px]">
+            <div
+              className={`w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 rounded-full`}
+              style={{ backgroundColor: color }}
+            />
+            <SelectValue>{value}</SelectValue>
+          </SelectTrigger>
+
+          <SelectContent className="w-auto min-w-[100px] ">
+            {categories.map((category: Category) => (
+              <SelectItem key={category.id} value={category.name}>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: category.color }}
+                  />
+                  {category.name}
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     )
   }
