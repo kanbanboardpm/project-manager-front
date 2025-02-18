@@ -27,7 +27,7 @@ const formSchema = z
     content: z.string().min(1, '설명을 입력해주세요'),
     startDate: z.date({ required_error: '시작 날짜를 선택하세요' }),
     endDate: z.date({ required_error: '종료 날짜를 선택하세요' }),
-    categoryId: z.string(),
+    categoryId: z.number(),
     categoryName: z.string().optional(),
     categoryColor: z.string().optional(),
   })
@@ -84,7 +84,7 @@ export default function CardContent({ projectId, mode }: CardContentProps) {
         endDate: card.endDate
           ? new Date(card.endDate.split('T')[0])
           : undefined,
-        categoryId: '',
+        categoryId: undefined,
         categoryName: card.categoryName,
         categoryColor: card.categoryColor,
       })
@@ -92,8 +92,8 @@ export default function CardContent({ projectId, mode }: CardContentProps) {
   }, [card, reset])
 
   const handleCategoryChange = useCallback(
-    (categoryId: string, categoryName: string, categoryColor: string) => {
-      setValue('categoryId', String(categoryId))
+    (categoryId: number, categoryName: string, categoryColor: string) => {
+      setValue('categoryId', categoryId)
       setValue('categoryName', categoryName)
       setValue('categoryColor', categoryColor)
     },
