@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getUser } from '@/services/user.service'
+import profileIcon from '@/assets/images/profile.png'
 interface UserProfileProps {
   isOpen: boolean
 }
@@ -19,7 +20,11 @@ export const UserProfile = ({ isOpen }: UserProfileProps) => {
         className={`flex items-center ${isOpen ? 'gap-3' : 'justify-center'}`}
       >
         <Link to="/profile" className={`${isOpen ? 'w-14 h-14' : 'w-8 h-8'}`}>
-          <img src={user.imageUrl} alt="프로필" className="rounded-full" />
+          {!user.imageUrl ? (
+            <img src={profileIcon} alt="프로필" className="rounded-full" />
+          ) : (
+            <img src={user.imageUrl} alt="프로필" className="rounded-full" />
+          )}
         </Link>
         <div className={`${isOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}>
           <Link to="/profile" className="font-medium">

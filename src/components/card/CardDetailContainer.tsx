@@ -1,14 +1,14 @@
 import { useProjectId } from '@/shared/hooks/useProjectId'
 import ProjectHeader from '../projectMain/ProjectHeader'
-import CardContent from './CardContent'
 import { useQueryProject } from '@/shared/queries/useQueryProject'
+import CardContentContainer from './CardContentContainer'
 
-interface CardDetailProps {
+interface CardDetailContainerProps {
   mode?: 'view' | 'edit'
 }
 export default function CardDetailContainer({
   mode = 'view',
-}: CardDetailProps) {
+}: CardDetailContainerProps) {
   const projectId = useProjectId()
   const { data: project } = useQueryProject(projectId)
 
@@ -16,7 +16,7 @@ export default function CardDetailContainer({
     return (
       <div className="min-h-screen bg-white w-full rounded-card">
         <ProjectHeader {...project?.data} />
-        <CardContent projectId={projectId} mode={mode} />
+        <CardContentContainer projectId={projectId} mode={mode} />
       </div>
     )
 }
