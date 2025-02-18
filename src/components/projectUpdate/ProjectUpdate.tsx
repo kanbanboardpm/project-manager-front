@@ -55,12 +55,11 @@ export default function ProjectUpdate({
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
     try {
       await updateProject.mutateAsync({
         id: projectId,
-        name: getValues('title'),
-        color: getValues('color'),
+        name: values.title,
+        color: values.color,
       })
       // await deleteMember.mutateAsync({projectid, email: deleteMemberList})
       navigate(`${currentProjectPath}`)

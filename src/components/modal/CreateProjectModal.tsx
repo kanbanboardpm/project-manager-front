@@ -103,6 +103,7 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
                 {...register('name')}
                 placeholder="프로젝트의 이름을 입력하세요"
                 className={`flex-1 ${errors.name ? 'border-warning' : ''} text-xs md:text-sm h-10`}
+                autoFocus
               />
             </div>
 

@@ -56,6 +56,7 @@ export default function CreateSectionModal({ modalId }: { modalId: ModalKey }) {
               placeholder="제목을 입력하세요"
               {...register('title')}
               className={`${errors.title ? 'border-warning' : ''} `}
+              autoFocus
             />
           </div>
           <div className="flex gap-3 justify-end">

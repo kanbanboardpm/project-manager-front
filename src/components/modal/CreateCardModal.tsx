@@ -124,6 +124,7 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
                 placeholder="제목을 입력하세요"
                 {...register('title')}
                 className={`flex-1 ${errors.title ? 'border-warning' : ''}  text-xs md:text-sm h-10`}
+                autoFocus
               />
             </div>
 

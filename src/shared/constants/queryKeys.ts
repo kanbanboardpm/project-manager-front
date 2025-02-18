@@ -28,6 +28,7 @@ export const QUERY_KEYS = {
   cards: {
     all: ['cards'] as const,
     lists: () => [...QUERY_KEYS.cards.all, 'list'] as const,
-    detail: (id: number) => [...QUERY_KEYS.cards.all, id] as const,
+    detail: (projectId: number, sectionId?: number) =>
+      [...QUERY_KEYS.cards.all, projectId, sectionId] as const,
   },
 } as const
