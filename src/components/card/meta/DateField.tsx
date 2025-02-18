@@ -3,7 +3,7 @@ import { Icon } from '@/shared/ui/Icon'
 import { format } from 'date-fns'
 
 import MetaInfoField from './MetaInfo'
-import DateRangePicker from '../CardCalendar'
+import DateRangePicker from './CardCalendar'
 
 interface DateFieldProps {
   isEdit: boolean
