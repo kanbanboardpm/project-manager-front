@@ -6,6 +6,7 @@ import CardDetail from '@/components/card/CardDetail'
 import CategoryContainer from '@/components/category/CategoryContainer'
 import HomePage from '@/components/home/Home'
 import NotificationPage from '@/components/inbox/NotificationPage'
+import LandingContainer from '@/components/landing/LandingContainer'
 import ProjectMainContainer from '@/components/projectMain/ProjectMainContainer'
 import ProjectUpdateContainer from '@/components/projectUpdate/ProjectUpdateContainer'
 import SectionContainer from '@/components/section/SectionContainer'
@@ -18,7 +19,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <div>랜딩 페이지</div>,
+        element: <LandingContainer />,
       },
     ],
   },
