@@ -11,11 +11,17 @@ import ProjectMainContainer from '@/components/projectMain/ProjectMainContainer'
 import ProjectUpdateContainer from '@/components/projectUpdate/ProjectUpdateContainer'
 import SectionContainer from '@/components/section/SectionContainer'
 import { AuthLayout, LandingLayout, MainLayout } from '@/layout/index'
+import ProtectedRoute from './ProtectedRoute'
+import PublicRoute from './PublicRoute'
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <LandingLayout />,
+    element: (
+      <PublicRoute>
+        <LandingLayout />
+      </PublicRoute>
+    ),
     children: [
       {
         index: true,
@@ -25,7 +31,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <AuthLayout />,
+    element: (
+      <PublicRoute>
+        <AuthLayout />
+      </PublicRoute>
+    ),
     children: [
       {
         path: 'login',
@@ -39,7 +49,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <MainLayout />,
+    element: (
+      <ProtectedRoute>
+        <MainLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: 'home',
