@@ -19,6 +19,7 @@ export default function CardListContainer({
         <div className="w-[283px] md:w-[453px] lg:w-[996px] mx-auto lg:flex-row lg:px-3 flex flex-col gap-3">
           <InProgressCardList
             projectId={projectId}
+            sectionId={sectionId}
             sectionCardList={sectionCardList}
           />
           <CompletedCardList

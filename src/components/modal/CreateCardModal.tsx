@@ -70,7 +70,6 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
   const projectId = useProjectId()
   const { data: sectionList } = useQuerySectionList(projectId)
   const { data: categoryList } = useQueryCategoryList(projectId)
-  console.log(categoryList?.data)
 
   const startDate = watch('startDate')
   const endDate = watch('endDate')
@@ -79,12 +78,6 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
   const createCard = useMutationCreateCard()
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
-    console.log('error: ', errors)
-    console.log(
-      'sectionId',
-      sectionList?.data?.find((section) => section.name === values.section)?.id,
-    )
     try {
       if (sectionList && categoryList) {
         await createCard.mutateAsync({
