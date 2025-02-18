@@ -3,7 +3,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import LoginPage from '@/components/auth/Login'
 import SignupPage from '@/components/auth/Signup'
 
-import CardDetailContainer from '@/components/card/CardDetailContainer'
+
 import CategoryContainer from '@/components/category/CategoryContainer'
 import HomePage from '@/components/home/Home'
 import NotificationPage from '@/components/inbox/NotificationPage'
@@ -14,6 +14,8 @@ import SectionContainer from '@/components/section/SectionContainer'
 import { AuthLayout, LandingLayout, MainLayout } from '@/layout/index'
 import ProtectedRoute from './ProtectedRoute'
 import PublicRoute from './PublicRoute'
+import CardDetailContainer from '@/components/card/CardDetailContainer'
+
 
 const router = createBrowserRouter([
   {

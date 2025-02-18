@@ -1,6 +1,7 @@
 import { useProjectId } from '@/shared/hooks/useProjectId'
 import { useQueryProject } from '@/shared/queries/useQueryProject'
 import ProjectHeader from '../projectMain/ProjectHeader'
+
 import CardContentContainer from './CardContentContainer'
 
 interface CardDetailContainerProps {

@@ -13,7 +13,7 @@ interface CategorySelectProps {
   value: string
   color: string
   onChange: (
-    categoryId: string,
+    categoryId: number,
     categoryName: string,
     categoryColor: string,
   ) => void
