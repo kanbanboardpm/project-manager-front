@@ -15,8 +15,8 @@ export interface Card {
   content: string
   startDate: string
   endDate: string
-  completedDate: string
-  categoryColor: string
+  completeDate: string | null
+  color: string
   categoryName: string
   nickName: string
   photoUrl: string

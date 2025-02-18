@@ -1,4 +1,5 @@
-import { useQueryCardList } from '@/shared/queries/useQueryCardList'
+import { Card as SectionCardProps } from '@/services/card.service'
+import { APIResponse } from '@/shared/types/response'
 import Card from '@/shared/ui/Card'
 import { Icon } from '@/shared/ui/Icon'
 import { useModalStore } from '@/store/useModalStore'
@@ -6,14 +7,14 @@ import { useState } from 'react'
 
 export default function InProgressCardList({
   projectId,
+  sectionCardList,
 }: {
   projectId: number
+  sectionCardList: APIResponse<SectionCardProps[]>
 }) {
   const [isOpen, setIsOpen] = useState(false)
 
   const { openModal } = useModalStore()
-
-  const { data: cardList } = useQueryCardList(projectId)
 
   return (
     <div className="lg:w-[256px] flex flex-col gap-2">
@@ -31,9 +32,11 @@ export default function InProgressCardList({
           isOpen ? 'max-h-[1000px] slide-down' : 'max-h-[89px] slide-up'
         }`}
       >
-        {cardList?.data?.map((card) => {
-          return <Card key={card.cardId} projectId={projectId} {...card} />
-        })}
+        {sectionCardList?.data
+          ?.filter((card) => card.completeDate === null)
+          .map((card) => {
+            return <Card key={card.cardId} projectId={projectId} {...card} />
+          })}
         <div
           className="w-full h-[81px] bg-white flex justify-center items-center cursor-pointer rounded-card"
           onClick={() => openModal('create-card')}

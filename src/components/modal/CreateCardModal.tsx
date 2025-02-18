@@ -70,6 +70,7 @@ export default function CreateCardModal({ modalId }: { modalId: ModalKey }) {
   const projectId = useProjectId()
   const { data: sectionList } = useQuerySectionList(projectId)
   const { data: categoryList } = useQueryCategoryList(projectId)
+  console.log(categoryList?.data)
 
   const startDate = watch('startDate')
   const endDate = watch('endDate')

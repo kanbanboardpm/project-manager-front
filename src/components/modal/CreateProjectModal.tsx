@@ -57,10 +57,12 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
         name: values.name,
         color: values.color,
       })
-      await inviteProject.mutateAsync({
-        projectId: result.id,
-        email: memberList,
-      })
+      if (memberList.length > 0) {
+        await inviteProject.mutateAsync({
+          projectId: result.id,
+          email: memberList,
+        })
+      }
       closeModal('create-project')
     } catch (error) {
       console.error(error)

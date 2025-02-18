@@ -7,7 +7,6 @@ import {
   useMutationDeleteProject,
   useMutationUpdateProject,
 } from '@/shared/queries/useMutationProject'
-import { useQueryProject } from '@/shared/queries/useQueryProject'
 import { Button } from '@/shared/ui/common/button'
 import { Input } from '@/shared/ui/common/input'
 import { Icon } from '@/shared/ui/Icon'
@@ -16,13 +15,18 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
+import { ProjectProps } from '../projectMain/ProjectHeader'
 
 const formSchema = z.object({
   title: z.string().min(1),
   color: z.string().min(1),
 })
 
-export default function ProjectUpdate({ projectId }: { projectId: number }) {
+export default function ProjectUpdate({
+  id: projectId,
+  name,
+  color,
+}: ProjectProps) {
   const [memberList, setMemberList] = useState<string[]>([])
   const [deleteMemberList, setDeleteMemberList] = useState<string[]>([])
   const [memberInput, setMemberInput] = useState('')
@@ -32,10 +36,8 @@ export default function ProjectUpdate({ projectId }: { projectId: number }) {
   const location = useLocation()
   const currentProjectPath = location.pathname.split('/').slice(0, 3).join('/')
 
-  const { data } = useQueryProject(projectId)
   const updateProject = useMutationUpdateProject()
   const deleteProject = useMutationDeleteProject()
-  const project = data?.data
 
   const {
     register,
@@ -47,8 +49,8 @@ export default function ProjectUpdate({ projectId }: { projectId: number }) {
     resolver: zodResolver(formSchema),
     mode: 'onChange',
     defaultValues: {
-      title: project?.name ?? '',
-      color: project?.color ?? '',
+      title: name ?? '',
+      color: color ?? '',
     },
   })
 
@@ -173,7 +175,8 @@ export default function ProjectUpdate({ projectId }: { projectId: number }) {
                     )
                   }
                   className={`w-4 h-4 md:w-6 md:h-6 rounded-card md:rounded-input transition-all hover:opacity-80 ${
-                    getValues('color') === key.toUpperCase() &&
+                    (getValues('color') === key.toUpperCase() ||
+                      getValues('color') === color) &&
                     'border-2 border-black'
                   }`}
                   style={{

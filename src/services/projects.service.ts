@@ -29,7 +29,7 @@ export interface Project {
 export const createProject = async (
   payload: CreateProjectRequest,
 ): Promise<Project> => {
-  const { data } = await axiosApi.post(`/projects`, payload)
+  const { data } = await axiosApi.post(`projects`, payload)
   return data
 }
 
@@ -43,6 +43,6 @@ export const updateProject = async ({
 }
 
 export const deleteProject = async ({ projectId }: GetProjectRequest) => {
-  const response = await axiosApi.delete(`/projects/${projectId}`)
+  const response = await axiosApi.delete(`projects/${projectId}`)
   return response.data
 }

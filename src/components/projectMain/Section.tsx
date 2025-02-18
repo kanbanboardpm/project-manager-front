@@ -20,6 +20,7 @@ export default function Section({
 
   const { openModal } = useModalStore()
   const { data: cardList } = useQueryCardList(projectId)
+  console.log(cardList?.data)
 
   const location = useLocation()
   const currentPath = location.pathname
@@ -47,9 +48,11 @@ export default function Section({
           isOpen ? 'max-h-[1000px] slide-down' : 'max-h-[89px] slide-up'
         }`}
       >
-        {cardList?.data?.map((card) => {
-          return <Card key={card.cardId} projectId={projectId} {...card} />
-        })}
+        {cardList?.data
+          ?.filter((card) => card.sectionId === sectionId)
+          .map((card) => {
+            return <Card key={card.cardId} projectId={projectId} {...card} />
+          })}
         <div
           className="w-full h-[81px] bg-white flex justify-center items-center cursor-pointer rounded-card"
           onClick={() => openModal('create-card', { sectionName })}
