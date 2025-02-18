@@ -20,7 +20,6 @@ export default function Section({
 
   const { openModal } = useModalStore()
   const { data: cardList } = useQueryCardList(projectId)
-  console.log(cardList?.data)
 
   const location = useLocation()
   const currentPath = location.pathname

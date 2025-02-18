@@ -6,7 +6,7 @@ import { APIResponse } from '../types/response'
 
 const useQuerySectionCardList = (projectId: number, sectionId: number) => {
   const { data, isError } = useQuery<APIResponse<Card[]>>({
-    queryKey: QUERY_KEYS.cards.all,
+    queryKey: QUERY_KEYS.cards.detail(sectionId),
     queryFn: async () => {
       const { data } = await axiosApi.get(
         `projects/${projectId}/sections/${sectionId}/cards`,

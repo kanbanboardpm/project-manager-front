@@ -21,7 +21,6 @@ export default function UpdateSectionModal({ modalId }: { modalId: ModalKey }) {
   const updateSection = useMutationUpdateSection()
   const deleteSection = useMutationDeleteSection()
 
-  console.log(modalData?.projectId)
   const {
     register,
     handleSubmit,
@@ -35,7 +34,6 @@ export default function UpdateSectionModal({ modalId }: { modalId: ModalKey }) {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
     try {
       if (modalData?.projectId && modalData?.sectionId) {
         await updateSection.mutateAsync({
@@ -56,7 +54,6 @@ export default function UpdateSectionModal({ modalId }: { modalId: ModalKey }) {
       sectionId: modalData?.sectionId,
       projectId: modalData?.projectId,
     })
-    console.log('섹션 삭제 완료', modalData)
   }
 
   return (
