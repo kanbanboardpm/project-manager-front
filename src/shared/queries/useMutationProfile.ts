@@ -7,8 +7,8 @@ const useMutationUpdateProfile = () => {
 
   return useMutation<APIResponse<null>, Error, UpdateProfileRequest>({
     mutationFn: updateProfile,
-    onSuccess: (user) => {
-      queryClient.setQueryData(['user'], user)
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] })
     },
     onError: (error) => {
       console.error('Error deleting card:', error)

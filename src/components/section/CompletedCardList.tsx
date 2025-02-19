@@ -11,7 +11,7 @@ export default function CompletedCardList({
   sectionCardList: APIResponse<SectionCardProps[]>
 }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 lg:min-w-[704px] ">
       <div className="font-semibold text-sm md:text-base pt-2">완료</div>
       <div className="flex flex-col gap-2">
         <div>
@@ -37,7 +37,7 @@ export default function CompletedCardList({
                 <div className="hidden lg:block lg:w-[104px]">
                   {card.categoryName}
                 </div>
-                <div className="w-[180px] md:w-[233px] lg:w-[230px] text-sm">
+                <div className="w-[180px] md:w-[233px] lg:w-[230px] text-sm truncate">
                   {card.title}
                 </div>
                 <div className="hidden lg:block lg:w-[170px] text-cardDate font-normal">
@@ -45,7 +45,7 @@ export default function CompletedCardList({
                   {format(card.endDate, 'yy.MM.dd.')}
                 </div>
                 <div className="w-[103px] md:w-[130px] lg:w-[130px] lg:text-sm font-semibold">
-                  {card.completeDate}
+                  {card.completeDate && format(card.completeDate, 'yyyy-MM-dd')}
                 </div>
                 <div className="hidden md:block md:w-[90px] lg:w-[70px] font-normal">
                   {card.nickName}
