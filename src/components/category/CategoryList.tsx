@@ -13,6 +13,7 @@ import { Icon } from '@/shared/ui/Icon'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
 import { z } from 'zod'
 import { COLORS } from '../modal/CreateProjectModal'
 
@@ -56,16 +57,24 @@ export default function CategoryList({ projectId }: { projectId: number }) {
         description: values.description,
         color: values.color,
       })
+      setEditingId(null)
+      toast.success('카테고리가 수정되었습니다')
     } catch (error) {
       console.error(error)
+      toast.error('오류가 발생하였습니다')
     }
-    setEditingId(null)
   }
 
   const onDelete = async () => {
-    await deleteCategory.mutateAsync({
-      categoryId: editingId as number,
-    })
+    try {
+      await deleteCategory.mutateAsync({
+        categoryId: editingId as number,
+      })
+      toast.success('카테고리가 삭제되었습니다')
+    } catch (error) {
+      console.error(error)
+      toast.error('오류가 발생하였습니다')
+    }
   }
 
   return (
@@ -95,7 +104,14 @@ export default function CategoryList({ projectId }: { projectId: number }) {
                   <button
                     type="button"
                     className="w-4 h-4 md:w-5 md:h-5 rounded-card ml-1.5 lg:ml-8"
-                    style={{ backgroundColor: getValues('color') }}
+                    style={{
+                      backgroundColor:
+                        CATEGORY_COLORS[
+                          getValues(
+                            'color',
+                          ).toLowerCase() as keyof typeof CATEGORY_COLORS
+                        ],
+                    }}
                     onClick={() => {
                       setEditColor(!editColor)
                     }}
@@ -200,7 +216,16 @@ export default function CategoryList({ projectId }: { projectId: number }) {
                     setEditingId(category.id as unknown as number)
                     setValue('name', category.name)
                     setValue('description', category.description)
-                    setValue('color', category.color as UppercaseCategoryColor)
+                    setValue(
+                      'color',
+                      Object.keys(CATEGORY_COLORS).find(
+                        (key) =>
+                          CATEGORY_COLORS[
+                            key as keyof typeof CATEGORY_COLORS
+                          ] === category.color,
+                      ) as UppercaseCategoryColor,
+                    )
+                    console.log(getValues('color'))
                   }}
                 >
                   <Icon

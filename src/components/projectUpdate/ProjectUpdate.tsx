@@ -3,6 +3,7 @@ import {
   CATEGORY_COLORS,
   UppercaseCategoryColor,
 } from '@/shared/constants/color'
+import { useMutationInviteProject } from '@/shared/queries/useMutationInviteProject'
 import {
   useMutationDeleteProject,
   useMutationUpdateProject,
@@ -14,8 +15,15 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { z } from 'zod'
 import { ProjectProps } from '../projectMain/ProjectHeader'
+
+interface Member {
+  email: string
+  photoUrl?: string
+  profileColor?: string
+}
 
 const formSchema = z.object({
   title: z.string().min(1),
@@ -27,7 +35,8 @@ export default function ProjectUpdate({
   name,
   color,
 }: ProjectProps) {
-  const [memberList, setMemberList] = useState<string[]>([])
+  const [memberList, setMemberList] = useState<Member[]>([])
+  console.log(memberList.map((member) => member.email))
   const [deleteMemberList, setDeleteMemberList] = useState<string[]>([])
   const [memberInput, setMemberInput] = useState('')
   // TODO: 1) 프로젝트 별 멤버 조회 후 상태 set 2) 멤버리스트 상태와 비교 3) 삭제된 멤버 프로젝트에서 제거 API
@@ -38,6 +47,9 @@ export default function ProjectUpdate({
 
   const updateProject = useMutationUpdateProject()
   const deleteProject = useMutationDeleteProject()
+  const inviteMember = useMutationInviteProject()
+
+  const colorList = Object.entries(CATEGORY_COLORS)
 
   const {
     register,
@@ -56,17 +68,21 @@ export default function ProjectUpdate({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
+      const emailList = memberList.map((member) => member.email)
       await updateProject.mutateAsync({
         id: projectId,
         name: values.title,
         color: values.color,
       })
+      await inviteMember.mutateAsync({ projectId, emailList })
       // await deleteMember.mutateAsync({projectid, email: deleteMemberList})
       navigate(`${currentProjectPath}`)
       setMemberList([])
       setDeleteMemberList([])
+      toast.success('프로젝트가 수정되었습니다')
     } catch (error) {
       console.error('Error updating project:', error)
+      toast.error('오류가 발생하였습니다')
     }
   }
 
@@ -74,19 +90,27 @@ export default function ProjectUpdate({
     return z.string().email().safeParse(email).success
   }
 
-  const addEmail = () => {
-    if (
-      memberInput &&
-      isValidEmail(memberInput) &&
-      !memberList.includes(memberInput)
-    ) {
-      setMemberList([...memberList, memberInput])
+  const addMember = () => {
+    if (memberList.some((member) => member.email === memberInput)) {
+      toast.warning('이미 초대된 멤버입니다')
+      return
+    } else if (memberInput && isValidEmail(memberInput)) {
+      const newMember: Member = {
+        email: memberInput,
+        profileColor:
+          Object.values(CATEGORY_COLORS)[
+            Math.floor(Math.random() * Object.values(CATEGORY_COLORS).length)
+          ],
+      }
+      setMemberList([...memberList, newMember])
       setMemberInput('')
     }
   }
 
   const removeEmail = (memberToRemove: string) => {
-    setMemberList(memberList.filter((member) => member !== memberToRemove))
+    setMemberList(
+      memberList.filter((member) => member.email !== memberToRemove),
+    )
     setDeleteMemberList([...deleteMemberList, memberToRemove])
   }
 
@@ -94,8 +118,10 @@ export default function ProjectUpdate({
     try {
       await deleteProject.mutateAsync({ projectId })
       navigate(`${currentProjectPath}`)
+      toast.success('프로젝트가 삭제되었습니다')
     } catch (error) {
       console.error('Error deleting project:', error)
+      toast.error('오류가 발생하였습니다')
     }
   }
 
@@ -122,6 +148,7 @@ export default function ProjectUpdate({
             <div className="w-full flex items-center gap-2 md:gap-4">
               <label className="whitespace-pre font-semibold">멤버 초대</label>
               <Input
+                value={memberInput}
                 onChange={(e) => setMemberInput(e.target.value)}
                 placeholder="이메일을 입력하여 프로젝트에 멤버를 추가하세요"
                 className="text-xs md:text-sm placeholder:text-xs placeholder:md:text-sm h-[30px] md:h-10"
@@ -130,7 +157,7 @@ export default function ProjectUpdate({
             <Button
               type="button"
               className={`${isValidEmail(memberInput) ? '' : 'bg-modalBorder'} `}
-              onClick={addEmail}
+              onClick={addMember}
               disabled={!isValidEmail(memberInput)}
             >
               <Icon icon="Plus" size={10} color="white" />
@@ -141,18 +168,29 @@ export default function ProjectUpdate({
             {memberList.map((member) => {
               return (
                 <div
-                  key={member}
+                  key={member.email}
                   className="flex items-center justify-between gap-2"
                 >
                   <div className="flex items-center gap-1 truncate">
-                    <img src={profileIcon} className="w-4 h-4 " />
-                    <span className="truncate text-xs">{member}</span>
+                    {member.photoUrl !== undefined ? (
+                      <img src={profileIcon} className="w-4 h-4 " />
+                    ) : (
+                      <div
+                        className="w-4 h-4 rounded-full text-white font-semibold flex items-center justify-center text-xs"
+                        style={{
+                          backgroundColor: member.profileColor,
+                        }}
+                      >
+                        {member.email.slice(0, 1).toUpperCase()}
+                      </div>
+                    )}
+                    <span className="truncate text-xs">{member.email}</span>
                   </div>
                   <Icon
                     icon="Close"
                     size={8}
                     className="fill-modalPlaceholder cursor-pointer"
-                    onClick={() => removeEmail(member)}
+                    onClick={() => removeEmail(member.email)}
                   />
                 </div>
               )
@@ -162,7 +200,7 @@ export default function ProjectUpdate({
           <div className="flex items-center gap-2 md:gap-4 h-10">
             <label className="whitespace-pre font-semibold">테마 색상</label>
             <div className="flex gap-1">
-              {Object.entries(CATEGORY_COLORS).map(([key, color]) => (
+              {colorList.map(([key, color]) => (
                 <button
                   key={key}
                   type="button"

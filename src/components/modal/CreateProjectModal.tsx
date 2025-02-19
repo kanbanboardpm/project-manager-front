@@ -11,6 +11,7 @@ import { useModalStore } from '@/store/useModalStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
 import { z } from 'zod'
 import { Input } from '../../shared/ui/common/input'
 import { ModalKey } from './ModalController'
@@ -64,8 +65,10 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
         })
       }
       closeModal('create-project')
+      toast.success('프로젝트가 생성되었습니다')
     } catch (error) {
       console.error(error)
+      toast.error('오류가 발생하였습니다')
     }
   }
 

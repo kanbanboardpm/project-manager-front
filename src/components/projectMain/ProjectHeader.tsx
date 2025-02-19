@@ -22,7 +22,7 @@ export default function ProjectHeader({
   const [memberListOpen, setMemberListOpen] = useState(false)
 
   return (
-    <div className="relative flex justify-between p-3 border-b border-bodyBorder bg-white rounded-tl-lg">
+    <div className="relative flex justify-between p-3 border-b border-bodyBorder bg-white">
       <div className="flex items-center gap-3">
         <div
           className="w-5 h-5 md:w-10 md:h-10 rounded-button"

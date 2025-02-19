@@ -9,6 +9,7 @@ import { Icon } from '@/shared/ui/Icon'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
 import { z } from 'zod'
 import { COLORS } from '../modal/CreateProjectModal'
 import CategoryList from './CategoryList'
@@ -46,8 +47,10 @@ export default function Category({ projectId }: { projectId: number }) {
         description: values.description,
         color: values.color,
       })
+      toast.success('카테고리가 생성되었습니다')
     } catch (error) {
       console.error('Error creating category:', error)
+      toast.error('에러가 발생하였습니다')
     } finally {
       setValue('name', '')
       setValue('description', '')

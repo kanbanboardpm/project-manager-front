@@ -1,9 +1,11 @@
+import { useMutationDeleteSection } from '@/shared/queries/useMutationSection'
 import { useQuerySection } from '@/shared/queries/useQuerySection'
 import { useQuerySectionList } from '@/shared/queries/useQuerySectionList'
 import { Button } from '@/shared/ui/common/button'
 import { Icon } from '@/shared/ui/Icon'
 import { useModalStore } from '@/store/useModalStore'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 interface PageProps {
   page: 'project' | 'section'
@@ -20,6 +22,21 @@ export default function SettingMenuBar({ page, projectId }: PageProps) {
 
   const { data: sectionList } = useQuerySectionList(projectId)
   const { data: section } = useQuerySection({ projectId, sectionId })
+  const deleteSection = useMutationDeleteSection()
+
+  const onDelete = async () => {
+    try {
+      await deleteSection.mutateAsync({
+        sectionId,
+        projectId,
+      })
+      navigate(`/project/${projectId}`)
+      toast.success('섹션이 삭제되었습니다')
+    } catch (error) {
+      console.error(error)
+      toast.error('오류가 발생하였습니다')
+    }
+  }
 
   return (
     <div className="px-3 py-2 md:py-2.5 flex justify-between border-b border-bodyBorder bg-white">
@@ -44,6 +61,7 @@ export default function SettingMenuBar({ page, projectId }: PageProps) {
           <Icon
             icon="Delete"
             className="w-3 h-3 md:w-[14px] md:h-[14px] fill-white"
+            onClick={onDelete}
           />
         </Button>
       </div>

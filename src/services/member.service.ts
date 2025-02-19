@@ -2,13 +2,16 @@ import axiosApi from '@/helper/api_helper'
 
 export interface InviteProjectRequest {
   projectId: number
-  email: string[]
+  emailList: string[]
 }
 
 export const inviteProject = async ({
   projectId,
-  email,
+  emailList,
 }: InviteProjectRequest) => {
-  const response = await axiosApi.post(`projects/invite/${projectId}`, email)
+  const response = await axiosApi.post(
+    `projects/invite/${projectId}`,
+    emailList,
+  )
   return response.data
 }
