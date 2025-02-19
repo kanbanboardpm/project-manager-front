@@ -1,67 +1,33 @@
-import profileIcon from '@/assets/images/profile.png'
-import { MOCK_PROJECT_LIST } from '@/shared/mock/projectList'
+import { useQueryProjectList } from '@/shared/queries/useQueryProjectList'
 import { Icon } from '@/shared/ui/Icon'
+// components/Sidebar.tsx
 import { useSidebarStore } from '@/store/sidebarStore'
-import { useModalStore } from '@/store/useModalStore'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { CreateProjectButton } from './CreateProjectButton'
+import { UserProfile } from './UserProfile'
 
 export default function Sidebar() {
   const { isOpen, setIsOpen } = useSidebarStore()
 
-  const { openModal } = useModalStore()
+  const { data } = useQueryProjectList()
 
   useEffect(() => {
     const handleResize = () => {
       const isDesktop = window.innerWidth >= 640
       setIsOpen(isDesktop)
     }
-    // 초기 실행
     handleResize()
-    // resize 이벤트 리스너 등록
     window.addEventListener('resize', handleResize)
-    // cleanup
     return () => window.removeEventListener('resize', handleResize)
   }, [setIsOpen])
 
   return (
     <aside
-      className={`p-2 bg-gradient-to-b from-white to-screenBg rounded-tr-lg flex flex-col h-[calc(100vh-64px)] transition-all duration-300 ease-in-out text-sm font-pretendard
-      ${isOpen ? 'w-64' : 'w-16 items-center'}`}
+      className={`p-2 bg-gradient-to-b from-white to-screenBg rounded-tr-lg flex flex-col h-[calc(100vh)] transition-all duration-300 ease-in-out text-sm font-pretendard
+      ${isOpen ? 'min-w-64 w-64' : 'w-16 items-center'}`}
     >
-      <div
-        className="p-4 sm:px-2"
-        onClick={() => {
-          openModal('create-project')
-        }}
-      >
-        <button
-          className={` bg-primary text-white rounded-button hover:bg-primary/80 transition-all duration-300 h-10
-          ${isOpen ? 'w-19 px-4' : 'w-7 h-7'}`}
-        >
-          <div
-            className={`flex  items-center w-full justify-center overflow-hidden`}
-          >
-            <Icon
-              icon="Plus"
-              size={10}
-              className={`transition-all duration-300 whitespace-nowrap   ${isOpen ? 'mr-1 opacity-100' : 'opacity-0 w-0'}`}
-            />
-            <span
-              className={`transition-all duration-300 whitespace-nowrap ${isOpen ? 'opacity-100' : 'opacity-0 w-0'}`}
-            >
-              프로젝트
-            </span>
-            <span
-              className={`text-center transition-all duration-300  ${isOpen ? 'opacity-0 w-0' : 'opacity-100 '}`}
-            >
-              <Icon icon="Plus" size={10} />
-            </span>
-          </div>
-        </button>
-      </div>
-
-      {/* 메인 네비게이션 */}
+      <CreateProjectButton isOpen={isOpen} />
       <nav className="flex-1">
         <ul className="space-y-1 px-3 border-b border-bodyBorder">
           <li>
@@ -111,15 +77,18 @@ export default function Sidebar() {
             </span>
           </div>
           {/* api 적용할때 반복문으로 수정 */}
-          <div className="space-y-2">
-            {MOCK_PROJECT_LIST.map((project) => {
+          <div className="">
+            {data?.data?.map((project) => {
               return (
                 <Link
                   key={project.id}
                   to={`/project/${project.id}`}
                   className={`flex items-center  p-2 hover:bg-gray-100 rounded-lg cursor-pointer ${isOpen ? 'gap-2' : ''}`}
                 >
-                  <div className="w-3.5 h-3.5 rounded-sm bg-red-500 min-w-[8px]"></div>
+                  <div
+                    className="w-3.5 h-3.5 rounded-sm min-w-[8px]"
+                    style={{ backgroundColor: project.color }}
+                  />
                   <span
                     className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${isOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}
                   >
@@ -131,26 +100,7 @@ export default function Sidebar() {
           </div>
         </div>
       </nav>
-
-      {/* 하단 프로필 영역 */}
-      <div className={`p-4 border-t border-gray-200 `}>
-        <div
-          className={`flex items-center ${isOpen ? 'gap-3' : 'justify-center'}`}
-        >
-          <Link
-            to="/profile"
-            className={` ${isOpen ? 'w-14 h-14' : 'w-8 h-8'}`}
-          >
-            <img src={profileIcon} alt="프로필" />
-          </Link>
-          <div className={`${isOpen ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}>
-            <Link to="/profile" className="font-medium">
-              강나연
-            </Link>
-            <div className={`text-xs text-gray-500 `}>yeonna18k@gmail.com</div>
-          </div>
-        </div>
-      </div>
+      <UserProfile isOpen={isOpen} />
     </aside>
   )
 }

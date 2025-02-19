@@ -1,14 +1,15 @@
 import { createBrowserRouter } from 'react-router-dom'
-
 import LoginPage from '@/components/auth/Login'
 import SignupPage from '@/components/auth/Signup'
-import CardDetail from '@/components/card/CardDetail'
+import CategoryContainer from '@/components/category/CategoryContainer'
 import HomePage from '@/components/home/Home'
 import NotificationPage from '@/components/inbox/NotificationPage'
 import ProjectMainContainer from '@/components/projectMain/ProjectMainContainer'
+import ProjectUpdateContainer from '@/components/projectUpdate/ProjectUpdateContainer'
 import SectionContainer from '@/components/section/SectionContainer'
-import { AuthLayout, MainLayout, LandingLayout } from '@/layout/index'
-import ProfilePage from '@/components/profile/Profile'
+import { AuthLayout, LandingLayout, MainLayout } from '@/layout/index'
+import CardDetailContainer from '@/components/card/CardDetailContainer'
+import ProfileContainer from '@/components/profile/ProfileContainer'
 
 const router = createBrowserRouter([
   {
@@ -49,30 +50,42 @@ const router = createBrowserRouter([
       },
       {
         path: 'profile',
-        element: <ProfilePage />,
+        element: <ProfileContainer />,
       },
+
       {
-        path: 'project',
+        path: 'project/:projectId',
         children: [
           {
-            path: ':projectId',
+            index: true,
             element: <ProjectMainContainer />,
           },
           {
-            path: ':projectId/section/:sectionId',
-            element: <SectionContainer />,
+            path: 'category',
+            element: <CategoryContainer />,
           },
           {
-            path: ':projectId/card/:cardId',
-            element: <CardDetail />,
+            path: 'update',
+            element: <ProjectUpdateContainer />,
           },
           {
-            path: ':projectId/card/:cardId/edit',
-            element: <CardDetail mode="edit" />,
-          },
-          {
-            path: ':projectId/card/:cardId/complete',
-            element: <CardDetail mode="complete" />,
+            path: 'section/:sectionId',
+            children: [
+              { index: true, element: <SectionContainer /> },
+              {
+                path: ':cardId', // 중첩 라우팅 유지
+                children: [
+                  {
+                    index: true,
+                    element: <CardDetailContainer />,
+                  },
+                  {
+                    path: 'edit',
+                    element: <CardDetailContainer mode="edit" />,
+                  },
+                ],
+              },
+            ],
           },
         ],
       },

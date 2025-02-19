@@ -1,7 +1,9 @@
+import { useMutationCreateSection } from '@/shared/queries/useMutationSection'
 import { Button } from '@/shared/ui/common/button'
 import { useModalStore } from '@/store/useModalStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 import { z } from 'zod'
 import { Input } from '../../shared/ui/common/input'
 import { ModalKey } from './ModalController'
@@ -23,10 +25,19 @@ export default function CreateSectionModal({ modalId }: { modalId: ModalKey }) {
     },
   })
 
+  const { projectId } = useParams()
   const { closeModal } = useModalStore()
+  const createSection = useMutationCreateSection()
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await createSection.mutateAsync({
+        projectId: projectId,
+        name: values.title,
+      })
+    } catch (error) {
+      console.error(error)
+    }
     closeModal('create-section')
   }
 
@@ -45,13 +56,20 @@ export default function CreateSectionModal({ modalId }: { modalId: ModalKey }) {
               placeholder="제목을 입력하세요"
               {...register('title')}
               className={`${errors.title ? 'border-warning' : ''} `}
+              autoFocus
             />
           </div>
           <div className="flex gap-3 justify-end">
-            <Button variant="modalOutline" onClick={() => closeModal(modalId)}>
+            <Button
+              type="button"
+              variant="modalOutline"
+              onClick={() => closeModal(modalId)}
+            >
               취소
             </Button>
-            <Button variant={`${isValid ? 'modal' : 'disabled'}`}>생성</Button>
+            <Button type="submit" variant={`${isValid ? 'modal' : 'disabled'}`}>
+              생성
+            </Button>
           </div>
         </form>
       </div>
