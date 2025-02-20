@@ -1,3 +1,4 @@
+import { useQueryMember } from '@/shared/queries/useQueryMember'
 import { Button } from '@/shared/ui/common/button'
 import { Icon } from '@/shared/ui/Icon'
 import { useState } from 'react'
@@ -20,6 +21,8 @@ export default function ProjectHeader({
   const currentProjectPath = location.pathname.split('/').slice(0, 3).join('/')
 
   const [memberListOpen, setMemberListOpen] = useState(false)
+
+  const { data: memberList } = useQueryMember(projectId)
 
   return (
     <div className="relative flex justify-between p-3 border-b border-bodyBorder bg-white">
@@ -46,7 +49,12 @@ export default function ProjectHeader({
         <Icon icon="Member" size={10} />
         멤버
       </Button>
-      {memberListOpen && <MemberList currentProjectPath={currentProjectPath} />}
+      {memberListOpen && (
+        <MemberList
+          currentProjectPath={currentProjectPath}
+          memberList={memberList}
+        />
+      )}
     </div>
   )
 }

@@ -1,4 +1,3 @@
-import profileIcon from '@/assets/images/profile.png'
 import {
   CATEGORY_COLORS,
   UppercaseCategoryColor,
@@ -15,6 +14,12 @@ import { toast } from 'react-toastify'
 import { z } from 'zod'
 import { Input } from '../../shared/ui/common/input'
 import { ModalKey } from './ModalController'
+
+export interface TempMember {
+  email: string
+  imageUrl?: string
+  profileColor?: string
+}
 
 export const COLORS = Object.keys(CATEGORY_COLORS).map((key) =>
   key.toUpperCase(),
@@ -40,13 +45,13 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
       color: 'BLUE',
     },
   })
-  const [memberList, setMemberList] = useState<string[]>([])
+  const [memberList, setMemberList] = useState<TempMember[]>([])
   const [memberInput, setMemberInput] = useState('')
 
   const { closeModal } = useModalStore()
 
   const createProject = useMutationCreateProject()
-  const inviteProject = useMutationInviteProject()
+  const inviteMember = useMutationInviteProject()
 
   const isValidEmail = (email: string) => {
     return z.string().email().safeParse(email).success
@@ -54,16 +59,19 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
+      const emailList = memberList.map((member) => member.email)
       const result = await createProject.mutateAsync({
         name: values.name,
         color: values.color,
       })
+      console.log(result)
       if (memberList.length > 0) {
-        await inviteProject.mutateAsync({
+        await inviteMember.mutateAsync({
           projectId: result.id,
-          email: memberList,
+          emailList,
         })
       }
+      setMemberList([])
       closeModal('create-project')
       toast.success('프로젝트가 생성되었습니다')
     } catch (error) {
@@ -72,19 +80,27 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
     }
   }
 
-  const addEmail = () => {
-    if (
-      memberInput &&
-      isValidEmail(memberInput) &&
-      !memberList.includes(memberInput)
-    ) {
-      setMemberList([...memberList, memberInput])
+  const addMember = () => {
+    if (memberList.some((member) => member.email === memberInput)) {
+      toast.warning('이미 초대된 멤버입니다')
+      return
+    } else if (memberInput && isValidEmail(memberInput)) {
+      const newMember: TempMember = {
+        email: memberInput,
+        profileColor:
+          Object.values(CATEGORY_COLORS)[
+            Math.floor(Math.random() * Object.values(CATEGORY_COLORS).length)
+          ],
+      }
+      setMemberList([...memberList, newMember])
       setMemberInput('')
     }
   }
 
   const removeEmail = (memberToRemove: string) => {
-    setMemberList(memberList.filter((member) => member !== memberToRemove))
+    setMemberList(
+      memberList.filter((member) => member.email !== memberToRemove),
+    )
   }
 
   return (
@@ -123,7 +139,7 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
               <Button
                 className={`${isValidEmail(memberInput) ? '' : 'bg-modalBorder'} `}
                 type="button"
-                onClick={addEmail}
+                onClick={addMember}
                 disabled={!isValidEmail(memberInput)}
               >
                 <Icon icon="Plus" size={10} color="white" />
@@ -134,18 +150,25 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
               {memberList.map((member) => {
                 return (
                   <div
-                    key={member}
+                    key={member.email}
                     className="flex items-center justify-between gap-2"
                   >
                     <div className="flex items-center gap-1 truncate">
-                      <img src={profileIcon} className="w-4 h-4 " />
-                      <span className="truncate text-xs">{member}</span>
+                      <div
+                        className="w-4 h-4 rounded-full text-white font-semibold flex items-center justify-center text-xs"
+                        style={{
+                          backgroundColor: member.profileColor,
+                        }}
+                      >
+                        {member.email.slice(0, 1).toUpperCase()}
+                      </div>
+                      <span className="truncate text-xs">{member.email}</span>
                     </div>
                     <Icon
                       icon="Close"
                       size={8}
                       className="fill-modalPlaceholder cursor-pointer"
-                      onClick={() => removeEmail(member)}
+                      onClick={() => removeEmail(member.email)}
                     />
                   </div>
                 )

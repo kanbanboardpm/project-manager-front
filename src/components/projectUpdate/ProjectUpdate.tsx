@@ -1,4 +1,4 @@
-import profileIcon from '@/assets/images/profile.png'
+import { Member } from '@/services/member.service'
 import {
   CATEGORY_COLORS,
   UppercaseCategoryColor,
@@ -8,22 +8,19 @@ import {
   useMutationDeleteProject,
   useMutationUpdateProject,
 } from '@/shared/queries/useMutationProject'
+import { useQueryMember } from '@/shared/queries/useQueryMember'
 import { Button } from '@/shared/ui/common/button'
 import { Input } from '@/shared/ui/common/input'
 import { Icon } from '@/shared/ui/Icon'
+import { useGetUser } from '@/store/useUserStore'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
+import { TempMember } from '../modal/CreateProjectModal'
 import { ProjectProps } from '../projectMain/ProjectHeader'
-
-interface Member {
-  email: string
-  photoUrl?: string
-  profileColor?: string
-}
 
 const formSchema = z.object({
   title: z.string().min(1),
@@ -35,8 +32,9 @@ export default function ProjectUpdate({
   name,
   color,
 }: ProjectProps) {
-  const [memberList, setMemberList] = useState<Member[]>([])
-  console.log(memberList.map((member) => member.email))
+  const { data: queryMemberList } = useQueryMember(projectId)
+
+  const [memberList, setMemberList] = useState<TempMember[]>([])
   const [deleteMemberList, setDeleteMemberList] = useState<string[]>([])
   const [memberInput, setMemberInput] = useState('')
   // TODO: 1) 프로젝트 별 멤버 조회 후 상태 set 2) 멤버리스트 상태와 비교 3) 삭제된 멤버 프로젝트에서 제거 API
@@ -49,7 +47,8 @@ export default function ProjectUpdate({
   const deleteProject = useMutationDeleteProject()
   const inviteMember = useMutationInviteProject()
 
-  const colorList = Object.entries(CATEGORY_COLORS)
+  const getUser = useGetUser()
+  const loggedInUser = getUser()
 
   const {
     register,
@@ -74,7 +73,9 @@ export default function ProjectUpdate({
         name: values.title,
         color: values.color,
       })
-      await inviteMember.mutateAsync({ projectId, emailList })
+      if (memberList.length > 0) {
+        await inviteMember.mutateAsync({ projectId, emailList })
+      }
       // await deleteMember.mutateAsync({projectid, email: deleteMemberList})
       navigate(`${currentProjectPath}`)
       setMemberList([])
@@ -91,11 +92,16 @@ export default function ProjectUpdate({
   }
 
   const addMember = () => {
+    if (deleteMemberList.includes(memberInput)) {
+      setDeleteMemberList(
+        deleteMemberList.filter((email) => email !== memberInput),
+      )
+    }
     if (memberList.some((member) => member.email === memberInput)) {
       toast.warning('이미 초대된 멤버입니다')
       return
     } else if (memberInput && isValidEmail(memberInput)) {
-      const newMember: Member = {
+      const newMember: TempMember = {
         email: memberInput,
         profileColor:
           Object.values(CATEGORY_COLORS)[
@@ -111,7 +117,9 @@ export default function ProjectUpdate({
     setMemberList(
       memberList.filter((member) => member.email !== memberToRemove),
     )
-    setDeleteMemberList([...deleteMemberList, memberToRemove])
+    if (!deleteMemberList.includes(memberToRemove)) {
+      setDeleteMemberList([...deleteMemberList, memberToRemove])
+    }
   }
 
   const onDelete = async () => {
@@ -124,6 +132,20 @@ export default function ProjectUpdate({
       toast.error('오류가 발생하였습니다')
     }
   }
+
+  useEffect(() => {
+    if (queryMemberList) {
+      const formattedMembers: TempMember[] = queryMemberList
+        .filter((member: Member) => member.email !== loggedInUser.email)
+        .map((member: Member) => ({
+          email: member.email,
+          imageUrl: member.image_url,
+          profileColor: null,
+        }))
+
+      setMemberList(formattedMembers)
+    }
+  }, [queryMemberList, loggedInUser])
 
   return (
     <div className="relative bg-white w-[307px] md:w-[400px] lg:w-[500px] h-auto rounded-modal pt-6 px-4 md:px-6 flex flex-col gap-4 mx-auto">
@@ -172,8 +194,11 @@ export default function ProjectUpdate({
                   className="flex items-center justify-between gap-2"
                 >
                   <div className="flex items-center gap-1 truncate">
-                    {member.photoUrl !== undefined ? (
-                      <img src={profileIcon} className="w-4 h-4 " />
+                    {member.imageUrl !== undefined ? (
+                      <img
+                        src={member.imageUrl}
+                        className="w-4 h-4 rounded-full"
+                      />
                     ) : (
                       <div
                         className="w-4 h-4 rounded-full text-white font-semibold flex items-center justify-center text-xs"
@@ -200,7 +225,7 @@ export default function ProjectUpdate({
           <div className="flex items-center gap-2 md:gap-4 h-10">
             <label className="whitespace-pre font-semibold">테마 색상</label>
             <div className="flex gap-1">
-              {colorList.map(([key, color]) => (
+              {Object.entries(CATEGORY_COLORS).map(([key, color]) => (
                 <button
                   key={key}
                   type="button"
