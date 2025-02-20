@@ -1,5 +1,6 @@
 import { Icon } from '@/shared/ui/Icon'
 import { TaskListResponse } from '@/services/task.service'
+import { Link } from 'react-router-dom'
 
 interface TaskListProps {
   taskData?: TaskListResponse
@@ -32,9 +33,9 @@ export default function TaskList({ taskData, onPageChange }: TaskListProps) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col   ">
-        {/* ✅ PC 버전 */}
+        {/*  PC 버전 */}
         <div className="hidden  lg:block ">
-          <div className="grid grid-cols-[180px_120px_120px_200px_160px] place-items-center  ">
+          <div className="grid grid-cols-[180px_120px_120px_200px_160px] place-items-center ">
             <div className="contents">
               <div className="w-full text-sm text-center py-1 border-b">
                 프로젝트
@@ -56,37 +57,43 @@ export default function TaskList({ taskData, onPageChange }: TaskListProps) {
             {tasks.map((task) => {
               const formatStartDate = task.startDate.split('T')[0]
               const formatEndDate = task.endDate.split('T')[0]
+              const cardId = task.id
+              const projectId = task.section.project.id
+              const sectionId = task.section.id
               return (
-                <div key={`pc-${task.id}`} className="contents ">
-                  <div className="flex gap-3 py-2 border-b">
+                <Link
+                  to={`/project/${projectId}/section/${sectionId}/${cardId}`}
+                  key={`pc-${task.id}`}
+                  className="contents"
+                >
+                  <div className="flex gap-3 py-1 ">
                     <div
                       className="w-6 h-6 rounded flex-shrink-0"
                       style={{ backgroundColor: task.section.project.color }}
                     />
-                    <span className="text-sm font-medium w-[120px] truncate overflow-hidden whitespace-nowrap">
+                    <span className="text-sm font-medium w-[120px]  truncate overflow-hidden whitespace-nowrap">
                       {task.section.project.name}
                     </span>
                   </div>
-
-                  <div className="text-sm font-medium text-center py-1 border-b">
+                  <div className="text-sm font-medium text-center py-1">
                     {task.section.project.name}
                   </div>
-                  <div className=" text-sm font-medium text-center py-1 border-b">
+                  <div className=" text-sm font-medium text-center py-1">
                     {task.category.name}
                   </div>
-                  <div className=" text-sm font-medium text-center py-1 border-b">
+                  <div className=" text-sm font-medium text-center py-1">
                     {task.title}
                   </div>
-                  <div className=" text-xs font-medium text-center py-1 border-b">
+                  <div className=" text-xs font-medium text-center py-1">
                     {`${formatStartDate} ~ ${formatEndDate}`}
                   </div>
-                </div>
+                </Link>
               )
             })}
           </div>
         </div>
 
-        {/* ✅ 태블릿 버전 */}
+        {/*  태블릿 버전 */}
         <div className="hidden md:block lg:hidden">
           <div className="grid grid-cols-[140px_140px_140px_140px] place-items-center">
             <div className="contents">
@@ -104,28 +111,38 @@ export default function TaskList({ taskData, onPageChange }: TaskListProps) {
               </div>
             </div>
 
-            {tasks.map((task) => (
-              <div key={`tablet-${task.id}`} className="contents">
-                <div className="flex items-center justify-center gap-3 py-2 border-b">
-                  <div
-                    className="w-6 h-6 rounded flex-shrink-0"
-                    style={{ backgroundColor: task.section.project.color }}
-                  />
-                  <span className="text-sm font-medium w-[120px] truncate overflow-hidden whitespace-nowrap">
-                    {task.section.project.name}
-                  </span>
-                </div>
-                <div className="text-sm font-medium text-center py-2 border-b  ">
-                  {task.section.name}
-                </div>
-                <div className="text-sm font-medium text-center py-2 border-b ">
-                  {task.title}
-                </div>
-                <div className="text-xs font-medium text-center py-2 border-b">
-                  {getDateDiff(task.endDate)}
-                </div>
-              </div>
-            ))}
+            {tasks.map((task) => {
+              const cardId = task.id
+              const projectId = task.section.project.id
+              const sectionId = task.section.id
+
+              return (
+                <Link
+                  to={`/project/${projectId}/section/${sectionId}/${cardId}`}
+                  key={`tablet-${task.id} `}
+                  className="contents"
+                >
+                  <div className="flex items-center justify-center gap-3 py-2">
+                    <div
+                      className="w-6 h-6 rounded flex-shrink-0"
+                      style={{ backgroundColor: task.section.project.color }}
+                    />
+                    <span className="text-sm font-medium w-[120px] truncate overflow-hidden whitespace-nowrap">
+                      {task.section.project.name}
+                    </span>
+                  </div>
+                  <div className="text-sm font-medium text-center py-2   ">
+                    {task.section.name}
+                  </div>
+                  <div className="text-sm font-medium text-center py-2  ">
+                    {task.title}
+                  </div>
+                  <div className="text-xs font-medium text-center py-2 ">
+                    {getDateDiff(task.endDate)}
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </div>
 
@@ -144,19 +161,28 @@ export default function TaskList({ taskData, onPageChange }: TaskListProps) {
               </div>
             </div>
 
-            {tasks.map((task) => (
-              <div key={`mobile-${task.id}`} className="contents">
-                <div className=" text-sm font-medium text-center py-2 border-b border-bodyBorder">
-                  {task.section.project.name}
-                </div>
-                <div className=" text-sm font-medium text-center py-2 border-b border-bodyBorder max-w-[120px] truncate overflow-hidden whitespace-nowrap">
-                  {task.title}
-                </div>
-                <div className="text-xs font-medium text-center py-2 border-b border-bodyBorder">
-                  {getDateDiff(task.endDate)}
-                </div>
-              </div>
-            ))}
+            {tasks.map((task) => {
+              const cardId = task.id
+              const projectId = task.section.project.id
+              const sectionId = task.section.id
+              return (
+                <Link
+                  to={`/project/${projectId}/section/${sectionId}/${cardId}`}
+                  key={`tablet-${task.id} `}
+                  className="contents"
+                >
+                  <div className=" text-sm font-medium text-center py-2 max-w-[120px] truncate overflow-hidden whitespace-nowrap ">
+                    {task.section.project.name}
+                  </div>
+                  <div className=" text-sm font-medium text-center py-2 max-w-[120px] truncate overflow-hidden whitespace-nowrap">
+                    {task.title}
+                  </div>
+                  <div className="text-xs font-medium text-center py-2">
+                    {getDateDiff(task.endDate)}
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </div>
 
