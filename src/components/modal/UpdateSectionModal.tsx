@@ -1,3 +1,7 @@
+import {
+  useMutationDeleteSection,
+  useMutationUpdateSection,
+} from '@/shared/queries/useMutationSection'
 import { Button } from '@/shared/ui/common/button'
 import { useModalStore } from '@/store/useModalStore'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -11,6 +15,12 @@ const formSchema = z.object({
 })
 
 export default function UpdateSectionModal({ modalId }: { modalId: ModalKey }) {
+  const { closeModal, getModalData } = useModalStore()
+  const modalData = getModalData('update-section')
+
+  const updateSection = useMutationUpdateSection()
+  const deleteSection = useMutationDeleteSection()
+
   const {
     register,
     handleSubmit,
@@ -19,15 +29,31 @@ export default function UpdateSectionModal({ modalId }: { modalId: ModalKey }) {
     resolver: zodResolver(formSchema),
     mode: 'onChange',
     defaultValues: {
-      title: 'Frontend',
+      title: modalData?.sectionName,
     },
   })
 
-  const { closeModal } = useModalStore()
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      if (modalData?.projectId && modalData?.sectionId) {
+        await updateSection.mutateAsync({
+          projectId: modalData?.projectId,
+          sectionId: modalData?.sectionId,
+          name: values.title,
+        })
+      }
+      closeModal('update-section')
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
-    closeModal('update-section')
+  const onDelete = async () => {
+    if (!modalData?.sectionId || !modalData?.projectId) return
+    await deleteSection.mutateAsync({
+      sectionId: modalData?.sectionId,
+      projectId: modalData?.projectId,
+    })
   }
 
   return (
@@ -45,14 +71,33 @@ export default function UpdateSectionModal({ modalId }: { modalId: ModalKey }) {
               placeholder="제목을 입력하세요"
               {...register('title')}
               className={`${errors.title ? 'border-warning' : ''} `}
+              autoFocus
             />
           </div>
-
-          <div className="flex gap-3 justify-end">
-            <Button variant="modalOutline" onClick={() => closeModal(modalId)}>
-              취소
+          <div className="flex justify-between">
+            <Button
+              variant="categoryDelete"
+              className="!px-6 !py-2"
+              type="button"
+              onClick={onDelete}
+            >
+              삭제
             </Button>
-            <Button variant={`${isValid ? 'modal' : 'disabled'}`}>수정</Button>
+            <div className="flex gap-3 justify-end">
+              <Button
+                type="button"
+                variant="modalOutline"
+                onClick={() => closeModal(modalId)}
+              >
+                취소
+              </Button>
+              <Button
+                type="submit"
+                variant={`${isValid ? 'modal' : 'disabled'}`}
+              >
+                수정
+              </Button>
+            </div>
           </div>
         </form>
       </div>

@@ -1,9 +1,17 @@
-import { MOCK_COMPLETE_CARD_LIST } from '@/shared/mock/card'
+import { Card as SectionCardProps } from '@/services/card.service'
+import { APIResponse } from '@/shared/types/response'
 import { format } from 'date-fns'
+import { Link } from 'react-router-dom'
 
-export default function CompletedCardList() {
+export default function CompletedCardList({
+  projectId,
+  sectionCardList,
+}: {
+  projectId: number
+  sectionCardList: APIResponse<SectionCardProps[]>
+}) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 lg:min-w-[704px] ">
       <div className="font-semibold text-sm md:text-base pt-2">완료</div>
       <div className="flex flex-col gap-2">
         <div>
@@ -17,14 +25,19 @@ export default function CompletedCardList() {
             </div>
           </div>
         </div>
-        {MOCK_COMPLETE_CARD_LIST.map((card) => {
-          return (
-            <div key={card.title}>
-              <div className="text-xs flex bg-white rounded-sm py-1.5 items-center text-center">
+        {sectionCardList?.data
+          ?.filter((card) => card.completeDate !== null)
+          .map((card) => {
+            return (
+              <Link
+                to={`/project/${projectId}/section/${card.sectionId}/${card.cardId}`}
+                key={card.title}
+                className="text-xs flex bg-white rounded-sm py-1.5 items-center text-center"
+              >
                 <div className="hidden lg:block lg:w-[104px]">
-                  {card.category}
+                  {card.categoryName}
                 </div>
-                <div className="w-[180px] md:w-[233px] lg:w-[230px] text-sm">
+                <div className="w-[180px] md:w-[233px] lg:w-[230px] text-sm truncate">
                   {card.title}
                 </div>
                 <div className="hidden lg:block lg:w-[170px] text-cardDate font-normal">
@@ -32,15 +45,14 @@ export default function CompletedCardList() {
                   {format(card.endDate, 'yy.MM.dd.')}
                 </div>
                 <div className="w-[103px] md:w-[130px] lg:w-[130px] lg:text-sm font-semibold">
-                  {format(card.completeDate, 'yyyy.MM.dd')}
+                  {card.completeDate && format(card.completeDate, 'yyyy-MM-dd')}
                 </div>
                 <div className="hidden md:block md:w-[90px] lg:w-[70px] font-normal">
-                  {card.userName}
+                  {card.nickName}
                 </div>
-              </div>
-            </div>
-          )
-        })}
+              </Link>
+            )
+          })}
       </div>
     </div>
   )

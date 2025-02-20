@@ -1,23 +1,5 @@
 import { Icon } from '@/shared/ui/Icon'
-
-interface Task {
-  id: string
-  projectName: string
-  projectColor: string
-  sectionName: string
-  title: string
-  content: string
-  startDate: string
-  endDate: string
-  category: string
-  completeDate?: string
-}
-
-interface TaskListResponse {
-  page: number
-  size: number
-  data: Task[]
-}
+import { TaskListResponse } from '@/services/task.service'
 
 interface TaskListProps {
   taskData?: TaskListResponse
@@ -25,13 +7,14 @@ interface TaskListProps {
 }
 
 export default function TaskList({ taskData, onPageChange }: TaskListProps) {
-  if (!taskData) {
+  if (!taskData?.content.length) {
     return (
       <div className="text-center py-10 text-gray-500">작업이 없습니다.</div>
     )
   }
 
-  const { data: tasks, page, size } = taskData
+  const { content: tasks, currentPage: page, totalPages } = taskData
+
   function getDateDiff(endDate: string): string {
     const today = new Date()
     const end = new Date(endDate)
@@ -48,59 +31,64 @@ export default function TaskList({ taskData, onPageChange }: TaskListProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-col">
-        {/* PC */}
-        <div className="hidden lg:block">
-          <div className="grid grid-cols-[180px_120px_120px_200px_160px]">
+      <div className="flex flex-col   ">
+        {/* ✅ PC 버전 */}
+        <div className="hidden  lg:block ">
+          <div className="grid grid-cols-[180px_120px_120px_200px_160px] place-items-center  ">
             <div className="contents">
-              <div className="text-sm text-center py-1 border-b border-bodyBorder">
+              <div className="w-full text-sm text-center py-1 border-b">
                 프로젝트
               </div>
-              <div className="text-sm text-center py-1 border-b border-bodyBorder">
+              <div className="w-full text-sm text-center py-1 border-b">
                 섹션
               </div>
-              <div className="text-sm text-center py-1 border-b border-bodyBorder">
+              <div className="w-full text-sm text-center py-1 border-b">
                 카테고리
               </div>
-              <div className="text-sm text-center py-1 border-b border-bodyBorder">
+              <div className="w-full text-sm text-center py-1 border-b">
                 카드
               </div>
-              <div className="text-sm text-center py-1 border-b border-bodyBorder">
+              <div className="w-full text-sm text-center py-1 border-b">
                 기간
               </div>
             </div>
 
-            {tasks.map((task) => (
-              <div key={`pc-${task.id}`} className="contents">
-                <div className="flex items-center px-6 gap-3 py-2 border-b border-bodyBorder">
-                  <div
-                    className="w-6 h-6 rounded flex-shrink-0"
-                    style={{ backgroundColor: task.projectColor }}
-                  />
-                  <span className="text-sm font-medium truncate">
-                    {task.projectName}
-                  </span>
+            {tasks.map((task) => {
+              const formatStartDate = task.startDate.split('T')[0]
+              const formatEndDate = task.endDate.split('T')[0]
+              return (
+                <div key={`pc-${task.id}`} className="contents ">
+                  <div className="flex gap-3 py-2 border-b">
+                    <div
+                      className="w-6 h-6 rounded flex-shrink-0"
+                      style={{ backgroundColor: task.section.project.color }}
+                    />
+                    <span className="text-sm font-medium w-[120px] truncate overflow-hidden whitespace-nowrap">
+                      {task.section.project.name}
+                    </span>
+                  </div>
+
+                  <div className="text-sm font-medium text-center py-1 border-b">
+                    {task.section.project.name}
+                  </div>
+                  <div className=" text-sm font-medium text-center py-1 border-b">
+                    {task.category.name}
+                  </div>
+                  <div className=" text-sm font-medium text-center py-1 border-b">
+                    {task.title}
+                  </div>
+                  <div className=" text-xs font-medium text-center py-1 border-b">
+                    {`${formatStartDate} ~ ${formatEndDate}`}
+                  </div>
                 </div>
-                <div className="text-sm font-medium text-center py-2 border-b border-bodyBorder">
-                  {task.sectionName}
-                </div>
-                <div className="text-sm font-medium text-center py-2 border-b border-bodyBorder">
-                  {task.category}
-                </div>
-                <div className="text-sm font-medium text-center py-2 border-b border-bodyBorder">
-                  {task.title}
-                </div>
-                <div className="text-xs font-medium text-center py-2 border-b border-bodyBorder">
-                  {`${task.startDate} ~ ${task.endDate}`}
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
 
-        {/* Tablet */}
+        {/* ✅ 태블릿 버전 */}
         <div className="hidden md:block lg:hidden">
-          <div className="grid grid-cols-[140px_140px_140px_140px]">
+          <div className="grid grid-cols-[140px_140px_140px_140px] place-items-center">
             <div className="contents">
               <div className="text-sm text-center py-1 border-b border-bodyBorder">
                 프로젝트
@@ -118,22 +106,22 @@ export default function TaskList({ taskData, onPageChange }: TaskListProps) {
 
             {tasks.map((task) => (
               <div key={`tablet-${task.id}`} className="contents">
-                <div className="flex items-center justify-center gap-3 py-2 border-b border-bodyBorder">
+                <div className="flex items-center justify-center gap-3 py-2 border-b">
                   <div
                     className="w-6 h-6 rounded flex-shrink-0"
-                    style={{ backgroundColor: task.projectColor }}
+                    style={{ backgroundColor: task.section.project.color }}
                   />
-                  <span className="text-sm font-medium truncate">
-                    {task.projectName}
+                  <span className="text-sm font-medium w-[120px] truncate overflow-hidden whitespace-nowrap">
+                    {task.section.project.name}
                   </span>
                 </div>
-                <div className="text-sm font-medium text-center py-2 border-b border-bodyBorder">
-                  {task.sectionName}
+                <div className="text-sm font-medium text-center py-2 border-b  ">
+                  {task.section.name}
                 </div>
-                <div className="text-sm font-medium text-center py-2 border-b border-bodyBorder">
+                <div className="text-sm font-medium text-center py-2 border-b ">
                   {task.title}
                 </div>
-                <div className="text-xs font-medium text-center py-2 border-b border-bodyBorder">
+                <div className="text-xs font-medium text-center py-2 border-b">
                   {getDateDiff(task.endDate)}
                 </div>
               </div>
@@ -141,9 +129,9 @@ export default function TaskList({ taskData, onPageChange }: TaskListProps) {
           </div>
         </div>
 
-        {/* Mobile */}
+        {/* ✅ 모바일 버전 */}
         <div className="block md:hidden">
-          <div className="grid grid-cols-[100px_120px_40px]">
+          <div className="grid grid-cols-[100px_120px_40px] place-items-center">
             <div className="contents">
               <div className="text-xs text-center py-1 border-b border-bodyBorder">
                 프로젝트
@@ -158,10 +146,10 @@ export default function TaskList({ taskData, onPageChange }: TaskListProps) {
 
             {tasks.map((task) => (
               <div key={`mobile-${task.id}`} className="contents">
-                <div className=" whitespace-nowrap text-ellipsis overflow-hidden text-sm font-medium text-center py-2 border-b border-bodyBorder">
-                  {task.projectName}
+                <div className=" text-sm font-medium text-center py-2 border-b border-bodyBorder">
+                  {task.section.project.name}
                 </div>
-                <div className="whitespace-nowrap text-ellipsis overflow-hidden text-sm font-medium text-center py-2 border-b border-bodyBorder ">
+                <div className=" text-sm font-medium text-center py-2 border-b border-bodyBorder max-w-[120px] truncate overflow-hidden whitespace-nowrap">
                   {task.title}
                 </div>
                 <div className="text-xs font-medium text-center py-2 border-b border-bodyBorder">
@@ -174,45 +162,47 @@ export default function TaskList({ taskData, onPageChange }: TaskListProps) {
 
         {/* Pagination */}
         <div className="flex justify-center py-3">
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-2">
             <button
-              className={`${page <= 1 ? 'opacity-40' : ''}`}
-              onClick={() => onPageChange(1)}
-              disabled={page <= 1}
+              className={`${page <= 0 ? 'opacity-40' : ''}`}
+              onClick={() => onPageChange(0)}
+              disabled={page <= 0}
             >
               <Icon icon="AngleDoubleLeft" size={10} />
             </button>
             <button
-              className={`${page <= 1 ? 'opacity-40' : ''}`}
+              className={`${page <= 0 ? 'opacity-40' : ''}`}
               onClick={() => onPageChange(page - 1)}
-              disabled={page <= 1}
+              disabled={page <= 0}
             >
               <Icon icon="AngleLeft" size={10} />
             </button>
-            <div className="flex items-center px-2 gap-3">
-              {Array.from({ length: size }, (_, i) => i + 1).map((num) => (
-                <span
+            {Array.from({ length: totalPages }, (_, i) => i)
+              .filter((num) =>
+                page < 5 ? num < 5 : num >= page - 2 && num <= page + 2,
+              )
+              .map((num) => (
+                <button
                   key={num}
-                  className={`text-xs font-medium cursor-pointer ${
-                    num === page ? 'text-primary' : 'text-black'
+                  className={`text-xs font-medium px-2 ${
+                    num === page ? 'text-primary font-bold' : 'text-black'
                   }`}
                   onClick={() => onPageChange(num)}
                 >
-                  {num}
-                </span>
+                  {num + 1}
+                </button>
               ))}
-            </div>
             <button
-              className={`${page >= size ? 'opacity-40' : ''}`}
+              className={`${page >= totalPages - 1 ? 'opacity-40' : ''}`}
               onClick={() => onPageChange(page + 1)}
-              disabled={page >= size}
+              disabled={page >= totalPages - 1}
             >
               <Icon icon="AngleRight" size={10} />
             </button>
             <button
-              className={`${page >= size ? 'opacity-40' : ''}`}
-              onClick={() => onPageChange(size)}
-              disabled={page >= size}
+              className={`${page >= totalPages - 1 ? 'opacity-40' : ''}`}
+              onClick={() => onPageChange(totalPages - 1)}
+              disabled={page >= totalPages - 1}
             >
               <Icon icon="AngleDoubleRight" size={10} />
             </button>

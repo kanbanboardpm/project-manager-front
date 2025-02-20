@@ -1,30 +1,35 @@
 import { createBrowserRouter } from 'react-router-dom'
-
 import LoginPage from '@/components/auth/Login'
 import SignupPage from '@/components/auth/Signup'
-import CardDetail from '@/components/card/CardDetail'
+import CardDetailContainer from '@/components/card/CardDetailContainer'
 import CategoryContainer from '@/components/category/CategoryContainer'
 import HomePage from '@/components/home/Home'
 import NotificationPage from '@/components/inbox/NotificationPage'
+import LandingContainer from '@/components/landing/LandingContainer'
 import ProjectMainContainer from '@/components/projectMain/ProjectMainContainer'
 import ProjectUpdateContainer from '@/components/projectUpdate/ProjectUpdateContainer'
 import SectionContainer from '@/components/section/SectionContainer'
-import { AuthLayout, LandingLayout, MainLayout } from '@/layout/index'
+import { AuthLayout, MainLayout } from '@/layout/index'
+import ProtectedRoute from './ProtectedRoute'
+import PublicRoute from './PublicRoute'
+import ProfileContainer from '@/components/profile/ProfileContainer'
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <LandingLayout />,
-    children: [
-      {
-        index: true,
-        element: <div>랜딩 페이지</div>,
-      },
-    ],
+    element: (
+      <PublicRoute>
+        <LandingContainer />
+      </PublicRoute>
+    ),
   },
   {
     path: '/',
-    element: <AuthLayout />,
+    element: (
+      <PublicRoute>
+        <AuthLayout />
+      </PublicRoute>
+    ),
     children: [
       {
         path: 'login',
@@ -38,7 +43,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <MainLayout />,
+    element: (
+      <ProtectedRoute>
+        <MainLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: 'home',
@@ -47,6 +56,10 @@ const router = createBrowserRouter([
       {
         path: 'inbox',
         element: <NotificationPage />,
+      },
+      {
+        path: 'profile',
+        element: <ProfileContainer />,
       },
 
       {
@@ -69,19 +82,15 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <SectionContainer /> },
               {
-                path: ':cardId', // 중첩 라우팅 유지
+                path: ':cardId',
                 children: [
                   {
                     index: true,
-                    element: <CardDetail />,
+                    element: <CardDetailContainer mode="view" />,
                   },
                   {
                     path: 'edit',
-                    element: <CardDetail mode="edit" />,
-                  },
-                  {
-                    path: 'complete',
-                    element: <CardDetail mode="complete" />,
+                    element: <CardDetailContainer mode="edit" />,
                   },
                 ],
               },
