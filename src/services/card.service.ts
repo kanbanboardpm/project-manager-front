@@ -63,6 +63,14 @@ export interface ProgressCardRequest {
   cardId: number
 }
 
+export interface Comments {
+  commentId: number
+  content: string
+  nickName: string
+  createAt: string
+  photoUrl: string
+}
+
 export const createCard = async ({
   projectId,
   sectionId,
@@ -114,5 +122,36 @@ export const progressCard = async ({
   cardId,
 }: ProgressCardRequest): Promise<APIResponse<null>> => {
   const response = await axiosApi.put(`/cards/${cardId}/progress`)
+  return response.data
+}
+
+export const createComment = async ({
+  cardId,
+  content,
+}: {
+  cardId: number
+  content: string
+}): Promise<APIResponse<null>> => {
+  const response = await axiosApi.post(`/cards/${cardId}/comments`, { content })
+  return response.data
+}
+
+export const editComment = async ({
+  commentId,
+  content,
+}: {
+  commentId: number
+  content: string
+}): Promise<APIResponse<null>> => {
+  const response = await axiosApi.put(`/comments/${commentId}`, { content })
+  return response.data
+}
+
+export const deleteComment = async ({
+  commentId,
+}: {
+  commentId: number
+}): Promise<APIResponse<null>> => {
+  const response = await axiosApi.delete(`/comments/${commentId}`)
   return response.data
 }

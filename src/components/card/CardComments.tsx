@@ -1,6 +1,7 @@
 import { useMutationUpdateCard } from '@/shared/queries/useMutationEditCard'
 import { Button } from '@/shared/ui/common/button'
 import { useNavigate } from 'react-router-dom'
+import CommentSection from './meta/CommentSection'
 
 type UpdateCardMutationType = ReturnType<typeof useMutationUpdateCard>
 
@@ -11,6 +12,7 @@ interface CardCommentsProps {
   cardId: number
   isValid: boolean
   updateCardMutation: UpdateCardMutationType
+  isComplete: boolean
 }
 
 export default function CardComments({
@@ -20,6 +22,7 @@ export default function CardComments({
   cardId,
   isValid,
   updateCardMutation,
+  isComplete,
 }: CardCommentsProps) {
   const navigate = useNavigate()
 
@@ -49,7 +52,7 @@ export default function CardComments({
             </Button>
           </div>
         ) : (
-          <div>댓글</div>
+          <CommentSection cardId={cardId} isComplete={isComplete} />
         )}
       </div>
     </>

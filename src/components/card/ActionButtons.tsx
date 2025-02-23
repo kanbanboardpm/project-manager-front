@@ -97,7 +97,10 @@ export function ActionButtons({
             <Icon icon="Setting" size={18} className="sm:w-5 sm:h-5" />
           </Link>
         )}
-        <button onClick={() => navigate(-1)} className="h-4 sm:w-5 sm:h-5">
+        <button
+          onClick={() => navigate(`/project/${projectId}`)}
+          className="h-4 sm:w-5 sm:h-5"
+        >
           <Icon icon="Home" size={18} />
         </button>
       </div>

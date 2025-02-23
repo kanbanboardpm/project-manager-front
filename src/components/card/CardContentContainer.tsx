@@ -151,6 +151,7 @@ export default function CardContentContainer({
         cardId={parsedCardId}
         isValid={isValid}
         updateCardMutation={updateCardMutation}
+        isComplete={isComplete}
       />
     </form>
   )

@@ -10,9 +10,11 @@ export function SectionField({ projectId, sectionId }: SectionFieldProps) {
   const { data: section } = useQuerySection({ projectId, sectionId })
   return (
     <MetaInfoField label="섹션">
-      <span className="text-xs sm:text-sm text-cardDate whitespace-nowrap overflow-hidden">
-        {section?.name}
-      </span>
+      <div className="px-1">
+        <span className="text-xs sm:text-sm text-cardDate whitespace-nowrap overflow-hidden">
+          {section?.name}
+        </span>
+      </div>
     </MetaInfoField>
   )
 }

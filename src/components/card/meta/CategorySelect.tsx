@@ -60,7 +60,7 @@ export function CategorySelect({
             }
           }}
         >
-          <SelectTrigger className="flex items-center justify-start gap-3 p-0 h-auto text-xs text-cardDate border-none min-w-[100px]  ">
+          <SelectTrigger className="flex items-center justify-start gap-5 px-2 h-auto text-xs text-cardDate border-none min-w-[100px]  ">
             <div
               className={`w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 rounded-full`}
               style={{ backgroundColor: color }}
@@ -71,7 +71,7 @@ export function CategorySelect({
           <SelectContent className="w-auto min-w-[100px] ">
             {categories.map((category: Category) => (
               <SelectItem key={category.id} value={category.name}>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center  gap-2">
                   <div
                     className="w-2 h-2 rounded-full"
                     style={{ backgroundColor: category.color }}
@@ -87,12 +87,12 @@ export function CategorySelect({
   }
 
   return (
-    <>
+    <div className="flex px-2 gap-5">
       <div
-        className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 rounded-full"
+        className=" w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 rounded-full"
         style={{ backgroundColor: color }}
       />
       <span className="text-xs text-cardDate">{value}</span>
-    </>
+    </div>
   )
 }
