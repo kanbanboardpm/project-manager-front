@@ -14,6 +14,7 @@ import { Button } from '@/shared/ui/common/button'
 import { Input } from '@/shared/ui/common/input'
 import { Icon } from '@/shared/ui/Icon'
 import { zodResolver } from '@hookform/resolvers/zod'
+import axios, { AxiosError } from 'axios'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
@@ -53,10 +54,9 @@ export default function CategoryList({
   const deleteCategory = useMutationDeleteCategory()
 
   const onUpdate = async (values: z.infer<typeof formSchema>) => {
-    console.log(editingId)
-    console.log(values)
     try {
       await updateCategory.mutateAsync({
+        projectId,
         categoryId: editingId as number,
         name: values.name,
         description: values.description,
@@ -65,20 +65,62 @@ export default function CategoryList({
       setEditingId(null)
       toast.success('카테고리가 수정되었습니다')
     } catch (error) {
-      console.error(error)
-      toast.error('오류가 발생하였습니다')
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{
+          statusCode: number
+          message: string
+          data: null
+        }>
+        if (axiosError.response?.data) {
+          const errorMessage = axiosError.response.data.message
+          if (
+            errorMessage === '프로젝트 내에서 카테고리명이 이미 존재합니다.'
+          ) {
+            toast.warning('이미 존재하는 카테고리 이름입니다.')
+          } else {
+            toast.error(`오류: ${errorMessage}`)
+          }
+        } else {
+          toast.error('서버 응답을 처리하는 중 오류가 발생했습니다.')
+        }
+      } else {
+        console.error('Error creating category:', error)
+        toast.error('예상치 못한 오류가 발생했습니다.')
+      }
     }
   }
 
   const onDelete = async () => {
     try {
       await deleteCategory.mutateAsync({
+        projectId,
         categoryId: editingId as number,
       })
       toast.success('카테고리가 삭제되었습니다')
     } catch (error) {
-      console.error(error)
-      toast.error('오류가 발생하였습니다')
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{
+          statusCode: number
+          message: string
+          data: null
+        }>
+        if (axiosError.response?.data) {
+          const errorMessage = axiosError.response.data.message
+          if (
+            errorMessage ===
+            '관련 된 카드를 제거해야 카테고리를 지울 수 있습니다.'
+          ) {
+            toast.warning('해당 카테고리에 카드가 존재합니다')
+          } else {
+            toast.error(`오류: ${errorMessage}`)
+          }
+        } else {
+          toast.error('서버 응답을 처리하는 중 오류가 발생했습니다.')
+        }
+      } else {
+        console.error('Error creating category:', error)
+        toast.error('예상치 못한 오류가 발생했습니다.')
+      }
     }
   }
 
@@ -223,14 +265,13 @@ export default function CategoryList({
                     setValue('description', category.description)
                     setValue(
                       'color',
-                      CATEGORY_COLOR_KEYS.find(
+                      (CATEGORY_COLOR_KEYS.find(
                         (key) =>
                           CATEGORY_COLORS[
                             key as keyof typeof CATEGORY_COLORS
                           ] === category.color,
-                      ) as UppercaseCategoryColor,
+                      )?.toUpperCase() as UppercaseCategoryColor) ?? 'BLUE',
                     )
-                    console.log(getValues('color'))
                   }}
                 >
                   <Icon

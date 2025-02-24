@@ -8,7 +8,7 @@ export const inviteProject = async ({
   projectId,
   emailList,
 }: InviteProjectRequest) => {
-  const response = await axiosApi.post(`projects/invite/${projectId}`, {
+  const response = await axiosApi.post(`projects/invites/${projectId}`, {
     emails: emailList,
   })
   return response.data

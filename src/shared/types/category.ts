@@ -16,8 +16,14 @@ export interface CreateCategoryRequest {
 }
 
 export interface UpdateCategoryRequest {
+  projectId: number
   categoryId: number
   name: string
   description: string
   color: UppercaseColorKeys
+}
+
+export interface DeleteCategoryRequest {
+  projectId: number
+  categoryId: number
 }

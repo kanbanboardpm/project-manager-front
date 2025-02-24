@@ -1,4 +1,5 @@
 export interface Member {
+  id: number
   email: string
   nickname: string
   image_url: string

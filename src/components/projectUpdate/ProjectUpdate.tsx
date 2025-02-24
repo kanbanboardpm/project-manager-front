@@ -3,12 +3,16 @@ import {
   CATEGORY_COLOR_VALUES,
   UppercaseCategoryColor,
 } from '@/shared/constants/color'
-import { useMutationInviteProject } from '@/shared/queries/useMutationInviteProject'
+import {
+  useMutationDeleteMember,
+  useMutationInviteProject,
+} from '@/shared/queries/useMutationMember'
 import {
   useMutationDeleteProject,
   useMutationUpdateProject,
 } from '@/shared/queries/useMutationProject'
 import { useQueryMember } from '@/shared/queries/useQueryMember'
+import { TempMember } from '@/shared/types/common'
 import { Member } from '@/shared/types/member'
 import { Project } from '@/shared/types/project'
 import { Button } from '@/shared/ui/common/button'
@@ -22,18 +26,24 @@ import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
-import { TempMember } from '../modal/CreateProjectModal'
 
 const formSchema = z.object({
   title: z.string().min(1),
   color: z.string().min(1),
 })
 
+interface DeleteMemberList {
+  userId?: number
+  email: string
+}
+
 export default function ProjectUpdate({ id: projectId, name, color }: Project) {
   const { data: queryMemberList } = useQueryMember({ projectId })
 
   const [memberList, setMemberList] = useState<TempMember[]>([])
-  const [deleteMemberList, setDeleteMemberList] = useState<string[]>([])
+  const [deleteMemberList, setDeleteMemberList] = useState<DeleteMemberList[]>(
+    [],
+  )
   const [memberInput, setMemberInput] = useState('')
   // TODO: 1) 프로젝트 별 멤버 조회 후 상태 set 2) 멤버리스트 상태와 비교 3) 삭제된 멤버 프로젝트에서 제거 API
 
@@ -46,6 +56,7 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
   const updateProject = useMutationUpdateProject()
   const deleteProject = useMutationDeleteProject()
   const inviteMember = useMutationInviteProject()
+  const deleteMember = useMutationDeleteMember()
 
   const getUser = useGetUser()
   const loggedInUser = getUser()
@@ -76,7 +87,12 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
       if (memberList.length > 0) {
         await inviteMember.mutateAsync({ projectId, emailList })
       }
-      // await deleteMember.mutateAsync({projectid, email: deleteMemberList})
+      if (deleteMemberList.length > 0) {
+        for (const member of deleteMemberList) {
+          if (member.userId)
+            await deleteMember.mutateAsync({ projectId, userId: member.userId })
+        }
+      }
       navigate(`${currentProjectPath}`)
       setMemberList([])
       setDeleteMemberList([])
@@ -92,9 +108,9 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
   }
 
   const addMember = () => {
-    if (deleteMemberList.includes(memberInput)) {
+    if (deleteMemberList.some((dm) => dm.email === memberInput)) {
       setDeleteMemberList(
-        deleteMemberList.filter((email) => email !== memberInput),
+        deleteMemberList.filter((dm) => dm.email !== memberInput),
       )
     }
     if (memberList.some((member) => member.email === memberInput)) {
@@ -113,12 +129,10 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
     }
   }
 
-  const removeEmail = (memberToRemove: string) => {
-    setMemberList(
-      memberList.filter((member) => member.email !== memberToRemove),
-    )
-    if (!deleteMemberList.includes(memberToRemove)) {
-      setDeleteMemberList([...deleteMemberList, memberToRemove])
+  const removeEmail = (member: DeleteMemberList) => {
+    setMemberList(memberList.filter((mem) => mem.email !== member.email))
+    if (!deleteMemberList.some((dm) => dm.userId === member.userId)) {
+      setDeleteMemberList([...deleteMemberList, member])
     }
   }
 
@@ -145,6 +159,7 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
       const formattedMembers: TempMember[] = queryMemberList
         .filter((member: Member) => member.email !== loggedInUser.email)
         .map((member: Member) => ({
+          id: member.id,
           email: member.email,
           imageUrl: member.image_url,
           profileColor: null,
@@ -222,7 +237,9 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
                     icon="Close"
                     size={8}
                     className="fill-modalPlaceholder cursor-pointer"
-                    onClick={() => removeEmail(member.email)}
+                    onClick={() =>
+                      removeEmail({ userId: member.id, email: member.email })
+                    }
                   />
                 </div>
               )

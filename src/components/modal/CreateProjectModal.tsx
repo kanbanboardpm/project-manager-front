@@ -4,8 +4,9 @@ import {
   CATEGORY_COLOR_VALUES,
   UppercaseCategoryColor,
 } from '@/shared/constants/color'
-import { useMutationInviteProject } from '@/shared/queries/useMutationInviteProject'
+import { useMutationInviteProject } from '@/shared/queries/useMutationMember'
 import { useMutationCreateProject } from '@/shared/queries/useMutationProject'
+import { TempMember } from '@/shared/types/common'
 import { Button } from '@/shared/ui/common/button'
 import { Icon } from '@/shared/ui/Icon'
 import { useModalStore } from '@/store/useModalStore'
@@ -16,12 +17,6 @@ import { toast } from 'react-toastify'
 import { z } from 'zod'
 import { Input } from '../../shared/ui/common/input'
 import { ModalKey } from './ModalController'
-
-export interface TempMember {
-  email: string
-  imageUrl?: string
-  profileColor?: string
-}
 
 export const COLORS = CATEGORY_COLOR_KEYS.map((key) => key.toUpperCase()) as [
   UppercaseCategoryColor,
