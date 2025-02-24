@@ -14,6 +14,7 @@ import { Input } from '@/shared/ui/common/input'
 import { Icon } from '@/shared/ui/Icon'
 import { useGetUser } from '@/store/useUserStore'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -42,6 +43,8 @@ export default function ProjectUpdate({
   const navigate = useNavigate()
   const location = useLocation()
   const currentProjectPath = location.pathname.split('/').slice(0, 3).join('/')
+
+  const queryClient = useQueryClient()
 
   const updateProject = useMutationUpdateProject()
   const deleteProject = useMutationDeleteProject()
@@ -125,8 +128,15 @@ export default function ProjectUpdate({
   const onDelete = async () => {
     try {
       await deleteProject.mutateAsync({ projectId })
-      navigate(`${currentProjectPath}`)
-      toast.success('프로젝트가 삭제되었습니다')
+      // 프로젝트 관련 쿼리 캐시 초기화
+      queryClient.removeQueries({ queryKey: ['project', projectId] })
+      queryClient.removeQueries({ queryKey: ['members', projectId] })
+
+      // 캐시 정리 후 홈으로 이동
+      setTimeout(() => {
+        navigate('/home')
+        toast.success('프로젝트가 삭제되었습니다')
+      }, 0)
     } catch (error) {
       console.error('Error deleting project:', error)
       toast.error('오류가 발생하였습니다')

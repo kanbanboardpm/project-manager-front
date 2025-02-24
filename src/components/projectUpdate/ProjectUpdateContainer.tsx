@@ -5,6 +5,7 @@ import ProjectUpdate from './ProjectUpdate'
 
 export default function ProjectUpdateContainer() {
   const projectId = useProjectId()
+  console.log(projectId)
   const { data: project } = useQueryProject(projectId)
 
   if (project?.data)

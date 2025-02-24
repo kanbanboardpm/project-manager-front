@@ -65,9 +65,9 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
         color: values.color,
       })
       console.log(result)
-      if (memberList.length > 0) {
+      if (memberList.length > 0 && result.data?.id) {
         await inviteMember.mutateAsync({
-          projectId: result.id,
+          projectId: result.data?.id,
           emailList,
         })
       }

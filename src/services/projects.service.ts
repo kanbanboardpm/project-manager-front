@@ -26,9 +26,7 @@ export interface Project {
   color: string
 }
 
-export const createProject = async (
-  payload: CreateProjectRequest,
-): Promise<Project> => {
+export const createProject = async (payload: CreateProjectRequest) => {
   const { data } = await axiosApi.post(`projects`, payload)
   return data
 }

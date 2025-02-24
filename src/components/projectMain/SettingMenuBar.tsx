@@ -34,7 +34,7 @@ export default function SettingMenuBar({ page, projectId }: PageProps) {
 
         <Button
           className="flex gap-0.5"
-          onClick={() => navigate(`project/${projectId}/category`)}
+          onClick={() => navigate(`/project/${projectId}/category`)}
         >
           <Icon
             icon="Category"
