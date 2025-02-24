@@ -1,13 +1,16 @@
 import { useSectionId } from '@/shared/hooks/useProjectId'
 import { useMutationDeleteSection } from '@/shared/queries/useMutationSection'
 import { useQuerySection } from '@/shared/queries/useQuerySection'
+import { ProjectSectionParams } from '@/shared/types/common'
 import { Button } from '@/shared/ui/common/button'
 import { Icon } from '@/shared/ui/Icon'
 import { useModalStore } from '@/store/useModalStore'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-export default function SectionNameBlock({ projectId }: { projectId: number }) {
+export default function SectionNameBlock({
+  projectId,
+}: Pick<ProjectSectionParams, 'projectId'>) {
   const navigate = useNavigate()
 
   const sectionId = useSectionId()

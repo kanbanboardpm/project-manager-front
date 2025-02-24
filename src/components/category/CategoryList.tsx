@@ -1,4 +1,6 @@
 import {
+  CATEGORY_COLOR_ENTRIES,
+  CATEGORY_COLOR_KEYS,
   CATEGORY_COLORS,
   UppercaseCategoryColor,
 } from '@/shared/constants/color'
@@ -7,6 +9,7 @@ import {
   useMutationUpdateCategory,
 } from '@/shared/queries/useMutationCategory'
 import { useQueryCategoryList } from '@/shared/queries/useQueryCategoryList'
+import { ProjectSectionParams } from '@/shared/types/common'
 import { Button } from '@/shared/ui/common/button'
 import { Input } from '@/shared/ui/common/input'
 import { Icon } from '@/shared/ui/Icon'
@@ -23,7 +26,9 @@ const formSchema = z.object({
   color: z.enum(COLORS),
 })
 
-export default function CategoryList({ projectId }: { projectId: number }) {
+export default function CategoryList({
+  projectId,
+}: Pick<ProjectSectionParams, 'projectId'>) {
   const {
     register,
     handleSubmit,
@@ -43,7 +48,7 @@ export default function CategoryList({ projectId }: { projectId: number }) {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editColor, setEditColor] = useState(false)
 
-  const { data: categoryList } = useQueryCategoryList(projectId)
+  const { data: categoryList } = useQueryCategoryList({ projectId })
   const updateCategory = useMutationUpdateCategory()
   const deleteCategory = useMutationDeleteCategory()
 
@@ -127,7 +132,7 @@ export default function CategoryList({ projectId }: { projectId: number }) {
                   <div
                     className={`${editColor ? 'block' : 'hidden'} border border-modalBorder bg-white p-0.5 rounded-card absolute top-5 md:top-6 z-50 left-1 lg:left-8 flex flex-col gap-0.5`}
                   >
-                    {Object.entries(CATEGORY_COLORS).map(([key, color]) => {
+                    {CATEGORY_COLOR_ENTRIES.map(([key, color]) => {
                       return (
                         <button
                           type="button"
@@ -218,7 +223,7 @@ export default function CategoryList({ projectId }: { projectId: number }) {
                     setValue('description', category.description)
                     setValue(
                       'color',
-                      Object.keys(CATEGORY_COLORS).find(
+                      CATEGORY_COLOR_KEYS.find(
                         (key) =>
                           CATEGORY_COLORS[
                             key as keyof typeof CATEGORY_COLORS

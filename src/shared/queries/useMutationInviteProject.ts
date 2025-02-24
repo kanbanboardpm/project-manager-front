@@ -1,7 +1,8 @@
-import { inviteProject, InviteProjectRequest } from '@/services/member.service'
+import { inviteProject } from '@/services/member.service'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { QUERY_KEYS } from '../constants/queryKeys'
+import { InviteProjectRequest } from '../types/member'
 import { APIResponse } from '../types/response'
 
 const useMutationInviteProject = () => {

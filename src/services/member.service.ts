@@ -1,19 +1,8 @@
 import axiosApi from '@/helper/api_helper'
-
-export interface Member {
-  email: string
-  nickname: string
-  image_url: string
-}
-export interface InviteProjectRequest {
-  projectId: number
-  emailList: string[]
-}
-
-export interface DeleteMemberRequest {
-  projectId: number
-  userId: number
-}
+import {
+  DeleteMemberRequest,
+  InviteProjectRequest,
+} from '@/shared/types/member'
 
 export const inviteProject = async ({
   projectId,

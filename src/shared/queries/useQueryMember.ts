@@ -1,8 +1,11 @@
 import axiosApi from '@/helper/api_helper'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '../constants/queryKeys'
+import { ProjectSectionParams } from '../types/common'
 
-const useQueryMember = (projectId: number) => {
+const useQueryMember = ({
+  projectId,
+}: Pick<ProjectSectionParams, 'projectId'>) => {
   const { data, isError } = useQuery({
     queryKey: QUERY_KEYS.members.all,
     queryFn: async () => {

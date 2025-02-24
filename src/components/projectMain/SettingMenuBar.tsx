@@ -1,13 +1,13 @@
 import { useQuerySectionList } from '@/shared/queries/useQuerySectionList'
+import { ProjectSectionParams } from '@/shared/types/common'
 import { Button } from '@/shared/ui/common/button'
 import { Icon } from '@/shared/ui/Icon'
 import { useModalStore } from '@/store/useModalStore'
 import { useNavigate } from 'react-router-dom'
 import SectionNameBlock from '../section/SectionNameBlock'
 
-interface PageProps {
+interface PageProps extends Pick<ProjectSectionParams, 'projectId'> {
   page: 'project' | 'section'
-  projectId: number
 }
 
 export default function SettingMenuBar({ page, projectId }: PageProps) {

@@ -1,5 +1,5 @@
 import { useProjectId } from '@/shared/hooks/useProjectId'
-import { useMutationCreateCard } from '@/shared/queries/useMutationCreateCard'
+import { useMutationCreateCard } from '@/shared/queries/useMutationCard'
 import { useQueryCategoryList } from '@/shared/queries/useQueryCategoryList'
 import { useQuerySectionList } from '@/shared/queries/useQuerySectionList'
 import { Button } from '@/shared/ui/common/button'

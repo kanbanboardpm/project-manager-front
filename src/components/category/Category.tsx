@@ -1,8 +1,10 @@
 import {
+  CATEGORY_COLOR_ENTRIES,
   CATEGORY_COLORS,
   UppercaseCategoryColor,
 } from '@/shared/constants/color'
 import { useMutationCreateCategory } from '@/shared/queries/useMutationCategory'
+import { ProjectSectionParams } from '@/shared/types/common'
 import { Button } from '@/shared/ui/common/button'
 import { Input } from '@/shared/ui/common/input'
 import { Icon } from '@/shared/ui/Icon'
@@ -20,7 +22,9 @@ const formSchema = z.object({
   color: z.enum(COLORS),
 })
 
-export default function Category({ projectId }: { projectId: number }) {
+export default function Category({
+  projectId,
+}: Pick<ProjectSectionParams, 'projectId'>) {
   const {
     register,
     handleSubmit,
@@ -111,7 +115,7 @@ export default function Category({ projectId }: { projectId: number }) {
           <div
             className={`${isOpenColor ? 'block' : 'hidden'} border border-modalBorder bg-white p-0.5 rounded-card absolute top-12 md:top-14 z-50 -left-1 flex flex-col gap-0.5`}
           >
-            {Object.entries(CATEGORY_COLORS).map(([key, color]) => {
+            {CATEGORY_COLOR_ENTRIES.map(([key, color]) => {
               return (
                 <button
                   key={key}

@@ -1,5 +1,7 @@
 import {
-  CATEGORY_COLORS,
+  CATEGORY_COLOR_ENTRIES,
+  CATEGORY_COLOR_KEYS,
+  CATEGORY_COLOR_VALUES,
   UppercaseCategoryColor,
 } from '@/shared/constants/color'
 import { useMutationInviteProject } from '@/shared/queries/useMutationInviteProject'
@@ -21,9 +23,10 @@ export interface TempMember {
   profileColor?: string
 }
 
-export const COLORS = Object.keys(CATEGORY_COLORS).map((key) =>
-  key.toUpperCase(),
-) as [UppercaseCategoryColor, ...UppercaseCategoryColor[]]
+export const COLORS = CATEGORY_COLOR_KEYS.map((key) => key.toUpperCase()) as [
+  UppercaseCategoryColor,
+  ...UppercaseCategoryColor[],
+]
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -88,8 +91,8 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
       const newMember: TempMember = {
         email: memberInput,
         profileColor:
-          Object.values(CATEGORY_COLORS)[
-            Math.floor(Math.random() * Object.values(CATEGORY_COLORS).length)
+          CATEGORY_COLOR_VALUES[
+            Math.floor(Math.random() * CATEGORY_COLOR_VALUES.length)
           ],
       }
       setMemberList([...memberList, newMember])
@@ -178,7 +181,7 @@ export default function CreateProjectModal({ modalId }: { modalId: ModalKey }) {
             <div className="flex items-center gap-2 md:gap-4">
               <label className="whitespace-pre">테마 색상</label>
               <div className="flex gap-1">
-                {Object.entries(CATEGORY_COLORS).map(([key, color]) => (
+                {CATEGORY_COLOR_ENTRIES.map(([key, color]) => (
                   <button
                     key={key}
                     type="button"

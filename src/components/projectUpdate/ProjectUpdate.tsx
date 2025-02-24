@@ -1,6 +1,6 @@
-import { Member } from '@/services/member.service'
 import {
-  CATEGORY_COLORS,
+  CATEGORY_COLOR_ENTRIES,
+  CATEGORY_COLOR_VALUES,
   UppercaseCategoryColor,
 } from '@/shared/constants/color'
 import { useMutationInviteProject } from '@/shared/queries/useMutationInviteProject'
@@ -9,6 +9,8 @@ import {
   useMutationUpdateProject,
 } from '@/shared/queries/useMutationProject'
 import { useQueryMember } from '@/shared/queries/useQueryMember'
+import { Member } from '@/shared/types/member'
+import { Project } from '@/shared/types/project'
 import { Button } from '@/shared/ui/common/button'
 import { Input } from '@/shared/ui/common/input'
 import { Icon } from '@/shared/ui/Icon'
@@ -21,19 +23,14 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
 import { TempMember } from '../modal/CreateProjectModal'
-import { ProjectProps } from '../projectMain/ProjectHeader'
 
 const formSchema = z.object({
   title: z.string().min(1),
   color: z.string().min(1),
 })
 
-export default function ProjectUpdate({
-  id: projectId,
-  name,
-  color,
-}: ProjectProps) {
-  const { data: queryMemberList } = useQueryMember(projectId)
+export default function ProjectUpdate({ id: projectId, name, color }: Project) {
+  const { data: queryMemberList } = useQueryMember({ projectId })
 
   const [memberList, setMemberList] = useState<TempMember[]>([])
   const [deleteMemberList, setDeleteMemberList] = useState<string[]>([])
@@ -107,8 +104,8 @@ export default function ProjectUpdate({
       const newMember: TempMember = {
         email: memberInput,
         profileColor:
-          Object.values(CATEGORY_COLORS)[
-            Math.floor(Math.random() * Object.values(CATEGORY_COLORS).length)
+          CATEGORY_COLOR_VALUES[
+            Math.floor(Math.random() * CATEGORY_COLOR_VALUES.length)
           ],
       }
       setMemberList([...memberList, newMember])
@@ -235,7 +232,7 @@ export default function ProjectUpdate({
           <div className="flex items-center gap-2 md:gap-4 h-10">
             <label className="whitespace-pre font-semibold">테마 색상</label>
             <div className="flex gap-1">
-              {Object.entries(CATEGORY_COLORS).map(([key, color]) => (
+              {CATEGORY_COLOR_ENTRIES.map(([key, color]) => (
                 <button
                   key={key}
                   type="button"

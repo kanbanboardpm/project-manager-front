@@ -1,27 +1,8 @@
 import axiosApi from '@/helper/api_helper'
-import { UppercaseColorKeys } from './projects.service'
-
-export interface Category {
-  projectId: number
-  id: number
-  name: string
-  description: string
-  color: string
-}
-
-interface CreateCategoryRequest {
-  projectId: number
-  name: string
-  description: string
-  color: UppercaseColorKeys
-}
-
-interface UpdateCategoryRequest {
-  categoryId: number
-  name: string
-  description: string
-  color: UppercaseColorKeys
-}
+import {
+  CreateCategoryRequest,
+  UpdateCategoryRequest,
+} from '@/shared/types/category'
 
 export const getAllCategories = async (projectNumber: number) => {
   try {

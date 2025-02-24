@@ -1,23 +1,29 @@
 import {
   createProject,
-  CreateProjectRequest,
   deleteProject,
-  GetProjectRequest,
   updateProject,
-  UpdateProjectRequest,
-} from '@/services/projects.service'
+} from '@/services/project.service'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '../constants/queryKeys'
+import {
+  CreateProjectRequest,
+  GetProjectRequest,
+  UpdateProjectRequest,
+} from '../types/project'
 import { APIResponse } from '../types/response'
 
-interface Data {
+interface CreateProjectResponse {
   id: number
 }
 
 const useMutationCreateProject = () => {
   const queryClient = useQueryClient()
 
-  return useMutation<APIResponse<Data>, Error, CreateProjectRequest>({
+  return useMutation<
+    APIResponse<CreateProjectResponse>,
+    Error,
+    CreateProjectRequest
+  >({
     mutationFn: createProject,
     onSuccess: () => {
       queryClient.invalidateQueries({
