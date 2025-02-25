@@ -2,7 +2,7 @@ import axiosApi from '@/helper/api_helper'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '../constants/queryKeys'
 import { APIResponse } from '../types/response'
-import { Comments } from '@/services/card.service'
+import { Comments } from '../types/card'
 
 const useQueryCommentList = (cardId: number) => {
   const { data, isError, isPending } = useQuery<APIResponse<Comments[]>>({
