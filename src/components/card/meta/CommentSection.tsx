@@ -108,6 +108,7 @@ export default function CommentSection({
       <div className="space-y-4">
         {comments?.map((comment) => {
           const isEditing = editingCommentId === comment.commentId
+          const isValid = loggedInUser.nickName === comment.nickName
           return (
             <div key={comment.commentId} className="flex gap-3 ">
               <img
@@ -155,7 +156,7 @@ export default function CommentSection({
               </div>
 
               {/* 수정 ✏️ / 삭제 🗑️ 버튼 */}
-              {!isComplete && !isEditing && (
+              {!isComplete && !isEditing && isValid && (
                 <div className="flex gap-2 ">
                   <button
                     onClick={() =>

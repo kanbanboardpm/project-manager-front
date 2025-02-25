@@ -38,4 +38,9 @@ export const QUERY_KEYS = {
     detail: (commentId: number) =>
       [...QUERY_KEYS.comments.all, 'detail', commentId] as const,
   },
+  password: {
+    all: ['password'] as const,
+    lists: (id: number) => [...QUERY_KEYS.password.all, 'list', id] as const,
+    detail: (id: number) => [...QUERY_KEYS.password.all, id] as const,
+  },
 } as const

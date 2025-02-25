@@ -1,6 +1,12 @@
 import axiosApi from '@/helper/api_helper'
 import { apiUrl } from '@/shared/constants/configure'
-import { LoginRequest, LoginResponse, SignupRequest } from '@/shared/types/auth'
+import {
+  LoginRequest,
+  LoginResponse,
+  SignupRequest,
+  PasswordRequest,
+  WithdrawalRequest,
+} from '@/shared/types/auth'
 
 export const postLogin = async (
   payload: LoginRequest,
@@ -25,4 +31,21 @@ export const postSignup = async (payload: SignupRequest) => {
   console.log('TEST:::', payload)
   const response = await axiosApi.post('/users', payload)
   return response?.data || {}
+}
+
+export const withdrawal = async ({ password }: WithdrawalRequest) => {
+  const response = await axiosApi.delete(`users/withdraw`, {
+    data: { password },
+  })
+  return response.data
+}
+
+export const confirmPassword = async ({ password }: PasswordRequest) => {
+  const response = await axiosApi.post(`users/password`, { password })
+  return response.data
+}
+
+export const updatePassword = async ({ password }: PasswordRequest) => {
+  const response = await axiosApi.put(`users/password`, { password })
+  return response.data
 }

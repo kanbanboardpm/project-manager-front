@@ -108,6 +108,7 @@ export function ActionButtons({
         <button
           onClick={() => navigate(`/project/${projectId}`)}
           className="h-4 sm:w-5 sm:h-5"
+          type="button"
         >
           <Icon icon="Home" size={18} />
         </button>

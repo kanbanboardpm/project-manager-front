@@ -12,3 +12,10 @@ export interface SignupRequest {
 export interface LoginResponse {
   token: string
 }
+
+export interface WithdrawalRequest {
+  password: string
+}
+export interface PasswordRequest {
+  password: string
+}
