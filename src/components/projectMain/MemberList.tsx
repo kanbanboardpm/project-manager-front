@@ -1,4 +1,4 @@
-import { Member } from '@/services/member.service'
+import { Member } from '@/shared/types/member'
 import { Icon } from '@/shared/ui/Icon'
 import { useGetUser } from '@/store/useUserStore'
 import { useNavigate } from 'react-router-dom'

@@ -10,7 +10,7 @@ export interface ProjectSectionParams {
 }
 
 export interface TempMember {
-  id?: number
+  userId?: number
   email: string
   imageUrl?: string
   profileColor?: string

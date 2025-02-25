@@ -7,7 +7,7 @@ const useQueryMember = ({
   projectId,
 }: Pick<ProjectSectionParams, 'projectId'>) => {
   const { data, isError } = useQuery({
-    queryKey: QUERY_KEYS.members.all,
+    queryKey: QUERY_KEYS.members.detail(projectId),
     queryFn: async () => {
       const { data } = await axiosApi.get(`projects/${projectId}/users`)
       return data.data
