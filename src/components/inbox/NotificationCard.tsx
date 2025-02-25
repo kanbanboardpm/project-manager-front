@@ -1,8 +1,7 @@
-import { acceptMember, getInviteProject } from '@/services/member.service'
 import { NotificationItem } from '@/shared/mock/inbox'
 import { Icon } from '@/shared/ui/Icon'
 import { Button } from '@/shared/ui/common/button'
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement } from 'react'
 
 interface NotificationCardProps {
   notification: NotificationItem
@@ -26,44 +25,25 @@ export default function NotificationCard({
   notification,
   showActions = false,
 }: NotificationCardProps): ReactElement {
-  const { type } = notification
-
-  const [data, setData] = useState<string[]>([])
-  useEffect(() => {
-    const getResult = async () => {
-      const result = await getInviteProject()
-      if (result.data) setData(result.data)
-    }
-    getResult()
-  }, [])
+  const { type, title, content } = notification
 
   return (
     <div className="flex flex-row items-start md:p-4 md:pl-8 p-3 pl-4 gap-2 md:gap-4 w-full bg-white shadow-md rounded-xl">
       <div className="flex-shrink-0">{getIconByType(type)}</div>
-      {data?.map((invite) => {
-        return (
-          <div key={invite} className="flex flex-col gap-1 md:gap-2 flex-grow">
-            <h3 className="font-bold text-xs md:text-sm ">{invite}</h3>
-            {/* <p className="font-bold text-xs md:text-sm ">{content}</p> */}
-            {showActions && (
-              <div className="flex justify-end gap-1 md:gap-2 mt-2">
-                <Button variant="categoryDelete" className="text-xs px-3 py-1">
-                  거절
-                </Button>
-                <Button
-                  variant="modal"
-                  className="text-xs px-3 py-1"
-                  onClick={() =>
-                    acceptMember({ inviteId: invite as unknown as number })
-                  }
-                >
-                  수락
-                </Button>
-              </div>
-            )}
+      <div className="flex flex-col gap-1 md:gap-2 flex-grow">
+        <h3 className="font-bold text-xs md:text-sm ">{title}</h3>
+        <p className="font-bold text-xs md:text-sm ">{content}</p>
+        {showActions && (
+          <div className="flex justify-end gap-1 md:gap-2 mt-2">
+            <Button variant="categoryDelete" className="text-xs px-3 py-1">
+              거절
+            </Button>
+            <Button variant="modal" className="text-xs px-3 py-1">
+              수락
+            </Button>
           </div>
-        )
-      })}
+        )}
+      </div>
       {type !== 'invite' && (
         <button className="p-1">
           <Icon

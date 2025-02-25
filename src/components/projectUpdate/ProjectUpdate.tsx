@@ -45,6 +45,7 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
   const [deleteMemberList, setDeleteMemberList] = useState<DeleteMemberList[]>(
     [],
   )
+  console.log(deleteMemberList)
   const [memberInput, setMemberInput] = useState('')
 
   const navigate = useNavigate()
@@ -133,8 +134,7 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
 
   const removeEmail = (member: DeleteMemberList) => {
     setMemberList(memberList.filter((mem) => mem.email !== member.email))
-    if (!deleteMemberList.some((dm) => dm.email === member.email)) {
-      // TODO: id 비교하는 걸로 수정
+    if (!deleteMemberList.some((dm) => dm.userId === member.userId)) {
       setDeleteMemberList([...deleteMemberList, member])
     }
   }
@@ -160,7 +160,7 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
       const formattedMembers: TempMember[] = queryMemberList
         .filter((member: Member) => member.email !== loggedInUser.email)
         .map((member: Member) => ({
-          userId: member.userId,
+          userId: member.id,
           email: member.email,
           imageUrl: member.image_url,
           profileColor: null,
