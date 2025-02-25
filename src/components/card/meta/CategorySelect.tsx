@@ -1,4 +1,4 @@
-import { Category } from '@/services/category.service'
+import { Category } from '@/shared/types/category'
 import {
   Select,
   SelectContent,

@@ -1,5 +1,5 @@
+import { TaskListResponse } from '@/shared/types/task'
 import { Icon } from '@/shared/ui/Icon'
-import { TaskListResponse } from '@/services/task.service'
 import { Link } from 'react-router-dom'
 
 interface TaskListProps {

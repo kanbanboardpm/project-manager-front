@@ -11,7 +11,7 @@ import CardHeader from './CardHeader'
 import CardDescription from './CardDescription'
 import CardComments from './CardComments'
 import { useQueryCategoryList } from '@/shared/queries/useQueryCategoryList'
-import { Category } from '@/services/category.service'
+import { Category } from '@/shared/types/category'
 
 interface CardContentContainerProps {
   mode: 'view' | 'edit'
@@ -58,7 +58,7 @@ export default function CardContentContainer({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
   })
-  const { data: categoriesData } = useQueryCategoryList(projectId)
+  const { data: categoriesData } = useQueryCategoryList({ projectId })
   const {
     data: cardDetail,
     isPending,

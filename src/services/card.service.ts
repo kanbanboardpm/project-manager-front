@@ -1,54 +1,12 @@
 import axiosApi from '@/helper/api_helper'
-import { CreateCardRequest } from '@/shared/types/card'
+import {
+  CompleteCardRequest,
+  CreateCardRequest,
+  DeleteCardRequest,
+  ProgressCardRequest,
+  UpdateCardRequest,
+} from '@/shared/types/card'
 import { APIResponse } from '@/shared/types/response'
-
-export interface FormData {
-  title: string
-  content: string
-  startDate: Date | undefined
-  endDate: Date | undefined
-  categoryId: number
-}
-
-export interface UpdateCardRequest {
-  cardId: number
-  data: FormData
-}
-
-export interface CardData {
-  id: number
-  title: string
-  content: string
-  startDate: string
-  endDate: string
-  completeDate: string | null
-  categoryColor: string
-  categoryName: string
-  nickName: string
-  photoUrl: string
-}
-
-export interface DeleteCardRequest {
-  cardId: number
-  projectId: number
-}
-
-export interface CompleteCardRequest {
-  cardId: number
-  completeDate: string | null
-}
-
-export interface ProgressCardRequest {
-  cardId: number
-}
-
-export interface Comments {
-  commentId: number
-  content: string
-  nickName: string
-  createAt: string
-  photoUrl: string
-}
 
 export const createCard = async ({
   projectId,

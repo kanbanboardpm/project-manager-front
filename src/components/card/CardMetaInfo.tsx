@@ -5,9 +5,9 @@ import { CategorySelect } from './meta/CategorySelect'
 import { UseFormSetValue, UseFormWatch, FieldErrors } from 'react-hook-form'
 import { FormValues } from './CardContentContainer'
 import { format } from 'date-fns'
-import { CardData } from '@/services/card.service'
 import { SectionField } from './meta/SectionField'
-import { Category } from '@/services/category.service'
+import { Category } from '@/shared/types/category'
+import { CardData } from '@/shared/types/card'
 
 interface CardMetaProps {
   watch: UseFormWatch<FormValues>
