@@ -1,4 +1,3 @@
-import { useQueryCategoryList } from '@/shared/queries/useQueryCategoryList'
 import { Category } from '@/services/category.service'
 import {
   Select,
@@ -7,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui/common/select'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 
 interface CategorySelectProps {
   value: string
@@ -19,6 +18,7 @@ interface CategorySelectProps {
   ) => void
   isEdit?: boolean
   projectId: number
+  categories: Category[]
 }
 
 export function CategorySelect({
@@ -26,11 +26,8 @@ export function CategorySelect({
   color,
   onChange,
   isEdit,
-  projectId,
+  categories,
 }: CategorySelectProps) {
-  const { data } = useQueryCategoryList(projectId)
-  const categories = useMemo(() => data?.data ?? [], [data])
-
   useEffect(() => {
     if (isEdit && value) {
       const selectedCategory = categories.find((cat) => cat.name === value)

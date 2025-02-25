@@ -10,6 +10,8 @@ import CardMetaInfo from './CardMetaInfo'
 import CardHeader from './CardHeader'
 import CardDescription from './CardDescription'
 import CardComments from './CardComments'
+import { useQueryCategoryList } from '@/shared/queries/useQueryCategoryList'
+import { Category } from '@/services/category.service'
 
 interface CardContentContainerProps {
   mode: 'view' | 'edit'
@@ -56,7 +58,7 @@ export default function CardContentContainer({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
   })
-
+  const { data: categoriesData } = useQueryCategoryList(projectId)
   const {
     data: cardDetail,
     isPending,
@@ -68,6 +70,7 @@ export default function CardContentContainer({
   })
   const updateCardMutation = useMutationUpdateCard()
   const card = cardDetail?.data
+  const categories: Category[] = categoriesData?.data ?? []
   const isComplete = card?.completeDate !== null
   useEffect(() => {
     if (card) {
@@ -89,12 +92,34 @@ export default function CardContentContainer({
 
   const handleCategoryChange = useCallback(
     (categoryId: number, categoryName: string, categoryColor: string) => {
-      setValue('categoryId', categoryId)
-      setValue('categoryName', categoryName)
-      setValue('categoryColor', categoryColor)
+      setValue('categoryId', categoryId, { shouldValidate: true })
+      setValue('categoryName', categoryName, { shouldValidate: true })
+      setValue('categoryColor', categoryColor, { shouldValidate: true })
     },
     [setValue],
   )
+
+  const resetForm = () => {
+    if (card) {
+      const selectedCategory = categories?.find(
+        (cat) => cat.name === card.categoryName,
+      )
+
+      reset({
+        title: card.title,
+        content: card.content,
+        startDate: card.startDate
+          ? new Date(card.startDate.split('T')[0])
+          : undefined,
+        endDate: card.endDate
+          ? new Date(card.endDate.split('T')[0])
+          : undefined,
+        categoryId: selectedCategory ? selectedCategory.id : undefined,
+        categoryName: card.categoryName,
+        categoryColor: card.categoryColor,
+      })
+    }
+  }
 
   const onSubmit = async (values: FormValues) => {
     if (!cardId || !projectId || !sectionId) return
@@ -137,6 +162,7 @@ export default function CardContentContainer({
         sectionId={parsedSectionId}
         projectId={projectId}
         handleCategoryChange={handleCategoryChange}
+        categories={categories}
       />
       <CardDescription
         register={register}
@@ -152,6 +178,7 @@ export default function CardContentContainer({
         isValid={isValid}
         updateCardMutation={updateCardMutation}
         isComplete={isComplete}
+        onCancel={resetForm}
       />
     </form>
   )

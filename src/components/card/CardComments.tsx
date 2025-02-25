@@ -13,6 +13,7 @@ interface CardCommentsProps {
   isValid: boolean
   updateCardMutation: UpdateCardMutationType
   isComplete: boolean
+  onCancel: () => void
 }
 
 export default function CardComments({
@@ -23,6 +24,7 @@ export default function CardComments({
   isValid,
   updateCardMutation,
   isComplete,
+  onCancel,
 }: CardCommentsProps) {
   const navigate = useNavigate()
 
@@ -34,9 +36,10 @@ export default function CardComments({
             <Button
               variant="modalOutline"
               type="button"
-              onClick={() =>
+              onClick={() => {
+                onCancel()
                 navigate(`/project/${projectId}/section/${sectionId}/${cardId}`)
-              }
+              }}
               disabled={updateCardMutation.isPending}
               className="h-7 sm:h-8 text-xs sm:text-sm"
             >
