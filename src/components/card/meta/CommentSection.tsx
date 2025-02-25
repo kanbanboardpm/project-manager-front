@@ -13,6 +13,7 @@ import {
 } from '@/shared/queries/useMutationComment'
 import { useQueryUser } from '@/shared/queries/useQueryUser'
 import { Icon } from '@/shared/ui/Icon'
+import { toast } from 'react-toastify'
 
 const formSchema = z.object({
   content: z.string().min(1, '댓글은 1글자 이상 입력해야 합니다.'),
@@ -55,9 +56,11 @@ export default function CommentSection({
   const handleDelete = async (commentId: number) => {
     try {
       await deleteCommentMutation.mutateAsync({ cardId, commentId })
+      toast.success('댓글이 삭제되었습니다')
       setEditingCommentId(null)
     } catch (error) {
       console.error('댓글 삭제 실패:', error)
+      toast.error('에러가 발생했습니다')
     }
   }
 
@@ -70,8 +73,10 @@ export default function CommentSection({
         content: editContent,
       })
       setEditingCommentId(null)
+      toast.success('댓글이 수정되었습니다.')
     } catch (error) {
       console.error('댓글 수정 실패:', error)
+      toast.error('오류가 발생하였습니다')
     }
   }
 
@@ -82,8 +87,10 @@ export default function CommentSection({
         content: values.content,
       })
       reset()
+      toast.success('댓글이 생성되었습니다')
     } catch (error) {
       console.error('댓글 저장 실패:', error)
+      toast.error('오류가 발생하였습니다')
     }
   }
 
@@ -101,6 +108,7 @@ export default function CommentSection({
       {/* 댓글 목록 */}
       <div className="space-y-4">
         {comments?.map((comment) => {
+          const isEditing = editingCommentId === comment.commentId
           return (
             <div key={comment.commentId} className="flex gap-3 ">
               <img
@@ -118,7 +126,7 @@ export default function CommentSection({
                   </span>
                 </div>
 
-                {editingCommentId === comment.commentId ? (
+                {isEditing ? (
                   <div className="flex gap-2 justify-center items-center">
                     <Input
                       type="text"
@@ -148,7 +156,7 @@ export default function CommentSection({
               </div>
 
               {/* 수정 ✏️ / 삭제 🗑️ 버튼 */}
-              {!isComplete && (
+              {!isComplete && !isEditing && (
                 <div className="flex gap-2 ">
                   <button
                     onClick={() =>
@@ -175,7 +183,10 @@ export default function CommentSection({
 
       {/* 새 댓글 입력 */}
       {!isComplete && (
-        <div className="flex gap-3 pt-2 justify-center items-center">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex gap-3 pt-2 justify-center items-center"
+        >
           <img
             src={user?.image_url}
             alt="User Profile"
@@ -190,7 +201,7 @@ export default function CommentSection({
           <Button onClick={handleSubmit(onSubmit)} disabled={!isValid}>
             등록
           </Button>
-        </div>
+        </form>
       )}
     </div>
   )

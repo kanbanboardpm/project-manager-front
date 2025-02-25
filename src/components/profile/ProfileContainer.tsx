@@ -7,6 +7,7 @@ import ProfileForm from './ProfileForm'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AxiosError } from 'axios'
+import { toast } from 'react-toastify'
 
 const DEFAULT_IMAGE_URL =
   'https://img1.daumcdn.net/thumb/R1280x0/?fname=http://t1.daumcdn.net/brunch/service/user/7r5X/image/9djEiPBPMLu_IvCYyvRPwmZkM1g.jpg'
@@ -47,6 +48,7 @@ export default function ProfileContainer() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await updateProfileMutation.mutateAsync(values)
+      toast.success('프로필이 수정되었습니다')
       navigate('/home')
     } catch (error: unknown) {
       if (error instanceof AxiosError && error.response?.status === 400) {
@@ -57,6 +59,7 @@ export default function ProfileContainer() {
             '닉네임 변경 중 오류가 발생했습니다.',
         })
       }
+      toast.error('오류가 발생했습니다')
     }
   }
 
