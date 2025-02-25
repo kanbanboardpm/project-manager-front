@@ -1,7 +1,6 @@
 import axiosApi from '@/helper/api_helper'
 import { apiUrl } from '@/shared/constants/configure'
 import { LoginRequest, LoginResponse, SignupRequest } from '@/shared/types/auth'
-import useSessionStore from '@/store/useSessionStore'
 
 export const postLogin = async (
   payload: LoginRequest,
@@ -11,12 +10,8 @@ export const postLogin = async (
 }
 
 export const getLogout = async () => {
-  console.log('로그아웃 시도')
-  console.log('현재 토큰:', useSessionStore.getState()?.access_token)
-
   try {
     const response = await axiosApi.get('/users/logout')
-
     return response.data
   } catch (error) {
     console.log('로그아웃 에러:', error)

@@ -11,9 +11,9 @@ import {
   useMutationEditComment,
   useMutationDeleteComment,
 } from '@/shared/queries/useMutationComment'
-import { useQueryUser } from '@/shared/queries/useQueryUser'
 import { Icon } from '@/shared/ui/Icon'
 import { toast } from 'react-toastify'
+import { useGetUser } from '@/store/useUserStore'
 
 const formSchema = z.object({
   content: z.string().min(1, '댓글은 1글자 이상 입력해야 합니다.'),
@@ -31,13 +31,12 @@ export default function CommentSection({
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null)
   const [editContent, setEditContent] = useState<string>('')
   const { data: commentData } = useQueryCommentList(cardId)
-  const { data: userData } = useQueryUser()
   const comments = commentData?.data
-  const user = userData?.data
   const createCommentMutation = useMutationCreateComment()
   const editCommentMutation = useMutationEditComment()
   const deleteCommentMutation = useMutationDeleteComment()
-
+  const getUser = useGetUser()
+  const loggedInUser = getUser()
   const {
     register,
     handleSubmit,
@@ -188,7 +187,7 @@ export default function CommentSection({
           className="flex gap-3 pt-2 justify-center items-center"
         >
           <img
-            src={user?.image_url}
+            src={loggedInUser?.imageUrl}
             alt="User Profile"
             className="w-8 h-8 rounded-full flex-shrink-0"
           />
