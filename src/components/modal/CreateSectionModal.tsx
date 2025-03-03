@@ -1,7 +1,11 @@
+import { useMutationCreateSection } from '@/shared/queries/useMutationSection'
 import { Button } from '@/shared/ui/common/button'
+import Modal from '@/shared/ui/Modal'
 import { useModalStore } from '@/store/useModalStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { z } from 'zod'
 import { Input } from '../../shared/ui/common/input'
 import { ModalKey } from './ModalController'
@@ -23,38 +27,50 @@ export default function CreateSectionModal({ modalId }: { modalId: ModalKey }) {
     },
   })
 
+  const { projectId } = useParams()
   const { closeModal } = useModalStore()
+  const createSection = useMutationCreateSection()
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
-    closeModal('create-section')
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await createSection.mutateAsync({
+        projectId: projectId,
+        name: values.title,
+      })
+      closeModal('create-section')
+      toast.success('섹션이 추가되었습니다')
+    } catch (error) {
+      console.error(error)
+      toast.error('오류가 발생하였습니다')
+    }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div
-        className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={() => closeModal(modalId)}
-      />
-      <div className="relative bg-white w-[300px] md:w-[400px] h-auto rounded-modal p-6  flex flex-col gap-4">
-        <div className="font-semibold text-base">섹션 추가</div>
+    <Modal modalId={modalId} width="w-[300px] md:w-[400px]">
+      <div className="font-semibold text-base">섹션 추가</div>
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <Input
-              placeholder="제목을 입력하세요"
-              {...register('title')}
-              className={`${errors.title ? 'border-warning' : ''} `}
-            />
-          </div>
-          <div className="flex gap-3 justify-end">
-            <Button variant="modalOutline" onClick={() => closeModal(modalId)}>
-              취소
-            </Button>
-            <Button variant={`${isValid ? 'modal' : 'disabled'}`}>생성</Button>
-          </div>
-        </form>
-      </div>
-    </div>
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+        <div>
+          <Input
+            placeholder="제목을 입력하세요"
+            {...register('title')}
+            className={`${errors.title ? 'border-warning' : ''} `}
+            autoFocus
+          />
+        </div>
+        <div className="flex gap-3 justify-end">
+          <Button
+            type="button"
+            variant="modalOutline"
+            onClick={() => closeModal(modalId)}
+          >
+            취소
+          </Button>
+          <Button type="submit" variant={`${isValid ? 'modal' : 'disabled'}`}>
+            생성
+          </Button>
+        </div>
+      </form>
+    </Modal>
   )
 }

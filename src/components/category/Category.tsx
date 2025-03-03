@@ -1,20 +1,31 @@
-import { CATEGORY_COLORS } from '@/shared/constants/color'
+import {
+  CATEGORY_COLOR_ENTRIES,
+  CATEGORY_COLORS,
+  UppercaseCategoryColor,
+} from '@/shared/constants/color'
+import { useMutationCreateCategory } from '@/shared/queries/useMutationCategory'
+import { ProjectSectionParams } from '@/shared/types/common'
 import { Button } from '@/shared/ui/common/button'
 import { Input } from '@/shared/ui/common/input'
 import { Icon } from '@/shared/ui/Icon'
 import { zodResolver } from '@hookform/resolvers/zod'
+import axios, { AxiosError } from 'axios'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
 import { z } from 'zod'
+import { COLORS } from '../modal/CreateProjectModal'
 import CategoryList from './CategoryList'
 
 const formSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1).max(50),
-  color: z.string().min(1),
+  color: z.enum(COLORS),
 })
 
-export default function Category() {
+export default function Category({
+  projectId,
+}: Pick<ProjectSectionParams, 'projectId'>) {
   const {
     register,
     handleSubmit,
@@ -27,12 +38,48 @@ export default function Category() {
     defaultValues: {
       name: '',
       description: '',
-      color: '#4285F4',
+      color: 'BLUE',
     },
   })
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
+  const createCategory = useMutationCreateCategory()
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await createCategory.mutateAsync({
+        projectId,
+        name: values.name,
+        description: values.description,
+        color: values.color,
+      })
+      toast.success('카테고리가 생성되었습니다')
+      setValue('name', '')
+      setValue('description', '')
+      setValue('color', 'BLUE')
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{
+          statusCode: number
+          message: string
+          data: null
+        }>
+        if (axiosError.response?.data) {
+          const errorMessage = axiosError.response.data.message
+          if (
+            errorMessage === '프로젝트 내에서 카테고리명이 이미 존재합니다.'
+          ) {
+            toast.warning('이미 존재하는 카테고리 이름입니다.')
+          } else {
+            toast.error(`오류: ${errorMessage}`)
+          }
+        } else {
+          toast.error('서버 응답을 처리하는 중 오류가 발생했습니다.')
+        }
+      } else {
+        console.error('Error creating category:', error)
+        toast.error('예상치 못한 오류가 발생했습니다.')
+      }
+    }
   }
 
   const [isOpenColor, setIsOpenColor] = useState(false)
@@ -70,7 +117,14 @@ export default function Category() {
               type="button"
               // onClick={() => setValue('color', color, { shouldValidate: true })}
               className="w-4 h-4 md:w-5 md:h-5 lg:w-[42px] rounded-card"
-              style={{ backgroundColor: getValues('color') }}
+              style={{
+                backgroundColor:
+                  CATEGORY_COLORS[
+                    getValues(
+                      'color',
+                    ).toLowerCase() as keyof typeof CATEGORY_COLORS
+                  ],
+              }}
             />
             <Icon
               icon={isOpenColor ? 'AngleDoubleUp' : 'AngleDoubleDown'}
@@ -81,12 +135,17 @@ export default function Category() {
           <div
             className={`${isOpenColor ? 'block' : 'hidden'} border border-modalBorder bg-white p-0.5 rounded-card absolute top-12 md:top-14 z-50 -left-1 flex flex-col gap-0.5`}
           >
-            {Object.entries(CATEGORY_COLORS).map(([key, color]) => {
+            {CATEGORY_COLOR_ENTRIES.map(([key, color]) => {
               return (
                 <button
                   key={key}
+                  type="button"
                   onClick={() => {
-                    setValue('color', color, { shouldValidate: true })
+                    setValue(
+                      'color',
+                      key.toUpperCase() as UppercaseCategoryColor,
+                      { shouldValidate: true },
+                    )
                     setIsOpenColor(false)
                   }}
                   className={`w-[30px] h-4 md:h-5 md:w-[34px] lg:w-[60px] rounded-card`}
@@ -104,7 +163,7 @@ export default function Category() {
           <div className="hidden lg:block">생성</div>
         </Button>
       </form>
-      <CategoryList />
+      <CategoryList projectId={projectId} />
     </div>
   )
 }
