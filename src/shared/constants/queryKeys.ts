@@ -58,4 +58,9 @@ export const QUERY_KEYS = {
     read: (notificationId: number) =>
       [...QUERY_KEYS.notifications.all, 'comments', notificationId] as const,
   },
+  authorities: {
+    all: ['authorities'] as const,
+    lists: (projectId: number) =>
+      [...QUERY_KEYS.authorities.all, 'list', projectId] as const,
+  },
 } as const
