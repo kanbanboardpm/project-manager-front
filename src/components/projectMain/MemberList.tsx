@@ -1,5 +1,6 @@
 import { useMutationUpdateAuthorities } from '@/shared/queries/useMutationAuthorities'
 import { useQueryAuthorities } from '@/shared/queries/useQueryAuthorities'
+import { useQueryMember } from '@/shared/queries/useQueryMember'
 import { Member } from '@/shared/types/member'
 import {
   DropdownMenu,
@@ -32,16 +33,17 @@ export default function MemberList({
   const loggedInUser = getUser()
 
   const { data } = useQueryAuthorities({ projectId })
+  const { refetch } = useQueryMember({ projectId })
   const updateAuthorities = useMutationUpdateAuthorities()
 
   const onCheckedChange = async (email: string, role: string) => {
     try {
       await updateAuthorities.mutateAsync({ projectId, role, email })
-      if (role === 'GUEST') toast('일반 멤버로 권한이 변경되었습니다')
-      if (role === 'ADMIN') toast('관리자로 권한이 변경되었습니다')
+      if (role === 'USER') toast.success('일반 멤버로 권한이 변경되었습니다')
+      if (role === 'ADMIN') toast.success('관리자로 권한이 변경되었습니다')
+      refetch()
     } catch (error) {
       console.error(error)
-      // toast.error("예상치 못한 오류가 발생하였습니다", error)
     }
   }
   return (
@@ -64,7 +66,7 @@ export default function MemberList({
               </div>
               {loggedInUser.email === member.email ? (
                 <span className="text-sm pr-0.5">나</span>
-              ) : data.userRole === 'ADMIN' ? (
+              ) : data?.userRole === 'ADMIN' ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button>
@@ -75,10 +77,10 @@ export default function MemberList({
                     <DropdownMenuLabel>권한</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuCheckboxItem
-                      checked={member.role === 'GUEST'}
+                      checked={member.role === 'USER'}
                       onCheckedChange={() => {
                         if (member.role === 'ADMIN')
-                          onCheckedChange(member.email, 'GUEST')
+                          onCheckedChange(member.email, 'USER')
                       }}
                     >
                       일반
@@ -86,7 +88,7 @@ export default function MemberList({
                     <DropdownMenuCheckboxItem
                       checked={member.role === 'ADMIN'}
                       onCheckedChange={() => {
-                        if (member.role === 'GUEST')
+                        if (member.role === 'USER')
                           onCheckedChange(member.email, 'ADMIN')
                       }}
                     >

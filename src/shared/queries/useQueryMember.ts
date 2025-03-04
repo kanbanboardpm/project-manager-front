@@ -6,14 +6,14 @@ import { ProjectSectionParams } from '../types/common'
 const useQueryMember = ({
   projectId,
 }: Pick<ProjectSectionParams, 'projectId'>) => {
-  const { data, isError } = useQuery({
+  const { data, isError, refetch } = useQuery({
     queryKey: QUERY_KEYS.members.lists(projectId),
     queryFn: async () => {
       const { data } = await axiosApi.get(`projects/${projectId}/users`)
       return data.data
     },
   })
-  return { data, isError }
+  return { data, isError, refetch }
 }
 
 export { useQueryMember }

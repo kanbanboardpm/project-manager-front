@@ -6,9 +6,9 @@ const useMutationUpdateAuthorities = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: updateAuthorities,
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.authorities.all,
+        queryKey: QUERY_KEYS.authorities.lists(variables.projectId),
       })
     },
   })

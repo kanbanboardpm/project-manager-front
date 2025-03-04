@@ -5,8 +5,16 @@ import { useModalStore } from '@/store/useModalStore'
 import { ModalKey } from './ModalController'
 
 export default function DeleteModal({ modalId }: { modalId: ModalKey }) {
-  const { getModalData } = useModalStore()
+  const { getModalData, closeModal } = useModalStore()
   const modalData = getModalData('delete-alert')
+
+  const handleDelete = () => {
+    if (modalData?.onClickHandler) {
+      modalData.onClickHandler()
+    }
+    closeModal(modalId)
+  }
+
   return (
     <Modal modalId={modalId} width="w-[300px] md:w-[400px]">
       <div className="flex gap-2">
@@ -14,11 +22,7 @@ export default function DeleteModal({ modalId }: { modalId: ModalKey }) {
       </div>
 
       <p className="whitespace-pre-line">{modalData?.modalText}</p>
-      <Button
-        onClick={modalData?.onClickHandler}
-        variant="categoryDelete"
-        className="!py-2"
-      >
+      <Button onClick={handleDelete} variant="categoryDelete" className="!py-2">
         삭제
       </Button>
     </Modal>
