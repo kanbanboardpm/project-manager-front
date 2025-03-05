@@ -41,11 +41,7 @@ export default function ProjectHeader({ id: projectId, name, color }: Project) {
         멤버
       </Button>
       {memberListOpen && (
-        <MemberList
-          currentProjectPath={currentProjectPath}
-          projectId={projectId}
-          memberList={memberList}
-        />
+        <MemberList projectId={projectId} memberList={memberList} />
       )}
     </div>
   )

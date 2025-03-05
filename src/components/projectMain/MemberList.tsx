@@ -11,30 +11,24 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/ui/common/dropdown-menu'
 import { Icon } from '@/shared/ui/Icon'
+import { useModalStore } from '@/store/useModalStore'
 import { useGetUser } from '@/store/useUserStore'
 import { ChevronDown } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 interface MemberListProps {
-  currentProjectPath: string
   memberList: Member[]
   projectId: number
 }
 
-export default function MemberList({
-  currentProjectPath,
-  memberList,
-  projectId,
-}: MemberListProps) {
-  const navigate = useNavigate()
-
+export default function MemberList({ memberList, projectId }: MemberListProps) {
   const getUser = useGetUser()
   const loggedInUser = getUser()
 
   const { data } = useQueryAuthorities({ projectId })
   const { refetch } = useQueryMember({ projectId })
   const updateAuthorities = useMutationUpdateAuthorities()
+  const { openModal } = useModalStore()
 
   const onCheckedChange = async (email: string, role: string) => {
     try {
@@ -105,9 +99,9 @@ export default function MemberList({
       })}
       <div
         className=" text-sm md:text-base flex gap-1 pt-2 items-center cursor-pointer whitespace-nowrap mx-auto px-3   "
-        onClick={() => navigate(`${currentProjectPath}/update`)}
+        onClick={() => openModal('update-member', { projectId })}
       >
-        <Icon icon="Plus" size={12} /> 멤버 추가
+        <Icon icon="Plus" size={12} /> 멤버 초대
       </div>
     </div>
   )

@@ -55,7 +55,13 @@ export default function SectionNameBlock({
           <Icon
             icon="Delete"
             className="w-3 h-3 md:w-[14px] md:h-[14px] fill-white"
-            onClick={onDelete}
+            onClick={() =>
+              openModal('delete-alert', {
+                modalText:
+                  '섹션을 삭제하시겠습니까?\n해당 카드 데이터가 모두 삭제됩니다.\n계속하시려면 아래 삭제 버튼을 눌러주세요.',
+                onClickHandler: onDelete,
+              })
+            }
           />
         </Button>
       </div>
