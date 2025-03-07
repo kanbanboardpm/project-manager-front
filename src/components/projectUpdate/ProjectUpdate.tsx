@@ -1,7 +1,6 @@
 import {
   CATEGORY_COLOR_ENTRIES,
   CATEGORY_COLOR_VALUES,
-  UppercaseCategoryColor,
 } from '@/shared/constants/color'
 import {
   useMutationDeleteMember,
@@ -11,6 +10,7 @@ import {
   useMutationDeleteProject,
   useMutationUpdateProject,
 } from '@/shared/queries/useMutationProject'
+import { useQueryAuthorities } from '@/shared/queries/useQueryAuthorities'
 import { useQueryMember } from '@/shared/queries/useQueryMember'
 import { TempMember } from '@/shared/types/common'
 import { Member } from '@/shared/types/member'
@@ -22,11 +22,12 @@ import { useModalStore } from '@/store/useModalStore'
 import { useGetUser } from '@/store/useUserStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
+import TooltipWrapper from './TooltipWrapper'
 
 const formSchema = z.object({
   title: z.string().min(1),
@@ -40,6 +41,8 @@ interface DeleteMemberList {
 
 export default function ProjectUpdate({ id: projectId, name, color }: Project) {
   const { data: queryMemberList } = useQueryMember({ projectId })
+  const { data: loggedInUserAuth } = useQueryAuthorities({ projectId })
+  const userRoleIsUser = loggedInUserAuth?.userRole === 'USER'
 
   const { openModal } = useModalStore()
 
@@ -80,12 +83,17 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const getColorNameByCode = (colorCode: string) =>
+      CATEGORY_COLOR_ENTRIES.find(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ([_, code]) => code === colorCode,
+      )?.[0].toUpperCase() || ''
     try {
       if (isDirty) {
         await updateProject.mutateAsync({
           id: projectId,
           name: values.title,
-          color: values.color,
+          color: getColorNameByCode(values.color),
         })
       }
       if (addMemberList.length > 0) {
@@ -157,6 +165,30 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
     }
   }
 
+  const onClickDeleteHandler = (
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
+  ) => {
+    e.preventDefault()
+    if (!userRoleIsUser) {
+      openModal('delete-alert', {
+        modalText:
+          '프로젝트를 삭제하시겠습니까?\n해당 프로젝트의 섹션과 카드 데이터가 모두 삭제됩니다.\n계속하시려면 아래 삭제 버튼을 눌러주세요.',
+        onClickHandler: onDelete,
+      })
+    }
+  }
+
+  const onClickSubmitHandler = (
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
+  ) => {
+    e.preventDefault()
+    if (!userRoleIsUser) {
+      handleSubmit(onSubmit)()
+    }
+  }
+
+  const Comp = userRoleIsUser ? TooltipWrapper : Fragment
+
   useEffect(() => {
     if (queryMemberList) {
       const formattedMembers: TempMember[] = queryMemberList
@@ -184,11 +216,21 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2 md:gap-4">
             <label className="font-semibold">프로젝트 이름</label>
-            <Input
-              {...register('title')}
-              placeholder="프로젝트의 이름을 입력하세요"
-              className={`flex-1 ${errors.title ? 'border-warning' : ''} text-xs md:text-sm h-[30px] md:h-10`}
-            />
+            {userRoleIsUser ? (
+              <TooltipWrapper className="flex-1">
+                <Input
+                  {...register('title')}
+                  className={`text-xs md:text-sm h-[30px] md:h-10`}
+                  disabled={userRoleIsUser}
+                />
+              </TooltipWrapper>
+            ) : (
+              <Input
+                {...register('title')}
+                placeholder="프로젝트의 이름을 입력하세요"
+                className={`flex-1 ${errors.title ? 'border-warning' : ''} text-xs md:text-sm h-[30px] md:h-10`}
+              />
+            )}
           </div>
 
           <div className="flex gap-1">
@@ -260,41 +302,36 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
                   key={key}
                   type="button"
                   onClick={() =>
-                    setValue(
-                      'color',
-                      key.toUpperCase() as UppercaseCategoryColor,
-                      { shouldValidate: true, shouldDirty: true },
-                    )
+                    setValue('color', color, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
                   }
                   className={`w-4 h-4 md:w-6 md:h-6 rounded-card md:rounded-input transition-all hover:opacity-80 ${
-                    (getValues('color') === key.toUpperCase() ||
-                      getValues('color') === color) &&
-                    'border-2 border-black'
+                    getValues('color') === color && 'border-2 border-black'
                   }`}
                   style={{
                     backgroundColor: color,
                   }}
                   aria-label={`Select ${color} color`}
+                  disabled={userRoleIsUser}
                 />
               ))}
             </div>
           </div>
         </div>
         <div className="flex justify-between">
-          <Button
-            type="button"
-            variant="categoryDelete"
-            className="!py-2 !px-6"
-            onClick={() =>
-              openModal('delete-alert', {
-                modalText:
-                  '프로젝트를 삭제하시겠습니까?\n해당 프로젝트의 섹션과 카드 데이터가 모두 삭제됩니다.\n계속하시려면 아래 삭제 버튼을 눌러주세요.',
-                onClickHandler: onDelete,
-              })
-            }
-          >
-            삭제
-          </Button>
+          <Comp>
+            <Button
+              type="button"
+              variant={userRoleIsUser ? 'disabled' : 'categoryDelete'}
+              className="!py-2 !px-6"
+              onClick={onClickDeleteHandler}
+            >
+              삭제
+            </Button>
+          </Comp>
+
           <div className="flex gap-3 justify-center">
             <Button
               type="button"
@@ -303,13 +340,17 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
             >
               취소
             </Button>
-            <Button
-              type="submit"
-              variant={isValid ? 'modal' : 'disabled'}
-              onClick={() => navigate(`${currentProjectPath}`)}
-            >
-              수정
-            </Button>
+            <Comp>
+              <Button
+                type="submit"
+                variant={
+                  userRoleIsUser ? 'disabled' : isValid ? 'modal' : 'disabled'
+                }
+                onClick={onClickSubmitHandler}
+              >
+                수정
+              </Button>
+            </Comp>
           </div>
         </div>
       </form>

@@ -25,7 +25,7 @@ export default function MemberList({ memberList, projectId }: MemberListProps) {
   const getUser = useGetUser()
   const loggedInUser = getUser()
 
-  const { data } = useQueryAuthorities({ projectId })
+  const { data: loggedInUserAuth } = useQueryAuthorities({ projectId })
   const { refetch } = useQueryMember({ projectId })
   const updateAuthorities = useMutationUpdateAuthorities()
   const { openModal } = useModalStore()
@@ -60,7 +60,7 @@ export default function MemberList({ memberList, projectId }: MemberListProps) {
               </div>
               {loggedInUser.email === member.email ? (
                 <span className="text-sm pr-0.5">나</span>
-              ) : data?.userRole === 'ADMIN' ? (
+              ) : loggedInUserAuth?.userRole === 'ADMIN' ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button>
