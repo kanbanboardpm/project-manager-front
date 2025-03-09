@@ -2,6 +2,7 @@ import {
   CATEGORY_COLOR_ENTRIES,
   CATEGORY_COLOR_VALUES,
 } from '@/shared/constants/color'
+import { useUserRole } from '@/shared/hooks/useUserRole'
 import {
   useMutationDeleteMember,
   useMutationInviteProject,
@@ -10,7 +11,6 @@ import {
   useMutationDeleteProject,
   useMutationUpdateProject,
 } from '@/shared/queries/useMutationProject'
-import { useQueryAuthorities } from '@/shared/queries/useQueryAuthorities'
 import { useQueryMember } from '@/shared/queries/useQueryMember'
 import { TempMember } from '@/shared/types/common'
 import { Member } from '@/shared/types/member'
@@ -18,16 +18,16 @@ import { Project } from '@/shared/types/project'
 import { Button } from '@/shared/ui/common/button'
 import { Input } from '@/shared/ui/common/input'
 import { Icon } from '@/shared/ui/Icon'
+import Tooltip from '@/shared/ui/Tooltip'
 import { useModalStore } from '@/store/useModalStore'
 import { useGetUser } from '@/store/useUserStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { Fragment, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
-import TooltipWrapper from './TooltipWrapper'
 
 const formSchema = z.object({
   title: z.string().min(1),
@@ -41,8 +41,7 @@ interface DeleteMemberList {
 
 export default function ProjectUpdate({ id: projectId, name, color }: Project) {
   const { data: queryMemberList } = useQueryMember({ projectId })
-  const { data: loggedInUserAuth } = useQueryAuthorities({ projectId })
-  const userRoleIsUser = loggedInUserAuth?.userRole === 'USER'
+  const { userRoleIsUser } = useUserRole(projectId)
 
   const { openModal } = useModalStore()
 
@@ -165,6 +164,18 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
     }
   }
 
+  const onClickTitleInput = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    if (userRoleIsUser) {
+      e.preventDefault()
+    }
+  }
+
+  const onClickInputHandler = () => {
+    if (userRoleIsUser) {
+      openModal('update-member', { projectId })
+    }
+  }
+
   const onClickDeleteHandler = (
     e: React.MouseEvent<HTMLElement, MouseEvent>,
   ) => {
@@ -187,7 +198,26 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
     }
   }
 
-  const Comp = userRoleIsUser ? TooltipWrapper : Fragment
+  function ConditionalTooltip({
+    className,
+    children,
+    condition,
+    content,
+  }: {
+    className?: string
+    children: ReactNode
+    condition: boolean
+    content: ReactNode
+  }) {
+    if (condition) {
+      return (
+        <Tooltip content={content} className={className}>
+          {children}
+        </Tooltip>
+      )
+    }
+    return <>{children}</>
+  }
 
   useEffect(() => {
     if (queryMemberList) {
@@ -211,26 +241,30 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
       </div>
       <form
         className="flex flex-col gap-4 text-xs md:text-sm"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={(e) => {
+          if (userRoleIsUser) {
+            e.preventDefault() // USER 권한일 때는 제출 방지
+            return
+          }
+          handleSubmit(onSubmit)(e)
+        }}
       >
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2 md:gap-4">
             <label className="font-semibold">프로젝트 이름</label>
-            {userRoleIsUser ? (
-              <TooltipWrapper className="flex-1">
-                <Input
-                  {...register('title')}
-                  className={`text-xs md:text-sm h-[30px] md:h-10`}
-                  disabled={userRoleIsUser}
-                />
-              </TooltipWrapper>
-            ) : (
+            <ConditionalTooltip
+              condition={userRoleIsUser}
+              content="권한이 없습니다"
+              className="flex-1"
+            >
               <Input
                 {...register('title')}
                 placeholder="프로젝트의 이름을 입력하세요"
                 className={`flex-1 ${errors.title ? 'border-warning' : ''} text-xs md:text-sm h-[30px] md:h-10`}
+                disabled={userRoleIsUser}
+                onClick={onClickTitleInput}
               />
-            )}
+            </ConditionalTooltip>
           </div>
 
           <div className="flex gap-1">
@@ -241,6 +275,7 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
                 onChange={(e) => setMemberInput(e.target.value)}
                 placeholder="이메일을 입력하여 프로젝트에 멤버를 추가하세요"
                 className="text-xs md:text-sm placeholder:text-xs placeholder:md:text-sm h-[30px] md:h-10"
+                onClick={onClickInputHandler}
               />
             </div>
             <Button
@@ -269,9 +304,11 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
                     ) : (
                       <div
                         className="w-4 h-4 rounded-full text-white font-semibold flex items-center justify-center text-xs"
-                        style={{
-                          backgroundColor: member.profileColor,
-                        }}
+                        style={
+                          {
+                            // backgroundColor: member.profileColor,
+                          }
+                        }
                       >
                         {member.email.slice(0, 1).toUpperCase()}
                       </div>
@@ -321,16 +358,20 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
           </div>
         </div>
         <div className="flex justify-between">
-          <Comp>
+          <ConditionalTooltip
+            condition={userRoleIsUser}
+            content="권한이 없습니다"
+          >
             <Button
               type="button"
               variant={userRoleIsUser ? 'disabled' : 'categoryDelete'}
               className="!py-2 !px-6"
               onClick={onClickDeleteHandler}
+              disabled={userRoleIsUser}
             >
               삭제
             </Button>
-          </Comp>
+          </ConditionalTooltip>
 
           <div className="flex gap-3 justify-center">
             <Button
@@ -340,17 +381,20 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
             >
               취소
             </Button>
-            <Comp>
+            <ConditionalTooltip
+              condition={userRoleIsUser}
+              content="권한이 없습니다"
+            >
               <Button
-                type="submit"
                 variant={
                   userRoleIsUser ? 'disabled' : isValid ? 'modal' : 'disabled'
                 }
                 onClick={onClickSubmitHandler}
+                disabled={userRoleIsUser}
               >
                 수정
               </Button>
-            </Comp>
+            </ConditionalTooltip>
           </div>
         </div>
       </form>
