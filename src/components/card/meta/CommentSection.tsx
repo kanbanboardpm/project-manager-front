@@ -105,7 +105,7 @@ export default function CommentSection({
       </div>
 
       {/* 댓글 목록 */}
-      <div className="max-h-[190px] overflow-auto space-y-4">
+      <div className="md:max-h-[110px]  max-h-[600px] overflow-auto space-y-4">
         {comments?.map((comment) => {
           const isEditing = editingCommentId === comment.commentId
           const isValid = loggedInUser.nickName === comment.nickName
