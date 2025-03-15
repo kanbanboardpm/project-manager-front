@@ -23,6 +23,7 @@ import { useModalStore } from '@/store/useModalStore'
 import { useGetUser } from '@/store/useUserStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
+import axios, { AxiosError } from 'axios'
 import { ReactNode, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -109,8 +110,38 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
       setDeleteMemberList([])
       toast.success('프로젝트가 수정되었습니다')
     } catch (error) {
-      console.error('Error updating project:', error)
-      toast.error('오류가 발생하였습니다')
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{
+          statusCode: number
+          message: string
+          data: null
+        }>
+        if (axiosError.response?.data) {
+          const errorMessage = axiosError.response.data.message
+          if (errorMessage === '존재하지 않는 유저 입니다.') {
+            if (addMemberList.length === 1) {
+              toast.warning('존재하지 않는 유저는 초대할 수 없습니다')
+            } else {
+              toast.warning(
+                '존재하지 않는 유저가 포함되어 있어\n초대할 수 없습니다',
+              )
+            }
+          } else if (errorMessage === '이미 초대된 유저입니다.') {
+            if (addMemberList.length === 1) {
+              toast.warning('이미 초대된 유저입니다')
+            } else {
+              toast.warning('이미 초대된 유저가 포함되어 있습니다')
+            }
+          } else {
+            toast.error(`오류: ${errorMessage}`)
+          }
+        } else {
+          toast.error('서버 응답을 처리하는 중 오류가 발생했습니다.')
+        }
+      } else {
+        console.error('Error updating member:', error)
+        toast.error('예상치 못한 오류가 발생했습니다.')
+      }
     }
   }
 
@@ -143,6 +174,7 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
 
   const removeEmail = (member: DeleteMemberList) => {
     setMemberList(memberList.filter((mem) => mem.email !== member.email))
+    setAddMemberList(addMemberList.filter((email) => email !== member.email))
     if (!deleteMemberList.some((dm) => dm.userId === member.userId)) {
       setDeleteMemberList([...deleteMemberList, member])
     }
@@ -304,11 +336,9 @@ export default function ProjectUpdate({ id: projectId, name, color }: Project) {
                     ) : (
                       <div
                         className="w-4 h-4 rounded-full text-white font-semibold flex items-center justify-center text-xs"
-                        style={
-                          {
-                            // backgroundColor: member.profileColor,
-                          }
-                        }
+                        style={{
+                          backgroundColor: member.profileColor,
+                        }}
                       >
                         {member.email.slice(0, 1).toUpperCase()}
                       </div>
