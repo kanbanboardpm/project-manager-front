@@ -53,14 +53,16 @@ export default function CardContainer({
         )
       })}
       <div
-        className={`font-semibold text-sm md:text-base flex gap-1 h-fit pt-2 items-center ${userRoleIsUser ? 'cursor-default' : 'cursor-pointer'} whitespace-nowrap w-[307px] mx-auto md:mx-0 px-3 md:min-w-[220px] md:px-0 lg:min-w-[256px]`}
+        className={`font-semibold text-sm md:text-base flex gap-1 h-fit pt-2 items-center whitespace-nowrap w-[307px] mx-auto md:mx-0 px-3 md:min-w-[220px] md:px-0 lg:min-w-[256px]`}
         onClick={() => !userRoleIsUser && openModal('create-section')}
       >
         <ConditionalTooltip
           content="권한이 없습니다"
           condition={userRoleIsUser}
         >
-          <button className="flex items-center gap-1">
+          <button
+            className={`flex items-center gap-1 ${userRoleIsUser && 'text-modalPlaceholder cursor-default'}`}
+          >
             <Icon icon="Plus" size={12} /> 섹션 추가
           </button>
         </ConditionalTooltip>
