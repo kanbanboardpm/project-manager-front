@@ -1,12 +1,15 @@
 import { useProjectId } from '@/shared/hooks/useProjectId'
+import { useUserRole } from '@/shared/hooks/useUserRole'
 import {
   useMutationCompleteCard,
   useMutationDeleteCard,
   useMutationInProgressCard,
 } from '@/shared/queries/useMutationEditCard'
 import { Button } from '@/shared/ui/common/button'
+import ConditionalTooltip from '@/shared/ui/ConditionalTooltip'
 import { Icon } from '@/shared/ui/Icon'
 import { useModalStore } from '@/store/useModalStore'
+import { useGetUser } from '@/store/useUserStore'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
@@ -14,19 +17,28 @@ interface ActionButtonsProps {
   isComplete: boolean
   cardId: number
   isEdit: boolean
+  cardOwner: string
 }
 
 export function ActionButtons({
   isComplete,
   cardId,
   isEdit,
+  cardOwner,
 }: ActionButtonsProps) {
   const navigate = useNavigate()
   const projectId = useProjectId()
+  const { userRoleIsUser } = useUserRole(projectId)
+  const getUser = useGetUser()
+  const loggedInUser = getUser()
+  const isCardOwner = loggedInUser?.nickName === cardOwner
+  const hasCardAccessPermission = isCardOwner || !userRoleIsUser
+
   const completeCardMutation = useMutationCompleteCard()
   const inProgressCardMutation = useMutationInProgressCard()
   const deleteCardMutation = useMutationDeleteCard()
   const { openModal } = useModalStore()
+
   const handleCompleteToggle = async () => {
     try {
       const today = new Date()
@@ -108,9 +120,21 @@ export function ActionButtons({
             />
           </button>
         ) : (
-          <Link to="edit">
-            <Icon icon="Setting" size={18} className="sm:w-5 sm:h-5" />
-          </Link>
+          <ConditionalTooltip
+            content="권한이 없습니다"
+            condition={!hasCardAccessPermission}
+          >
+            <Link
+              to="edit"
+              className={!hasCardAccessPermission ? 'pointer-events-none' : ''}
+            >
+              <Icon
+                icon="Setting"
+                size={18}
+                className={`sm:w-5 sm:h-5 ${!hasCardAccessPermission && 'text-modalPlaceholder'}`}
+              />
+            </Link>
+          </ConditionalTooltip>
         )}
         <button
           onClick={() => navigate(`/project/${projectId}`)}
