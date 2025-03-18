@@ -1,5 +1,7 @@
+import { useUserRole } from '@/shared/hooks/useUserRole'
 import { useQuerySectionList } from '@/shared/queries/useQuerySectionList'
 import { ProjectSectionParams } from '@/shared/types/common'
+import ConditionalTooltip from '@/shared/ui/ConditionalTooltip'
 import { Icon } from '@/shared/ui/Icon'
 import { useModalStore } from '@/store/useModalStore'
 import Section from './Section'
@@ -10,6 +12,7 @@ export default function CardContainer({
   const { openModal } = useModalStore()
 
   const { data: sectionList, isError } = useQuerySectionList(projectId)
+  const { userRoleIsUser } = useUserRole(projectId)
 
   if (isError) {
     return <div className="text-red-500">Error loading sections.</div>
@@ -28,10 +31,19 @@ export default function CardContainer({
         )
       })}
       <div
-        className="font-semibold text-sm md:text-base flex gap-1 h-fit pt-2 items-center cursor-pointer whitespace-nowrap w-[307px] mx-auto md:mx-0 px-3 md:min-w-[220px] md:px-0 lg:min-w-[256px]"
-        onClick={() => openModal('create-section')}
+        className={`font-semibold text-sm md:text-base flex gap-1 h-fit pt-2 items-center whitespace-nowrap w-[307px] mx-auto md:mx-0 px-3 md:min-w-[220px] md:px-0 lg:min-w-[256px]`}
+        onClick={() => !userRoleIsUser && openModal('create-section')}
       >
-        <Icon icon="Plus" size={12} /> 섹션 추가
+        <ConditionalTooltip
+          content="권한이 없습니다"
+          condition={userRoleIsUser}
+        >
+          <button
+            className={`flex items-center gap-1 ${userRoleIsUser && 'text-modalPlaceholder cursor-default'}`}
+          >
+            <Icon icon="Plus" size={12} /> 섹션 추가
+          </button>
+        </ConditionalTooltip>
       </div>
     </div>
   )
