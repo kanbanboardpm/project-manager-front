@@ -62,17 +62,25 @@ export default function ProfileContainer() {
     async (values: FormValues) => {
       const formData = new FormData()
       formData.append('nickname', values.nickname)
-
       if (values.image instanceof File) {
         formData.append('image', values.image)
+      } else if (values.image === DEFAULT_IMAGE_URL) {
+        const res = await fetch(DEFAULT_IMAGE_URL)
+        const blob = await res.blob()
+        const defaultFile = new File([blob], 'default.jpg', {
+          type: blob.type || 'image/jpeg',
+        })
+        formData.append('image', defaultFile)
       }
 
       try {
         const res = await updateProfileMutation.mutateAsync(formData)
+
         updateUser({
           nickName: res.data?.nickname,
           imageUrl: res.data?.image_url,
         })
+
         toast.success('프로필이 수정되었습니다')
         navigate('/home')
       } catch (error: unknown) {
