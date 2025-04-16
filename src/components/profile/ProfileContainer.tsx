@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 import ProfileForm from './ProfileForm'
 import ProfileImageUploader from './ProfileImageUploader'
-import { useGetUser, useUpdateUser } from '@/store/useUserStore'
+import { useGetUser } from '@/store/useUserStore'
 import { toast } from 'react-toastify'
 import { useCallback, useMemo } from 'react'
 
@@ -28,7 +28,6 @@ export default function ProfileContainer() {
   const navigate = useNavigate()
   const updateProfileMutation = useMutationUpdateProfile()
   const getUser = useGetUser()
-  const updateUser = useUpdateUser()
   const loggedInUser = getUser()
   const { openModal } = useModalStore()
 
@@ -74,13 +73,7 @@ export default function ProfileContainer() {
       }
 
       try {
-        const res = await updateProfileMutation.mutateAsync(formData)
-
-        updateUser({
-          nickName: res.data?.nickname,
-          imageUrl: res.data?.image_url,
-        })
-
+        await updateProfileMutation.mutateAsync(formData)
         toast.success('프로필이 수정되었습니다')
         navigate('/home')
       } catch (error: unknown) {
@@ -96,7 +89,7 @@ export default function ProfileContainer() {
         }
       }
     },
-    [updateProfileMutation, navigate, setError, updateUser],
+    [updateProfileMutation, navigate, setError],
   )
 
   return (
